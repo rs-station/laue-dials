@@ -220,7 +220,7 @@ on PyPI_, the following steps can be used to release a new version for
 
 #. Make sure all unit tests are successful.
 #. Tag the current commit on the main branch with a release tag, e.g., ``git tag -a v0.1 -m 'Version message'``.
-#. Push the new tag to the upstream repository_, e.g., ``git push upstream v1.2.3``
+#. Push the new tag to the upstream repository_, e.g., ``git push origin v0.1``
 #. Clean up the ``dist`` and ``build`` folders with ``tox -e clean``
    (or ``rm -rf dist build``)
    to avoid confusion with old builds and Sphinx docs.
@@ -228,8 +228,9 @@ on PyPI_, the following steps can be used to release a new version for
    the correct version (no ``.dirty`` or git_ hash) according to the git_ tag.
    Also check the sizes of the distributions, if they are too big (e.g., >
    500KB), unwanted clutter may have been accidentally included.
-#. Run ``tox -e publish -- --repository pypi`` and check that everything was
-   uploaded to PyPI_ correctly.
+#. Run ``tox -e publish_test`` and check that everything was
+   uploaded to TestPyPI_ correctly.
+#. Run ``tox -e publish`` to publish a new release to PyPI_.
 
 .. <-- Documentation variables -->
 .. _repository: https://github.com/rs-station/laue_dials
@@ -262,6 +263,7 @@ on PyPI_, the following steps can be used to release a new version for
 .. _Python Software Foundation's Code of Conduct: https://www.python.org/psf/conduct/
 .. _reStructuredText: https://www.sphinx-doc.org/en/master/usage/restructuredtext/
 .. _Sphinx: https://www.sphinx-doc.org/en/master/
+.. _TestPyPI: https://test.pypi.org
 .. _tox: https://tox.wiki/en/stable/
 .. _virtual environment: https://realpython.com/python-virtual-environments-a-primer/
 .. _virtualenv: https://virtualenv.pypa.io/en/stable/
