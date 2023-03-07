@@ -1,6 +1,3 @@
-.. These are examples of badges you might want to add to your README:
-   please update the URLs accordingly
-
     .. image:: https://api.cirrus-ci.com/github/<USER>/laue_dials.svg?branch=main
         :alt: Built Status
         :target: https://cirrus-ci.com/github/<USER>/laue_dials
@@ -23,10 +20,6 @@
         :alt: Twitter
         :target: https://twitter.com/laue_dials
 
-.. image:: https://img.shields.io/badge/-PyScaffold-005CA0?logo=pyscaffold
-    :alt: Project generated with PyScaffold
-    :target: https://pyscaffold.org/
-
 |
 
 ==========
@@ -34,16 +27,17 @@ laue_dials
 ==========
 
 
-    Add a short description here!
+    ``laue_dials`` is a package for analyzing Laue x-ray crystallography data using the DIALS framework.
 
 
-A longer description of your project goes here...
+``laue_dials`` is an extension to the `DIALS`_ code for analyzing polychromatic crystallographic data. To
+install ``laue_dials``, the DIALS code must first be installed, and then using the DIALS python environment
+run the following:
 
+.. code:: python
+   pip install laue-dials
 
-.. _pyscaffold-notes:
+If any issues occur either with installation or use of the software, please file an issue at `issue tracker`_.
 
-Note
-====
-
-This project has been set up using PyScaffold 4.4. For details and usage
-information on PyScaffold see https://pyscaffold.org/.
+.. _DIALS: https://dials.github.io/index.html
+.. _issue tracker: https://github.com/rs-station/laue_dials/issues

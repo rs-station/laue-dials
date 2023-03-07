@@ -1,47 +1,15 @@
-.. todo:: THIS IS SUPPOSED TO BE AN EXAMPLE. MODIFY IT ACCORDING TO YOUR NEEDS!
-
-   The document assumes you are using a source repository service that promotes a
-   contribution model similar to `GitHub's fork and pull request workflow`_.
-   While this is true for the majority of services (like GitHub, GitLab,
-   BitBucket), it might not be the case for private repositories (e.g., when
-   using Gerrit).
-
-   Also notice that the code examples might refer to GitHub URLs or the text
-   might use GitHub specific terminology (e.g., *Pull Request* instead of *Merge
-   Request*).
-
-   Please make sure to check the document having these assumptions in mind
-   and update things accordingly.
-
-.. todo:: Provide the correct links/replacements at the bottom of the document.
-
-.. todo:: You might want to have a look on `PyScaffold's contributor's guide`_,
-
-   especially if your project is open source. The text should be very similar to
-   this template, but there are a few extra contents that you might decide to
-   also include, like mentioning labels of your issue tracker or automated
-   releases.
-
-
 ============
 Contributing
 ============
 
-Welcome to ``laue_dials`` contributor's guide.
+Welcome to ``laue_dials`` developer's guide.
 
-This document focuses on getting any potential contributor familiarized
-with the development processes, but `other kinds of contributions`_ are also
+This document focuses on outlining development processes, but `other kinds of contributions`_ are also
 appreciated.
 
-If you are new to using git_ or have never collaborated in a project previously,
-please have a look at `contribution-guide.org`_. Other resources are also
-listed in the excellent `guide created by FreeCodeCamp`_ [#contrib1]_.
-
-Please notice, all users and contributors are expected to be **open,
-considerate, reasonable, and respectful**. When in doubt, `Python Software
-Foundation's Code of Conduct`_ is a good reference in terms of behavior
-guidelines.
-
+Please note that all users and contributors are expected to be **open,
+considerate, reasonable, honest, and respectful** when contributing
+ideas, issues, documentation, or code. 
 
 Issue Reports
 =============
@@ -71,27 +39,6 @@ by adding missing information and correcting mistakes.
 ``laue_dials`` documentation uses Sphinx_ as its main documentation compiler.
 This means that the docs are kept in the same repository as the project code, and
 that any documentation update is done in the same way was a code contribution.
-
-.. todo:: Don't forget to mention which markup language you are using.
-
-    e.g.,  reStructuredText_ or CommonMark_ with MyST_ extensions.
-
-.. todo:: If your project is hosted on GitHub, you can also mention the following tip:
-
-   .. tip::
-      Please notice that the `GitHub web interface`_ provides a quick way of
-      propose changes in ``laue_dials``'s files. While this mechanism can
-      be tricky for normal code contributions, it works perfectly fine for
-      contributing to the docs, and can be quite handy.
-
-      If you are interested in trying this method out, please navigate to
-      the ``docs`` folder in the source repository_, find which file you
-      would like to propose changes and click in the little pencil icon at the
-      top, to open `GitHub's code editor`_. Once you finish editing the file,
-      please write a message in the form at the bottom of the page describing
-      which changes have you made and what are the motivations behind them and
-      submit your proposal.
-
 When working on documentation changes in your local machine, you can
 compile them using |tox|_::
 
@@ -106,11 +53,13 @@ and use Python's built-in web server for a preview in your web browser
 Code Contributions
 ==================
 
-.. todo:: Please include a reference or explanation about the internals of the project.
+To the extent possible, this software is to be written such that it functions
+as an extension of `DIALS`_ for the user. Software should be written in a modular
+form with a command-line interface for common crystallographic tasks needed during
+data analysis. The scope of this package is limited to Laue 
+(i.e. wide spectral-bandwidth) crystallographic experiments, although multiple
+types of experiments under this umbrella can be supported.
 
-   An architecture description, design principles or at least a summary of the
-   main concepts will make it easy for potential contributors to get started
-   quickly.
 
 Submit an issue
 ---------------
@@ -118,18 +67,15 @@ Submit an issue
 Before you work on any non-trivial code contribution it's best to first create
 a report in the `issue tracker`_ to start a discussion on the subject.
 This often provides additional considerations and avoids unnecessary work.
+Please add an issue even when working on new features that don't involve changes
+to existing code, to prevent overlaps in work with others.
 
 Create an environment
 ---------------------
 
 Before you start coding, we recommend creating an isolated `virtual
 environment`_ to avoid any problems with your installed Python packages.
-This can easily be done via either |virtualenv|_::
-
-    virtualenv <PATH TO VENV>
-    source <PATH TO VENV>/bin/activate
-
-or Miniconda_::
+This can easily be done via Miniconda_::
 
     conda create -n laue_dials python=3 six virtualenv pytest pytest-cov
     conda activate laue_dials
@@ -151,15 +97,14 @@ Clone the repository
 
    to be able to import the package under development in the Python REPL.
 
-   .. todo:: if you are not using pre-commit, please remove the following item:
-
 #. Install |pre-commit|_::
 
     pip install pre-commit
     pre-commit install
 
    ``laue_dials`` comes with a lot of hooks configured to automatically help the
-   developer to check the code being written.
+   developer to check the code being written. Compliance with all hooks is 
+   necessary to contribute code to maintain code quality.
 
 Implement your changes
 ----------------------
@@ -171,9 +116,11 @@ Implement your changes
    and start making changes. Never work on the main branch!
 
 #. Start your work on this branch. Don't forget to add docstrings_ to new
-   functions, modules and classes, especially if they are part of public APIs.
+   functions, modules and classes. Sphinx will automatically build 
+   documentation for your work.
 
-#. Add yourself to the list of contributors in ``AUTHORS.rst``.
+#. Add yourself to the list of contributors in ``AUTHORS.rst`` if you are
+   not already listed.
 
 #. When you’re done editing, do::
 
@@ -182,17 +129,16 @@ Implement your changes
 
    to record your changes in git_.
 
-   .. todo:: if you are not using pre-commit, please remove the following item:
-
    Please make sure to see the validation messages from |pre-commit|_ and fix
-   any eventual issues.
+   any eventual issues. 
    This should automatically use flake8_/black_ to check/fix the code style
-   in a way that is compatible with the project.
+   in a way that is compatible with the project. Any unfixed issues will 
+   result in a rejected contribution. 
 
    .. important:: Don't forget to add unit tests and documentation in case your
       contribution adds an additional feature and is not just a bugfix.
 
-      Moreover, writing a `descriptive commit message`_ is highly recommended.
+      Moreover, writing a `descriptive commit message`_ is mandatory.
       In case of doubt, you can check the commit history with::
 
          git log --graph --decorate --pretty=oneline --abbrev-commit --all
@@ -216,13 +162,8 @@ Submit your contribution
     git push -u origin my-feature
 
 #. Go to the web page of your fork and click |contribute button|
-   to send your changes for review.
-
-   .. todo:: if you are using GitHub, you can uncomment the following paragraph
-
-      Find more detailed information in `creating a PR`_. You might also want to open
-      the PR as a draft first and mark it as ready for review after the feedbacks
-      from the continuous integration (CI) system or any required fixes.
+   to send your changes for review. Find more detailed information in
+   `creating a PR`_. 
 
 
 Troubleshooting
@@ -268,7 +209,7 @@ package:
 
 #. `Pytest can drop you`_ in an interactive session in the case an error occurs.
    In order to do that you need to pass a ``--pdb`` option (for example by
-   running ``tox -- -k <NAME OF THE FALLING TEST> --pdb``).
+   running ``tox -- -k <NAME OF THE FAILING TEST> --pdb``).
    You can also setup breakpoints manually instead of using the ``--pdb`` option.
 
 
@@ -277,11 +218,6 @@ Maintainer tasks
 
 Releases
 --------
-
-.. todo:: This section assumes you are using PyPI to publicly release your package.
-
-   If instead you are using a different/private package index, please update
-   the instructions accordingly.
 
 If you are part of the group of maintainers and have correct user permissions
 on PyPI_, the following steps can be used to release a new version for
@@ -300,25 +236,12 @@ on PyPI_, the following steps can be used to release a new version for
 #. Run ``tox -e publish -- --repository pypi`` and check that everything was
    uploaded to PyPI_ correctly.
 
-
-
-.. [#contrib1] Even though, these resources focus on open source projects and
-   communities, the general ideas behind collaborating with other developers
-   to collectively create software are general and can be applied to all sorts
-   of environments, including private companies and proprietary code bases.
-
-
-.. <-- start -->
-.. todo:: Please review and change the following definitions:
+.. <-- Documentation variables -->
+.. _repository: https://github.com/rs-station/laue_dials
+.. _issue tracker: https://github.com/rs-station/laue_dials/issues
 
 .. |the repository service| replace:: GitHub
 .. |contribute button| replace:: "Create pull request"
-
-.. _repository: https://github.com/<USERNAME>/laue_dials
-.. _issue tracker: https://github.com/<USERNAME>/laue_dials/issues
-.. <-- end -->
-
-
 .. |virtualenv| replace:: ``virtualenv``
 .. |pre-commit| replace:: ``pre-commit``
 .. |tox| replace:: ``tox``
@@ -329,12 +252,11 @@ on PyPI_, the following steps can be used to release a new version for
 .. _contribution-guide.org: https://www.contribution-guide.org/
 .. _creating a PR: https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request
 .. _descriptive commit message: https://chris.beams.io/posts/git-commit
+.. _DIALS: https://dials.github.io/index.html
 .. _docstrings: https://www.sphinx-doc.org/en/master/usage/extensions/napoleon.html
 .. _first-contributions tutorial: https://github.com/firstcontributions/first-contributions
 .. _flake8: https://flake8.pycqa.org/en/stable/
 .. _git: https://git-scm.com
-.. _GitHub's fork and pull request workflow: https://guides.github.com/activities/forking/
-.. _guide created by FreeCodeCamp: https://github.com/FreeCodeCamp/how-to-contribute-to-open-source
 .. _Miniconda: https://docs.conda.io/en/latest/miniconda.html
 .. _MyST: https://myst-parser.readthedocs.io/en/latest/syntax/syntax.html
 .. _other kinds of contributions: https://opensource.guide/how-to-contribute
@@ -349,5 +271,6 @@ on PyPI_, the following steps can be used to release a new version for
 .. _virtual environment: https://realpython.com/python-virtual-environments-a-primer/
 .. _virtualenv: https://virtualenv.pypa.io/en/stable/
 
+.. _GitHub's fork and pull request workflow: https://guides.github.com/activities/forking/
 .. _GitHub web interface: https://docs.github.com/en/repositories/working-with-files/managing-files/editing-files
 .. _GitHub's code editor: https://docs.github.com/en/repositories/working-with-files/managing-files/editing-files

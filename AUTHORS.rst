@@ -2,4 +2,6 @@
 Contributors
 ============
 
-* PrinceWalnut <Rick.Lira.Morgan@gmail.com>
+Rick A. Hewitt
+Kevin Dalton
+Doeke Hekstra
