@@ -19,6 +19,7 @@ on the `issue tracker`_. If you don't see anything useful there, please feel
 free to fire an issue report.
 
 .. tip::
+
    Please don't forget to include the closed issues in your search.
    Sometimes a solution was already reported, and the problem is considered
    **solved**.
@@ -135,7 +136,9 @@ Implement your changes
    in a way that is compatible with the project. Any unfixed issues will 
    result in a rejected contribution. 
 
-   .. important:: Don't forget to add unit tests and documentation in case your
+   .. important:: 
+
+      Don't forget to add unit tests and documentation in case your
       contribution adds an additional feature and is not just a bugfix.
 
       Moreover, writing a `descriptive commit message`_ is mandatory.
