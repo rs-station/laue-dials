@@ -219,7 +219,7 @@ on PyPI_, the following steps can be used to release a new version for
 ``laue_dials``:
 
 #. Make sure all unit tests are successful.
-#. Tag the current commit on the main branch with a release tag, e.g., ``v1.2.3``.
+#. Tag the current commit on the main branch with a release tag, e.g., ``git tag -a v0.1 -m 'Version message'``.
 #. Push the new tag to the upstream repository_, e.g., ``git push upstream v1.2.3``
 #. Clean up the ``dist`` and ``build`` folders with ``tox -e clean``
    (or ``rm -rf dist build``)
