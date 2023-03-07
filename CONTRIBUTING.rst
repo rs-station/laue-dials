@@ -18,12 +18,6 @@ If you experience bugs or general issues with ``laue_dials``, please have a look
 on the `issue tracker`_. If you don't see anything useful there, please feel
 free to fire an issue report.
 
-.. tip::
-
-   Please don't forget to include the closed issues in your search.
-   Sometimes a solution was already reported, and the problem is considered
-   **solved**.
-
 New issue reports should include information about your programming environment
 (e.g., operating system, Python version) and steps to reproduce the problem.
 Please try also to simplify the reproduction steps to a very minimal example
@@ -136,17 +130,15 @@ Implement your changes
    in a way that is compatible with the project. Any unfixed issues will 
    result in a rejected contribution. 
 
-   .. important:: 
+   Don't forget to add unit tests and documentation in case your
+   contribution adds an additional feature and is not just a bugfix.
 
-      Don't forget to add unit tests and documentation in case your
-      contribution adds an additional feature and is not just a bugfix.
+   Moreover, writing a `descriptive commit message`_ is mandatory.
+   In case of doubt, you can check the commit history with::
 
-      Moreover, writing a `descriptive commit message`_ is mandatory.
-      In case of doubt, you can check the commit history with::
+      git log --graph --decorate --pretty=oneline --abbrev-commit --all
 
-         git log --graph --decorate --pretty=oneline --abbrev-commit --all
-
-      to look for recurring communication patterns.
+   to look for recurring communication patterns.
 
 #. Please check that your changes don't break any unit tests with::
 
