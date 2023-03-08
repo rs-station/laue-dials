@@ -9,7 +9,7 @@ appreciated.
 
 Please note that all users and contributors are expected to be **open,
 considerate, reasonable, honest, and respectful** when contributing
-ideas, issues, documentation, or code. 
+ideas, issues, documentation, or code.
 
 Issue Reports
 =============
@@ -51,7 +51,7 @@ Code Contributions
 To the extent possible, this software is to be written such that it functions
 as an extension of `DIALS`_ for the user. Software should be written in a modular
 form with a command-line interface for common crystallographic tasks needed during
-data analysis. The scope of this package is limited to Laue 
+data analysis. The scope of this package is limited to Laue
 (i.e. wide spectral-bandwidth) crystallographic experiments, although multiple
 types of experiments under this umbrella can be supported.
 
@@ -98,7 +98,7 @@ Clone the repository
     pre-commit install
 
    ``laue_dials`` comes with a lot of hooks configured to automatically help the
-   developer to check the code being written. Compliance with all hooks is 
+   developer to check the code being written. Compliance with all hooks is
    necessary to contribute code to maintain code quality.
 
 Implement your changes
@@ -111,7 +111,7 @@ Implement your changes
    and start making changes. Never work on the main branch!
 
 #. Start your work on this branch. Don't forget to add docstrings_ to new
-   functions, modules and classes. Sphinx will automatically build 
+   functions, modules and classes. Sphinx will automatically build
    documentation for your work.
 
 #. Add yourself to the list of contributors in ``AUTHORS.rst`` if you are
@@ -125,10 +125,10 @@ Implement your changes
    to record your changes in git_.
 
    Please make sure to see the validation messages from |pre-commit|_ and fix
-   any eventual issues. 
+   any eventual issues.
    This should automatically use flake8_/black_ to check/fix the code style
-   in a way that is compatible with the project. Any unfixed issues will 
-   result in a rejected contribution. 
+   in a way that is compatible with the project. Any unfixed issues will
+   result in a rejected contribution.
 
    Don't forget to add unit tests and documentation in case your
    contribution adds an additional feature and is not just a bugfix.
@@ -158,7 +158,7 @@ Submit your contribution
 
 #. Go to the web page of your fork and click |contribute button|
    to send your changes for review. Find more detailed information in
-   `creating a PR`_. 
+   `creating a PR`_.
 
 
 Troubleshooting

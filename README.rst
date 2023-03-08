@@ -20,17 +20,17 @@ laue_dials
 
 Data analysis package for Laue crystallography.
 
-``laue_dials`` is an extension to the `DIALS`_ code for analyzing polychromatic crystallographic data. 
-Building off the ``DIALS`` framework, and including modern tools like ``numpy``, ``scipy``, and 
-``reciprocalspaceship``, this package allows for analysis of X-ray crystallographic data using 
-wide-bandwidth light sources. This package is intended to be used in conjunction with `DIALS`_, 
+``laue_dials`` is an extension to the `DIALS`_ code for analyzing polychromatic crystallographic data.
+Building off the ``DIALS`` framework, and including modern tools like ``numpy``, ``scipy``, and
+``reciprocalspaceship``, this package allows for analysis of X-ray crystallographic data using
+wide-bandwidth light sources. This package is intended to be used in conjunction with `DIALS`_,
 `careless`_, and `Phenix`_ in order to generate molecular models from raw data.
 
 ============
 Installation
 ============
 
-To install ``laue_dials``, the DIALS code must first be installed, and then using the DIALS python 
+To install ``laue_dials``, the DIALS code must first be installed, and then using the DIALS python
 environment run the following:
 
 .. code:: python
