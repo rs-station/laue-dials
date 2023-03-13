@@ -3,10 +3,13 @@ run-name: Documentation build by ${{ github.actor }}
 on: [push]
 jobs:
   build:
-    runs-on: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+
     strategy:
       matrix:
         python-version: ['3.8', '3.9', '3.10']
+        os: [ubuntu-latest, macos-latest]
+
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python ${{ matrix.python-version }}
