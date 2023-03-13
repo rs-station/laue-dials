@@ -10,9 +10,6 @@
     .. image:: https://img.shields.io/pypi/v/laue_dials.svg
         :alt: PyPI-Server
         :target: https://pypi.org/project/laue_dials/
-    .. image:: https://img.shields.io/conda/vn/conda-forge/laue_dials.svg
-        :alt: Conda-Forge
-        :target: https://anaconda.org/conda-forge/laue_dials
 
 ==========
 laue_dials
