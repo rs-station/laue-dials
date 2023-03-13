@@ -1,5 +1,4 @@
 name: Build
-run_name: ${{ github.actor }} formatting code.
 on: [push]
 jobs:
   build:

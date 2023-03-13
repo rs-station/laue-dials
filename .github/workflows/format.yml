@@ -1,5 +1,4 @@
-name: format_checks
-run_name: ${{ github.actor }} formatting code.
+name: Format
 on: [push]
 jobs:
   format:
