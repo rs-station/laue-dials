@@ -1,8 +1,9 @@
 name: Format
+run-name: Code formatting by ${{ github.actor }}
 on: [push]
 jobs:
   format:
-    runs_on: [ubuntu-latest, macos-latest]
+    runs-on: [ubuntu-latest, macos-latest]
     steps:
       - uses: actions/checkout@v3
       - name: Format code with black
