@@ -1,15 +1,9 @@
-    .. image:: https://api.cirrus-ci.com/github/rs-station/laue_dials.svg?branch=main
-        :alt: Built Status
-        :target: https://cirrus-ci.com/github/rs-station/laue_dials
-    .. image:: https://readthedocs.org/projects/laue_dials/badge/?version=latest
-        :alt: ReadTheDocs
-        :target: https://laue_dials.readthedocs.io/en/stable/
-    .. image:: https://img.shields.io/coveralls/github/rs-station/laue_dials/main.svg
-        :alt: Coveralls
-        :target: https://coveralls.io/r/rs-station/laue_dials
-    .. image:: https://img.shields.io/pypi/v/laue_dials.svg
-        :alt: PyPI-Server
-        :target: https://pypi.org/project/laue_dials/
+![Build]https://github.com/rs-station/laue-dials/actions/workflows/build.yml/badge.svg
+![Documentation]https://github.com/rs-station/laue-dials/actions/workflows/docs.yml/badge.svg
+[![PyPI](https://img.shields.io/pypi/v/laue-dials?color=blue )](https://pypi.org/project/laue-dials/ )
+[![codecov](https://codecov.io/gh/rs-station/laue-dials/branch/main/graph/badge.svg )](https://codecov.io/gh/rs-station/laue-dials )
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg )](https://github.com/rs-station/laue-dials/blob/main/LICENSE.txt )
+
 
 ==========
 laue_dials
