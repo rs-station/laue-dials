@@ -36,6 +36,7 @@ jobs:
         fi
         cd dials-installer-dev
         sudo ./install
+        source /usr/local/dials-dev/dials_env.sh
 
     - name: Build with tox
       run: |
