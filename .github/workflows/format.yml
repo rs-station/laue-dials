@@ -21,14 +21,17 @@ jobs:
         run: |
           pip install black
           black .
+
       - name: Sort imports with isort
         run: |
           pip install isort
           isort .
+
       - name: Remove unused imports with autoflake
         run: |
           pip install autoflake
           autoflake --in-place --remove-all-unused-imports --remove-unused-variables --recursive .
+
       - name: Commit changes
         uses: EndBug/add-and-commit@v4
         with:
