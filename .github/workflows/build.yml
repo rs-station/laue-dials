@@ -32,7 +32,7 @@ jobs:
         auto-update-conda: true
         auto-activate-base: true
       run: |
-        conda create -y --name dials dials
+        conda create -c conda-forge -y --name dials dials
         conda activate dials
 
     - name: Build with tox
