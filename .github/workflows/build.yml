@@ -33,8 +33,10 @@ jobs:
         elif [ "$RUNNER_OS" == "macOS" ]; then
           curl https://dials.diamond.ac.uk/diamond_builds/dials-macosx-conda3.tar.gz > dials-macosx.tar.gz
           tar -xzf dials-macosx.tar.gz
+        fi
         cd dials-installer-dev
         sudo ./install
+        source /usr/local/dials-dev/dials_env.sh
 
     - name: Build with tox
       run: |
