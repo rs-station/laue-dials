@@ -17,7 +17,6 @@ def dials_version():
     Returns:
         bool: The return value. True for success, False otherwise.
     """
-    import reciprocalspaceship as rs
     from dials.command_line.version import run
 
     try:
