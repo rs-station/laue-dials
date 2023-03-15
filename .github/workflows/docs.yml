@@ -31,6 +31,7 @@ jobs:
         conda create -c conda-forge -y --name dials dials
         conda info
         $CONDA/bin/activate dials
+        pip install tox
 
     - name: Build with tox
       run: |
@@ -48,5 +49,5 @@ jobs:
         author_name: ${{ github.actor }}
         author_email: ${{ github.actor }}@users.noreply.github.com
         message: "Commit built documentation"
-        add: "./docs/"
+        add: "./docs/*"
         branch: ${{ github.ref }}
