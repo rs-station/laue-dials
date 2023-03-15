@@ -34,8 +34,13 @@ wide-bandwidth light sources. This package is intended to be used in conjunction
 Installation
 ============
 
-To install ``laue_dials``, the DIALS code must first be installed, and then using the DIALS python
-environment run the following:
+To install ``laue_dials``, the DIALS code must first be installed using
+
+.. code:: python
+
+   conda install -c conda-forge dials
+
+Then, using the DIALS python environment, run the following:
 
 .. code:: python
 
