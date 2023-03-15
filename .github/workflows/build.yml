@@ -37,7 +37,8 @@ jobs:
     - name: Install DIALS environment
       run: |
         conda create -c conda-forge -y --name dials dials
-        conda activate dials
+        conda info
+        $CONDA/bin/activate dials
 
     - name: Build with tox
       run: |
