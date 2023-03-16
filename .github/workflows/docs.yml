@@ -17,21 +17,21 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
-    - name: Install Miniconda
-      uses: conda-incubator/setup-miniconda@v2
-      with:
-        miniconda-version: "latest"
-        channels: conda-forge, defaults
-        use-only-tar-bz2: true
-        auto-update-conda: true
-        auto-activate-base: true
-
-    - name: Install DIALS environment
-      run: |
-        conda create -c conda-forge -y --name dials dials
-        conda info
-        $CONDA/bin/activate dials
-        pip install tox
+#    - name: Install Miniconda
+#      uses: conda-incubator/setup-miniconda@v2
+#      with:
+#        miniconda-version: "latest"
+#        channels: conda-forge, defaults
+#        use-only-tar-bz2: true
+#        auto-update-conda: true
+#        auto-activate-base: true
+#
+#    - name: Install DIALS environment
+#      run: |
+#        conda create -c conda-forge -y --name dials dials
+#        conda info
+#        $CONDA/bin/activate dials
+#        pip install tox
 
     - name: Build with tox
       run: |
