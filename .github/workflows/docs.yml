@@ -31,10 +31,10 @@ jobs:
 #        conda create -c conda-forge -y --name dials dials
 #        conda info
 #        $CONDA/bin/activate dials
-#        pip install tox
 
     - name: Build with tox
       run: |
+        pip install tox
         tox -e build
 
     - name: Build documentation with tox + Sphinx
