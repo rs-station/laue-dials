@@ -211,6 +211,7 @@ on PyPI_, the following steps can be used to release a new version for
 
 #. Make sure all unit tests are successful.
 #. Update ``CHANGELOG.rst`` with new features and changes for the new release.
+#. Run ``git pull``, resolve any merge conflicts, and then ``git push`` the source code.
 #. Tag the current commit on the main branch with a release tag, e.g., ``git tag -a v0.1 -m 'Version message'``.
 #. Push the new tag to the upstream repository_, e.g., ``git push origin v0.1``
 #. Navigate to ``https://github.com/rs-station/laue-dials/releases/new``.
