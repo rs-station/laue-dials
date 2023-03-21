@@ -8,3 +8,7 @@ Examples
 Usage Details
 -------------
 """
+
+
+def predict_spots(expts, refls):
+    print("To be implemented")

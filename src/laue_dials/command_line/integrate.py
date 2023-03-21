@@ -8,3 +8,7 @@ Examples
 Usage Details
 -------------
 """
+
+
+def integrate_dataset(expts, refls, preds, method="variable_elliptical"):
+    print("To be implemented")
