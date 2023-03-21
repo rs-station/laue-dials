@@ -144,9 +144,9 @@ Implement your changes
 
     tox
 
-   (after having installed |tox|_ with ``pip install tox`` or ``pipx``).
+   (after having installed |tox-conda|_ with ``pip install tox-conda`` or ``pipx``).
 
-   You can also use |tox|_ to run several other pre-configured tasks in the
+   You can also use |tox-conda|_ to run several other pre-configured tasks in the
    repository. Try ``tox -av`` to see a list of the available checks.
 
 Submit your contribution
@@ -175,9 +175,9 @@ package:
    ``.eggs``, as well as the ``*.egg-info`` folders in the ``src`` folder or
    potentially in the root of your project.
 
-#. Sometimes |tox|_ misses out when new dependencies are added, especially to
+#. Sometimes |tox-conda|_ misses out when new dependencies are added, especially to
    ``setup.cfg`` and ``docs/requirements.txt``. If you find any problems with
-   missing dependencies when running a command with |tox|_, try to recreate the
+   missing dependencies when running a command with |tox-conda|_, try to recreate the
    ``tox`` environment using the ``-r`` flag. For example, instead of::
 
     tox -e docs
@@ -186,21 +186,12 @@ package:
 
     tox -r -e docs
 
-#. Make sure to have a reliable |tox|_ installation that uses the correct
+#. Make sure to have a reliable |tox-conda|_ installation that uses the correct
    Python version (e.g., 3.7+). When in doubt you can run::
 
     tox --version
     # OR
     which tox
-
-   If you have trouble and are seeing weird errors upon running |tox|_, you can
-   also try to create a dedicated `virtual environment`_ with a |tox|_ binary
-   freshly installed. For example::
-
-    virtualenv .venv
-    source .venv/bin/activate
-    .venv/bin/pip install tox
-    .venv/bin/tox -e all
 
 #. `Pytest can drop you`_ in an interactive session in the case an error occurs.
    In order to do that you need to pass a ``--pdb`` option (for example by
@@ -219,18 +210,13 @@ on PyPI_, the following steps can be used to release a new version for
 ``laue_dials``:
 
 #. Make sure all unit tests are successful.
+#. Update ``CHANGELOG.rst`` with new features and changes for the new release.
 #. Tag the current commit on the main branch with a release tag, e.g., ``git tag -a v0.1 -m 'Version message'``.
 #. Push the new tag to the upstream repository_, e.g., ``git push origin v0.1``
-#. Clean up the ``dist`` and ``build`` folders with ``tox -e clean``
-   (or ``rm -rf dist build``)
-   to avoid confusion with old builds and Sphinx docs.
-#. Run ``tox -e build`` and check that the files in ``dist`` have
-   the correct version (no ``.dirty`` or git_ hash) according to the git_ tag.
-   Also check the sizes of the distributions, if they are too big (e.g., >
-   500KB), unwanted clutter may have been accidentally included.
-#. Run ``tox -e publish_test`` and check that everything was
-   uploaded to TestPyPI_ correctly.
-#. Run ``tox -e publish`` to publish a new release to PyPI_.
+#. Navigate to ``https://github.com/rs-station/laue-dials/releases/new``.
+#. Select the appropriate tag and write a description for the release.
+#. Set as a pre-release if necessary, and then publish the release on Github.
+#. After Github Actions workflows have executed, check PyPI to ensure they worked correctly.
 
 .. <-- Documentation variables -->
 .. _repository: https://github.com/rs-station/laue_dials
@@ -240,7 +226,7 @@ on PyPI_, the following steps can be used to release a new version for
 .. |contribute button| replace:: "Create pull request"
 .. |virtualenv| replace:: ``virtualenv``
 .. |pre-commit| replace:: ``pre-commit``
-.. |tox| replace:: ``tox``
+.. |tox-conda| replace:: ``tox``
 
 
 .. _black: https://pypi.org/project/black/
