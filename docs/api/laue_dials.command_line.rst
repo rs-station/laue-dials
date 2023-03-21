@@ -13,3 +13,35 @@ laue\_dials.command\_line.initial\_solution module
    :members:
    :undoc-members:
    :show-inheritance:
+
+laue\_dials.command\_line.integrate module
+------------------------------------------
+
+.. automodule:: laue_dials.command_line.integrate
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+laue\_dials.command\_line.optimize\_indexing module
+---------------------------------------------------
+
+.. automodule:: laue_dials.command_line.optimize_indexing
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+laue\_dials.command\_line.predict module
+----------------------------------------
+
+.. automodule:: laue_dials.command_line.predict
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+laue\_dials.command\_line.refine module
+---------------------------------------
+
+.. automodule:: laue_dials.command_line.refine
+   :members:
+   :undoc-members:
+   :show-inheritance:

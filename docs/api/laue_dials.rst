@@ -7,7 +7,9 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
+   laue_dials.algorithms
    laue_dials.command_line
+   laue_dials.utils
 
 Submodules
 ----------
