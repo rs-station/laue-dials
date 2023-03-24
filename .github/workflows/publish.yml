@@ -19,7 +19,7 @@ jobs:
         pip install packaging setuptools twine wheel typing-extensions tox-conda
     - name: Publish the Python package
       env:
-        TWINE_USERNAME: __token__
+        TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
         TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
       run: |
         tox -e build
