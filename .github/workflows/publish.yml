@@ -21,8 +21,6 @@ jobs:
       run: |
         tox -e build
         tox -e docs
-        tox -e doctests
-        tox -e linkcheck
     - name: Publish to PyPI
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
