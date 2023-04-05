@@ -10,15 +10,10 @@ Usage Details
 """
 
 import logging
-from dials.util import log, show_mail_handle_errors
 
 import libtbx.phil
-
-from dxtbx.model import ExperimentList
-from dials.array_family import flex
-
-from dials.util.options import ArgumentParser, flatten_experiments
-
+from dials.util import log, show_mail_handle_errors
+from dials.util.options import ArgumentParser
 
 logger = logging.getLogger("laue-dials.command_line.optimize_indexing")
 
