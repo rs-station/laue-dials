@@ -1,8 +1,7 @@
-from laue_dials.algorithms.diffgeo import *
-import numpy as np
-import reciprocalspaceship as rs
 import gemmi
-import pytest
+import numpy as np
+
+from laue_dials.algorithms.diffgeo import *
 
 
 def test_get_UB_matrices():

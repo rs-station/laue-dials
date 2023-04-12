@@ -1,7 +1,9 @@
-import numpy as np
 import unittest
+
 import gemmi
+import numpy as np
 import reciprocalspaceship as rs
+
 from laue_dials.algorithms.laue import *
 
 

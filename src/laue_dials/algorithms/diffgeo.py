@@ -4,7 +4,6 @@ This file contains useful functions for diffraction geometry calculations
 
 import numpy as np
 import reciprocalspaceship as rs
-import gemmi
 
 
 def get_UB_matrices(A):

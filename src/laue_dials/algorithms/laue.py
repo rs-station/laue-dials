@@ -2,9 +2,10 @@
 Classes and functions for Laue-specific processes.
 """
 
+import gemmi
 import numpy as np
 import reciprocalspaceship as rs
-import gemmi
+
 from laue_dials.algorithms.diffgeo import hkl2ray
 
 
