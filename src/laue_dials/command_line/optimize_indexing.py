@@ -7,7 +7,8 @@ import logging
 
 import libtbx.phil
 from dials.util import log, show_mail_handle_errors
-from dials.util.options import ArgumentParser, reflections_and_experiments_from_files
+from dials.util.options import (ArgumentParser,
+                                reflections_and_experiments_from_files)
 
 logger = logging.getLogger("laue-dials.command_line.optimize_indexing")
 
@@ -75,14 +76,15 @@ working_phil = phil_scope.fetch(sources=[phil_scope])
 
 def index_image(params, refls, expts):
     #
-    from laue_dials.algorithms.laue import LaueAssigner
-    from tqdm import tqdm, trange
-    import numpy as np
     import gemmi
-    from dials.array_family import flex
+    import numpy as np
     from cctbx.sgtbx import space_group
     from cctbx.uctbx import unit_cell
+    from dials.array_family import flex
     from dxtbx.model import ExperimentList
+    from tqdm import trange
+
+    from laue_dials.algorithms.laue import LaueAssigner
 
     if type(expts) != ExperimentList:
         expts = ExperimentList([expts])
