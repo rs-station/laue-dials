@@ -47,7 +47,11 @@ def normalize(A):
     A : np.array
         A normalized matrix
     """
-    return A / np.linalg.norm(A, axis=-1)[..., None]
+    normalized_A = A / np.linalg.norm(A, axis=-1)[..., None]
+
+    # In case of magnitude-0 rows:
+    normalized_A[np.isnan(normalized_A)] = 0
+    return normalized_A
 
 
 def hkl2ray(hkl, wavelength=None):
@@ -58,7 +62,7 @@ def hkl2ray(hkl, wavelength=None):
     Parameters
     ----------
     hkl : array
-        `n x 3` array of miller indices. the dtype must be interpretable as an integeger
+        `n x 3` array of miller indices. the dtype must be interpretable as an integer
     wavelength : array (optional)
         length `n` array of wavelengths corresponding to each miller index
 
@@ -173,8 +177,7 @@ def orthogonalization(a, b, c, alpha, beta, gamma):
             [a, b * cosg, c * cosb],
             [0.0, b * sing, c * (cosa - cosb * cosg) / sing],
             [0.0, 0.0, V / a / b / sing],
-        ],
-        device=a.device,
+        ]
     )
 
 
@@ -194,16 +197,16 @@ def mat_to_rot_xyz(R, deg=True):
     """
     if R[2, 0] < 1:
         if R[2, 0] > -1:
-            rot_y = np.asin(-R[2, 0])
-            rot_z = np.atan2(R[1, 0], R[0, 0])
-            rot_x = np.atan2(R[2, 1], R[2, 2])
+            rot_y = np.arcsin(-R[2, 0])
+            rot_z = np.arctan2(R[1, 0], R[0, 0])
+            rot_x = np.arctan2(R[2, 1], R[2, 2])
         else:
             rot_y = np.pi / 2.0
-            rot_z = -np.atan2(-R[1, 2], R[1, 1])
+            rot_z = -np.arctan2(-R[1, 2], R[1, 1])
             rot_x = 0.0
     else:
         rot_y = np.pi / 2.0
-        rot_z = np.atan2(-R[1, 2], R[1, 1])
+        rot_z = np.arctan2(-R[1, 2], R[1, 1])
         rot_x = 0.0
     if deg:
         rot_x = np.rad2deg(rot_x)
@@ -239,6 +242,5 @@ def rot_xyz_to_mat(rot_x, rot_y, rot_z, deg=True):
             [cy * cz, cz * sx * sy - cx * sz, cx * cz * sy + sx * sz],
             [cy * sz, cx * cz + sx * sy * sz, -cz * sx + cx * sy * sz],
             [-sy, cy * sx, cx * cy],
-        ],
-        device=rot_x.device,
+        ]
     )
