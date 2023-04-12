@@ -7,8 +7,7 @@ import logging
 
 import libtbx.phil
 from dials.util import log, show_mail_handle_errors
-from dials.util.options import (ArgumentParser,
-                                reflections_and_experiments_from_files)
+from dials.util.options import ArgumentParser, reflections_and_experiments_from_files
 
 logger = logging.getLogger("laue-dials.command_line.optimize_indexing")
 
@@ -57,7 +56,7 @@ wavelengths {
     .type = float(value_min=0.1)
     .help = "Minimum wavelength for beam spectrum"
   lam_max = 1.15
-    .type = float
+    .type = float(value_min=0.2)
     .help = "Maximum wavelength for beam spectrum"
   }
 
@@ -176,9 +175,7 @@ def index_image(params, refls, expts):
 @show_mail_handle_errors()
 def run(args=None, *, phil=working_phil, return_results=False):
     # Parse arguments
-    usage = (
-        "usage: laue.optimize_indexing [options] monochromatic.expt monochromatic.refl"
-    )
+    usage = "laue.optimize_indexing [options] monochromatic.expt monochromatic.refl"
 
     parser = ArgumentParser(
         usage=usage,
