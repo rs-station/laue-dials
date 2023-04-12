@@ -6,6 +6,14 @@ laue\_dials.algorithms namespace
 Submodules
 ----------
 
+laue\_dials.algorithms.diffgeo module
+-------------------------------------
+
+.. automodule:: laue_dials.algorithms.diffgeo
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 laue\_dials.algorithms.laue module
 ----------------------------------
 
