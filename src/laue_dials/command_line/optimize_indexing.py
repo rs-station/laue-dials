@@ -7,7 +7,8 @@ import logging
 
 import libtbx.phil
 from dials.util import log, show_mail_handle_errors
-from dials.util.options import ArgumentParser, reflections_and_experiments_from_files
+from dials.util.options import (ArgumentParser,
+                                reflections_and_experiments_from_files)
 
 logger = logging.getLogger("laue-dials.command_line.optimize_indexing")
 
