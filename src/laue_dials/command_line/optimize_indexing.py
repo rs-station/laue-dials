@@ -26,7 +26,7 @@ unchanged entirely.
 
 Examples::
 
-    laue.optimize_indexing monochromatic.expt monochromatic.refl
+    laue.optimize_indexing [options] monochromatic.expt monochromatic.refl
 """
 
 # Set the phil scope
@@ -95,7 +95,7 @@ def index_image(params, refls, expts):
     s0 = np.array(expts[0].beam.get_s0())
 
     # Write to reflection file
-    refls["Wavelength"] = flex.double(len(refls))
+    refls["wavelength"] = flex.double(len(refls))
     refls["miller_index"] = flex.miller_index(len(refls))
 
     for i in trange(len(expts.imagesets())):
@@ -159,7 +159,7 @@ def index_image(params, refls, expts):
             idx,
             flex.miller_index(la._H.astype("int").tolist()),
         )
-        refls["Wavelength"].set_selected(
+        refls["wavelength"].set_selected(
             idx,
             flex.double(la._wav.tolist()),
         )
@@ -173,7 +173,7 @@ def index_image(params, refls, expts):
 
 
 @show_mail_handle_errors()
-def run(args=None, *, phil=working_phil, return_results=False):
+def run(args=None, *, phil=working_phil):
     # Parse arguments
     usage = "laue.optimize_indexing [options] monochromatic.expt monochromatic.refl"
 
