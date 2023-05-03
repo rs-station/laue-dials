@@ -5,8 +5,151 @@ Classes and functions for Laue-specific processes.
 import gemmi
 import numpy as np
 import reciprocalspaceship as rs
+from tqdm import tqdm, trange
+
+from dxtbx.model import ExperimentList
+from dials.array_family import flex
 
 from laue_dials.algorithms.diffgeo import hkl2ray
+from IPython import embed
+
+
+def store_wavelengths(expts, refls):
+    """
+    A function for storing wavelength data in beam objects in the reflection table
+        Parameters
+        ----------
+        expts : ExperimentList
+            ExperimentList to retrieve wavelengths from
+        refls : reflection_table
+            A reflection_table to store wavelengths in
+
+        Returns
+        -------
+        new_refls : reflection_table
+            A reflection_table with updated wavelengths
+    """
+    # Make new reflection_table
+    new_refls = refls.copy()
+
+    # Get experiment ID per reflection
+    idx = new_refls["id"].as_numpy_array()
+
+    # Initialize wavelength array
+    lams = np.zeros(len(idx))
+
+    # For each reflection, get corresponding beam wavelength
+    for i in trange(len(idx)):
+        lams[i] = expts[idx[i]].beam.get_wavelength()
+
+    # Store wavelengths into reflection_table
+    new_refls["wavelength"] = flex.double(lams)
+    return new_refls
+
+
+def remove_beam_models(expts):
+    """
+    A function for removing beam models no longer needed after refinement
+        Parameters
+        ----------
+        expts : ExperimentList
+            ExperimentList to remove beams from
+
+        Returns
+        -------
+        new_expts : ExperimentList
+            An ExperimentList with an experiment per image all sharing a beam
+    """
+    # Instantiate new ExperimentList/reflection_table
+    new_expts = ExperimentList()
+
+    # Copy first experiment per image to new ExperimentList
+    for img_num in trange(len(expts.imagesets())):
+        i = 0
+        img = expts.imagesets()[img_num]
+        expt = expts[0]
+        while True:
+            expt = expts[i]
+            if expt.imageset == img:
+                break
+            i = i + 1
+        expt = expts[i]
+        expt.identifier = str(img_num)  # Reset identifier to match image
+        new_expts.append(expt)
+    return new_expts
+
+
+def gen_beam_models(expts, refls):
+    """
+    A function for generating beam models according to wavelengths in a reflection table
+        Parameters
+        ----------
+        expts : ExperimentList
+            ExperimentList to insert beams into
+        refls : reflection_table
+            A reflection_table containing wavelengths for beam models
+
+        Returns
+        -------
+        new_expts : ExperimentList
+            ExperimentList with additional beam models and adjusted identifiers
+        new_refls : reflection_table
+            A reflection_table with updated identifiers
+    """
+    # Imports
+    from dials.algorithms.refinement.prediction.managed_predictors import (
+        ExperimentsPredictorFactory,
+    )
+    from copy import deepcopy
+
+    # Instantiate new ExperimentList/reflection_table
+    new_expts = ExperimentList()
+    new_refls = refls.copy()
+
+    # Unassign all reflections from experiments
+    new_refls["id"] = flex.int([-1] * len(new_refls))
+
+    # Initialize data frame
+    df = rs.DataSet(
+        {
+            "Wavelength": refls["Wavelength"],
+            "ID": refls["id"],
+            "new_ID": [-1] * len(refls),
+        }
+    )
+
+    # Generate beams per reflection
+    exp_id = -1
+    for i, refl in tqdm(df.iterrows()):
+        try:
+            # New beam per reflection
+            expt = expts[refl["ID"][i]]
+            temp = expt.beam.get_s0()
+            new_expt = expt
+            new_expt.beam = deepcopy(expt.beam)
+            new_expt.beam.set_wavelength(refl["Wavelength"][i])
+            s0 = (
+                expt.beam.get_s0() / np.linalg.norm(expt.beam.get_s0())
+            ) / new_expt.beam.get_wavelength()
+            new_expt.beam.set_s0(s0)
+            exp_id = exp_id + 1  # Increment experiment ID
+            new_expt.identifier = str(exp_id)
+            new_expts.append(new_expt)
+
+            # Write new beam identifiers to reflections
+            df.at[i, "new_ID"] = exp_id
+        except:
+            print("Warning: Unindexed strong spot has wavelength 0.")
+            df.at[i, "new_ID"] = -1
+            continue
+
+    # Replace reflection IDs with new IDs
+    idx = flex.int(df["new_ID"])
+    new_refls["id"] = idx
+
+    # Repredict centroids
+    ref_predictor = ExperimentsPredictorFactory.from_experiments(new_expts)
+    return new_expts, new_refls
 
 
 class LaueBase:
@@ -232,6 +375,7 @@ class LauePredictor(LaueBase):
             s1_pred -- predicted feasible s1 vectors
             lams -- the wavelengths (in Angstroms) associated with these s1 vectors
             qall -- the q vectors associated with these s1 vectors
+            Hall -- the miller indices associated with s1 vectors
         """
         # Generate the feasible set of reflections from the current geometry
         Hall = self.Hall
