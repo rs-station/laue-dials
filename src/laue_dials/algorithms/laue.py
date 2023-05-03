@@ -5,13 +5,11 @@ Classes and functions for Laue-specific processes.
 import gemmi
 import numpy as np
 import reciprocalspaceship as rs
+from dials.array_family import flex
+from dxtbx.model import ExperimentList
 from tqdm import tqdm, trange
 
-from dxtbx.model import ExperimentList
-from dials.array_family import flex
-
 from laue_dials.algorithms.diffgeo import hkl2ray
-from IPython import embed
 
 
 def store_wavelengths(expts, refls):
@@ -97,10 +95,10 @@ def gen_beam_models(expts, refls):
             A reflection_table with updated identifiers
     """
     # Imports
-    from dials.algorithms.refinement.prediction.managed_predictors import (
-        ExperimentsPredictorFactory,
-    )
     from copy import deepcopy
+
+    from dials.algorithms.refinement.prediction.managed_predictors import \
+        ExperimentsPredictorFactory
 
     # Instantiate new ExperimentList/reflection_table
     new_expts = ExperimentList()
@@ -124,7 +122,7 @@ def gen_beam_models(expts, refls):
         try:
             # New beam per reflection
             expt = expts[refl["ID"][i]]
-            temp = expt.beam.get_s0()
+            expt.beam.get_s0()
             new_expt = expt
             new_expt.beam = deepcopy(expt.beam)
             new_expt.beam.set_wavelength(refl["Wavelength"][i])
@@ -148,7 +146,7 @@ def gen_beam_models(expts, refls):
     new_refls["id"] = idx
 
     # Repredict centroids
-    ref_predictor = ExperimentsPredictorFactory.from_experiments(new_expts)
+    ExperimentsPredictorFactory.from_experiments(new_expts)
     return new_expts, new_refls
 
 
