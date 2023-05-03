@@ -6,17 +6,14 @@ import logging
 import time
 
 import libtbx.phil
-from dials.util import log, show_mail_handle_errors
-from dials.util.options import ArgumentParser, reflections_and_experiments_from_files
-from dials.command_line.refine import run_dials_refine
-from dxtbx.model.experiment_list import ExperimentListFactory
 from dials.array_family.flex import reflection_table
+from dials.command_line.refine import run_dials_refine
+from dials.util import log, show_mail_handle_errors
+from dials.util.options import ArgumentParser
+from dxtbx.model.experiment_list import ExperimentListFactory
 
-from laue_dials.algorithms.laue import (
-    gen_beam_models,
-    remove_beam_models,
-    store_wavelengths,
-)
+from laue_dials.algorithms.laue import (gen_beam_models, remove_beam_models,
+                                        store_wavelengths)
 
 logger = logging.getLogger("laue-dials.command_line.refine")
 
@@ -141,7 +138,7 @@ def run(args=None, *, phil=working_phil):
     multi_expts, multi_refls = gen_beam_models(expts, refls)
 
     # Perform scan-varying refinement
-    refine_time = time.time()
+    time.time()
 
     logger.info("")
     logger.info("*" * 80)

@@ -22,6 +22,14 @@ laue\_dials.algorithms.laue module
    :undoc-members:
    :show-inheritance:
 
+laue\_dials.algorithms.monochromatic module
+-------------------------------------------
+
+.. automodule:: laue_dials.algorithms.monochromatic
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 laue\_dials.algorithms.outliers module
 --------------------------------------
 
