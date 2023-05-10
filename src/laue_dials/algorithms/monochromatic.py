@@ -26,14 +26,14 @@ def import_images(args=None, *, phil):
     return expts
 
 
-def find_spots(phil, expts):
+def find_spots(params, expts):
     """
     Find strong reflections on images given a set of experiments
 
     Parameters
     ----------
-    phil : libtbx.phil.scope
-        A phil scope containing the parameters for the DIALS spotfinding code
+    phil : libtbx.phil.scope_extract
+        A phil scope extract containing the parameters for the DIALS spotfinding code
 
     Returns
     -------
@@ -42,7 +42,7 @@ def find_spots(phil, expts):
     """
     from dials.command_line.find_spots import do_spotfinding
 
-    refls = do_spotfinding(expts, phil, configure_logging=True)
+    refls = do_spotfinding(expts, params)
     return refls
 
 
