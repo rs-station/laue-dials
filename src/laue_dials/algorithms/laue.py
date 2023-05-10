@@ -97,8 +97,9 @@ def gen_beam_models(expts, refls):
     # Imports
     from copy import deepcopy
 
-    from dials.algorithms.refinement.prediction.managed_predictors import \
-        ExperimentsPredictorFactory
+    from dials.algorithms.refinement.prediction.managed_predictors import (
+        ExperimentsPredictorFactory,
+    )
 
     # Instantiate new ExperimentList/reflection_table
     new_expts = ExperimentList()
@@ -110,7 +111,7 @@ def gen_beam_models(expts, refls):
     # Initialize data frame
     df = rs.DataSet(
         {
-            "Wavelength": refls["Wavelength"],
+            "wavelength": refls["wavelength"],
             "ID": refls["id"],
             "new_ID": [-1] * len(refls),
         }
@@ -125,7 +126,7 @@ def gen_beam_models(expts, refls):
             expt.beam.get_s0()
             new_expt = expt
             new_expt.beam = deepcopy(expt.beam)
-            new_expt.beam.set_wavelength(refl["Wavelength"][i])
+            new_expt.beam.set_wavelength(refl["wavelength"][i])
             s0 = (
                 expt.beam.get_s0() / np.linalg.norm(expt.beam.get_s0())
             ) / new_expt.beam.get_wavelength()
