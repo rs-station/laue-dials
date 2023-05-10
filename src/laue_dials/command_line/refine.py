@@ -4,6 +4,7 @@ This script handles polychromatic geometry refinement.
 """
 import logging
 import time
+from IPython import embed
 
 import libtbx.phil
 from dials.array_family.flex import reflection_table
@@ -12,8 +13,11 @@ from dials.util import log, show_mail_handle_errors
 from dials.util.options import ArgumentParser
 from dxtbx.model.experiment_list import ExperimentListFactory
 
-from laue_dials.algorithms.laue import (gen_beam_models, remove_beam_models,
-                                        store_wavelengths)
+from laue_dials.algorithms.laue import (
+    gen_beam_models,
+    remove_beam_models,
+    store_wavelengths,
+)
 
 logger = logging.getLogger("laue-dials.command_line.refine")
 
@@ -106,7 +110,7 @@ def run(args=None, *, phil=working_phil):
         phil=phil,
         read_reflections=True,
         read_experiments=True,
-        check_format=False,
+        check_format=True,
         epilog=help_message,
     )
     params, options = parser.parse_args(args=args, show_diff_phil=False)
@@ -125,6 +129,7 @@ def run(args=None, *, phil=working_phil):
         params.input.experiments[0].filename, check_format=True
     )
     refls = reflection_table.from_file(params.input.reflections[0].filename)
+    refls = refls.select(refls["wavelength"] != 0)  # Remove unindexed reflections
 
     # Get initial time for process
     start_time = time.time()
