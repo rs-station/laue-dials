@@ -3,29 +3,6 @@ This file contains functions for monochromatic processing
 """
 
 
-def import_images(args=None, *, phil):
-    """
-    Read a set of images into an ExperimentList object
-
-    Parameters
-    ----------
-    args : string
-        File name(s) for image files. Can include wildcards to represent several files
-
-    phil : libtbx.phil.scope
-        A phil scope containing the parameters for the DIALS import code
-
-    Returns
-    -------
-    expts : ExperimentList
-        An ExperimentList with information from headers in image files
-    """
-    from dials.command_line.dials_import import do_import
-
-    expts = do_import(args, phil=phil)
-    return expts
-
-
 def find_spots(params, expts):
     """
     Find strong reflections on images given a set of experiments

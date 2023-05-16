@@ -10,36 +10,35 @@ import libtbx.phil
 from dials.util import log, show_mail_handle_errors
 from dials.util.options import ArgumentParser
 
-from laue_dials.algorithms.monochromatic import (find_spots, import_images,
-                                                 initial_index,
-                                                 scan_varying_refine,
-                                                 split_sequence)
+from laue_dials.algorithms.monochromatic import (
+    find_spots,
+    initial_index,
+    scan_varying_refine,
+    split_sequence,
+)
 
 logger = logging.getLogger("laue-dials.command_line.initial_solution")
 
 help_message = """
 
-This program takes a set of raw images and generates a DIALS experiment
-list and reflection table to use as an initial monochromatic solution
-to feed into the remainder of the pipeline. The outputs are a pair of
+This program takes a DIALS imported experiment list (generated with
+dials.import) and generates a DIALS experiment list and reflection
+table to use as an initial monochromatic solution to feed
+into the remainder of the pipeline. The outputs are a pair of
 files (monochromatic.expt, monochromatic.refl) that constitute a
 monochromatic estimate of a geometric solution for the crystal and
-experiment. Importing, spotfinding, indexing, scan-varying refinement,
+experiment. Spotfinding, indexing, scan-varying refinement,
 and conversion into stills are all done in this script.
 
 Examples:
 
-    laue.initial_solution [options] image_*.mccd
+    laue.initial_solution [options] imported.expt
 """
 
 # Set the phil scope
 master_phil = libtbx.phil.parse(
     """
 laue_output {
-  import_filename = 'imported.expt'
-    .type = str
-    .help = "The output imported experiment list filename."
-
   strong_filename = 'strong.refl'
     .type = str
     .help = "The output spotfinding reflection table filename."
@@ -77,33 +76,6 @@ laue_output {
     .help = "The log filename."
 }
 
-skip {
-  importing = False
-    .type = bool
-    .help = Whether to skip importing images
-
-  spotfinding = False
-    .type = bool
-    .help = Whether to skip spotfinding
-
-  indexing = False
-    .type = bool
-    .help = Whether to skip indexing
-
-  refinement = False
-    .type = bool
-    .help = Whether to skip refinement
-
-  splitting_sequence = False
-    .type = bool
-    .help = Whether to skip sequence splitting
-
-}
-
-importer {
-  include scope dials.command_line.dials_import.phil_scope
-}
-
 spotfinder {
   include scope dials.command_line.find_spots.phil_scope
 }
@@ -123,26 +95,6 @@ splitter {
 }
 """,
     process_includes=True,
-)
-
-importer_phil = libtbx.phil.parse(
-    """
-importer {
-  geometry {
-    beam {
-      wavelength = 1.04
-    }
-
-    goniometer {
-      axes=0,1,0
-    }
-
-    scan {
-      oscillation=0,1
-    }
-  }
-}
-"""
 )
 
 spotfinder_phil = libtbx.phil.parse(
@@ -251,9 +203,7 @@ refiner {
 """
 )
 
-working_phil = master_phil.fetch(
-    sources=[importer_phil, spotfinder_phil, indexer_phil, refiner_phil]
-)
+working_phil = master_phil.fetch(sources=[spotfinder_phil, indexer_phil, refiner_phil])
 
 
 @show_mail_handle_errors()
@@ -265,12 +215,12 @@ def run(args=None, *, phil=working_phil):
         usage=usage,
         phil=phil,
         read_reflections=False,
-        read_experiments=False,
-        check_format=False,
+        read_experiments=True,
+        check_format=True,
         epilog=help_message,
     )
     params, options = parser.parse_args(
-        args=args, show_diff_phil=True, quick_parse=True
+        args=args, show_diff_phil=True, ignore_unhandled=True
     )
 
     # Configure logging
@@ -282,121 +232,100 @@ def run(args=None, *, phil=working_phil):
         logger.info("The following parameters have been modified:\n")
         logger.info(diff_phil)
 
+    # Import images into expt file
+    imported_expts = params.input.experiments[0][1]
+
     # Get initial time for process
     start_time = time.time()
 
-    # Import images into expt file
-    if not params.skip.importing:
-        import_time = time.time()
-
-        logger.info("")
-        logger.info("*" * 80)
-        logger.info("Importing images")
-        logger.info("*" * 80)
-
-        imported_expts = import_images(args, phil=phil)
-
-        logger.info(
-            "Saving imported experiments to %s", params.laue_output.import_filename
-        )
-        imported_expts.as_file(params.laue_output.import_filename)
-
-        logger.info("")
-        logger.info("Time Taken Importing = %f seconds", time.time() - import_time)
-
     # Find strong spots
-    if not params.skip.spotfinding:
-        spotfinding_time = time.time()
+    spotfinding_time = time.time()
 
-        logger.info("")
-        logger.info("*" * 80)
-        logger.info("Finding strong spots")
-        logger.info("*" * 80)
+    logger.info("")
+    logger.info("*" * 80)
+    logger.info("Finding strong spots")
+    logger.info("*" * 80)
 
-        strong_refls = find_spots(params, imported_expts)
+    strong_refls = find_spots(params.spotfinder, imported_expts)
 
-        logger.info("Saving strong spots to %s", params.laue_output.strong_filename)
-        strong_refls.as_file(filename=params.laue_output.strong_filename)
+    logger.info("Saving strong spots to %s", params.laue_output.strong_filename)
+    strong_refls.as_file(filename=params.laue_output.strong_filename)
 
-        logger.info("")
-        logger.info(
-            "Time Taken Spotfinding = %f seconds", time.time() - spotfinding_time
-        )
+    logger.info("")
+    logger.info("Time Taken Spotfinding = %f seconds", time.time() - spotfinding_time)
 
     # Index at peak wavelength
-    if not params.skip.indexing:
-        index_time = time.time()
+    index_time = time.time()
 
-        logger.info("")
-        logger.info("*" * 80)
-        logger.info("Indexing images")
-        logger.info("*" * 80)
+    logger.info("")
+    logger.info("*" * 80)
+    logger.info("Indexing images")
+    logger.info("*" * 80)
 
-        indexed_expts, indexed_refls = initial_index(
-            params.indexer, imported_expts, strong_refls
-        )
+    indexed_expts, indexed_refls = initial_index(
+        params.indexer, imported_expts, strong_refls
+    )
 
-        logger.info(
-            "Saving indexed experiments to %s", params.laue_output.indexed.experiments
-        )
-        indexed_expts.as_file(params.laue_output.indexed.experiments)
+    logger.info(
+        "Saving indexed experiments to %s", params.laue_output.indexed.experiments
+    )
+    indexed_expts.as_file(params.laue_output.indexed.experiments)
 
-        logger.info(
-            "Saving indexed reflections to %s", params.laue_output.indexed.reflections
-        )
-        indexed_refls.as_file(filename=params.laue_output.indexed.reflections)
+    logger.info(
+        "Saving indexed reflections to %s", params.laue_output.indexed.reflections
+    )
+    indexed_refls.as_file(filename=params.laue_output.indexed.reflections)
 
-        logger.info("")
-        logger.info("Time Taken Indexing = %f seconds", time.time() - index_time)
+    logger.info("")
+    logger.info("Time Taken Indexing = %f seconds", time.time() - index_time)
 
     # Perform scan-varying refinement
-    if not params.skip.refinement:
-        refine_time = time.time()
+    refine_time = time.time()
 
-        logger.info("")
-        logger.info("*" * 80)
-        logger.info("Performing geometric refinement")
-        logger.info("*" * 80)
+    logger.info("")
+    logger.info("*" * 80)
+    logger.info("Performing geometric refinement")
+    logger.info("*" * 80)
 
-        refined_expts, refined_refls = scan_varying_refine(
-            params.refiner, indexed_expts, indexed_refls
-        )
+    refined_expts, refined_refls = scan_varying_refine(
+        params.refiner, indexed_expts, indexed_refls
+    )
 
-        logger.info(
-            "Saving refined experiments to %s", params.laue_output.refined.experiments
-        )
-        refined_expts.as_file(params.laue_output.refined.experiments)
+    logger.info(
+        "Saving refined experiments to %s", params.laue_output.refined.experiments
+    )
+    refined_expts.as_file(params.laue_output.refined.experiments)
 
-        logger.info(
-            "Saving refined reflections to %s", params.laue_output.refined.reflections
-        )
-        refined_refls.as_file(filename=params.laue_output.refined.reflections)
+    logger.info(
+        "Saving refined reflections to %s", params.laue_output.refined.reflections
+    )
+    refined_refls.as_file(filename=params.laue_output.refined.reflections)
 
-        logger.info("")
-        logger.info("Time Taken Refining = %f seconds", time.time() - refine_time)
+    logger.info("")
+    logger.info("Time Taken Refining = %f seconds", time.time() - refine_time)
 
-        # Split sequence into stills
-        stills_time = time.time()
+    # Split sequence into stills
+    stills_time = time.time()
 
-        logger.info("")
-        logger.info("*" * 80)
-        logger.info("Splitting sequence into stills")
-        logger.info("*" * 80)
+    logger.info("")
+    logger.info("*" * 80)
+    logger.info("Splitting sequence into stills")
+    logger.info("*" * 80)
 
-        stills_expts, stills_refls = split_sequence(
-            params.splitter, refined_expts, refined_refls
-        )
+    stills_expts, stills_refls = split_sequence(
+        params.splitter, refined_expts, refined_refls
+    )
 
-        logger.info("Saving experiment stills to %s", params.laue_output.experiments)
-        stills_expts.as_file(params.laue_output.experiments)
+    logger.info("Saving experiment stills to %s", params.laue_output.experiments)
+    stills_expts.as_file(params.laue_output.experiments)
 
-        logger.info("Saving reflection stills to %s", params.laue_output.reflections)
-        stills_refls.as_file(filename=params.laue_output.reflections)
+    logger.info("Saving reflection stills to %s", params.laue_output.reflections)
+    stills_refls.as_file(filename=params.laue_output.reflections)
 
-        logger.info("")
-        logger.info(
-            "Time Taken Converting to Stills = %f seconds", time.time() - stills_time
-        )
+    logger.info("")
+    logger.info(
+        "Time Taken Converting to Stills = %f seconds", time.time() - stills_time
+    )
 
     # Final logs
     logger.info("")
