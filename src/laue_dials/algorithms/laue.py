@@ -292,8 +292,13 @@ class LaueAssigner(LaueBase):
         """update the list of inliers"""
         from sklearn.covariance import MinCovDet
 
-        X = np.concatenate((self.qobs, self.qpred * self.wav[:, None]), axis=-1)
-        dist = MinCovDet().fit(X).dist_
+        idx = np.isfinite(self.wav)
+
+        X = np.concatenate(
+            (self.qobs[idx], self.qpred[idx] * self.wav[idx, None]), axis=-1
+        )
+        dist = np.ones(len(self._inliers)) * np.inf
+        dist[idx] = MinCovDet().fit(X).dist_
         self.set_inliers(dist <= nstd**2.0)
 
     def assign(self):
@@ -329,29 +334,39 @@ class LaueAssigner(LaueBase):
 
         from scipy.optimize import linear_sum_assignment
 
-        _, idx = linear_sum_assignment(cost)
-        H = Hall[idx]
-        qpred = qall[idx]
-        harmonics = harmonics[idx]
+        ido, idx = linear_sum_assignment(cost)
+
+        # Initialize variables to update
+        H = self.H
+        qpred = self.qpred
+        harmonics_obs = self.harmonics
+
+        # Update appropriate variables
+        H[ido] = Hall[idx]
+        qpred[ido] = qall[idx]
+        harmonics_obs[ido] = harmonics[idx]
 
         # Set all attributes to match the current assignment
         self.set_H(H)
         self.set_qpred(qpred)
-        self.set_harmonics(harmonics)
+        self.set_harmonics(harmonics_obs)
 
         # wav_pred = -2.*(self.s0 * qpred).sum(-1) / (qpred*qpred).sum(-1)
-        wav_obs = np.linalg.norm(self.qobs, axis=-1) / np.linalg.norm(
-            self.qpred, axis=-1
-        )
+        with np.errstate(divide="ignore"):
+            wav_obs = np.linalg.norm(self.qobs, axis=-1) / np.linalg.norm(
+                self.qpred, axis=-1
+            )
         self.set_wav(wav_obs)
 
     def update_rotation(self):
         """Update the rotation matrix (self.R) based on the inlying refls"""
         from scipy.linalg import orthogonal_procrustes
 
+        idx = np.isfinite(self.wav)
+
         misset, _ = orthogonal_procrustes(
-            self.qobs,
-            self.qpred * self.wav[:, None],
+            self.qobs[idx],
+            self.qpred[idx] * self.wav[idx, None],
         )
         self.R = misset @ self.R
 

@@ -7,8 +7,7 @@ import logging
 
 import libtbx.phil
 from dials.util import log, show_mail_handle_errors
-from dials.util.options import (ArgumentParser,
-                                reflections_and_experiments_from_files)
+from dials.util.options import ArgumentParser, reflections_and_experiments_from_files
 
 logger = logging.getLogger("laue-dials.command_line.optimize_indexing")
 
@@ -99,7 +98,7 @@ def index_image(params, refls, expts):
     refls["wavelength"] = flex.double(len(refls))
     refls["miller_index"] = flex.miller_index(len(refls))
 
-    for i in trange(len(expts.imagesets())):
+    for i in range(len(expts.imagesets())):
         # Get experiment data from experiment objects
         experiment = expts[i]
         cryst = experiment.crystal
@@ -108,7 +107,7 @@ def index_image(params, refls, expts):
         )
 
         # Get reflections on this image
-        idx = refls["id"] == i
+        idx = refls["id"] == int(experiment.identifier)
         subrefls = refls.select(idx)
 
         # Get unit cell params
@@ -135,7 +134,7 @@ def index_image(params, refls, expts):
 
         # Optimize Miller indices
         la.assign()
-        for j in range(params.n_macrocycles):
+        for j in trange(params.n_macrocycles):
             la.reset_inliers()
             la.update_rotation()
             la.assign()
@@ -187,7 +186,7 @@ def run(args=None, *, phil=working_phil):
         epilog=help_message,
     )
 
-    params, options = parser.parse_args(args=args, show_diff_phil=False)
+    params, options = parser.parse_args(args=args, show_diff_phil=True)
 
     # Configure logging
     log.config(verbosity=options.verbose, logfile=params.output.log)
@@ -201,6 +200,7 @@ def run(args=None, *, phil=working_phil):
     reflections, experiments = reflections_and_experiments_from_files(
         params.input.reflections, params.input.experiments
     )
+    reflections = reflections[0]  # Get reflection table out of list
 
     # Sanity checks
     if len(experiments) == 0:
@@ -211,8 +211,9 @@ def run(args=None, *, phil=working_phil):
     for i in range(len(experiments)):
         # Reindex data
         print(f"Reindexing experiment {i}.")
+        j = int(experiments[i].identifier)
         indexed_experiments, indexed_reflections = index_image(
-            params, reflections[i], experiments[i]
+            params, reflections.select(reflections["id"] == j), experiments[i]
         )
 
         # Save experiments
