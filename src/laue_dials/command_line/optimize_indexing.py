@@ -99,6 +99,7 @@ def index_image(params, refls, expts):
     # Write to reflection file
     refls["wavelength"] = flex.double(len(refls))
     refls["miller_index"] = flex.miller_index(len(refls))
+    refls["harmonics"] = flex.bool([False] * len(refls))
 
     for i in range(len(expts.imagesets())):
         # Get experiment data from experiment objects
@@ -155,7 +156,6 @@ def index_image(params, refls, expts):
         cryst.set_unit_cell(unit_cell(la.cell.parameters))
 
         # Write data to reflections
-        refls["harmonics"] = flex.bool([False] * len(refls))
         refls["s1"].set_selected(idx, flex.vec3_double(s1))
         refls["miller_index"].set_selected(
             idx,
