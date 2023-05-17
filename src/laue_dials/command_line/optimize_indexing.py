@@ -8,6 +8,8 @@ import logging
 import libtbx.phil
 from dials.util import log, show_mail_handle_errors
 from dials.util.options import ArgumentParser, reflections_and_experiments_from_files
+from dxtbx.model import ExperimentList
+from dials.array_family.flex import reflection_table
 
 logger = logging.getLogger("laue-dials.command_line.optimize_indexing")
 
@@ -208,6 +210,8 @@ def run(args=None, *, phil=working_phil):
         return
 
     # Loop over input files
+    total_experiments = ExperimentList()
+    total_reflections = reflection_table()
     for i in range(len(experiments)):
         # Reindex data
         print(f"Reindexing experiment {i}.")
@@ -215,14 +219,16 @@ def run(args=None, *, phil=working_phil):
         indexed_experiments, indexed_reflections = index_image(
             params, reflections.select(reflections["id"] == j), experiments[i]
         )
+        total_experiments.extend(indexed_experiments)
+        total_reflections.extend(indexed_reflections)
 
-        # Save experiments
-        logger.info("Saving optimized experiments to %s", params.output.experiments)
-        indexed_experiments.as_file(params.output.experiments)
+    # Save experiments
+    logger.info("Saving optimized experiments to %s", params.output.experiments)
+    total_experiments.as_file(params.output.experiments)
 
-        # Save reflections
-        logger.info("Saving optimized reflections to %s", params.output.reflections)
-        indexed_reflections.as_file(filename=params.output.reflections)
+    # Save reflections
+    logger.info("Saving optimized reflections to %s", params.output.reflections)
+    total_reflections.as_file(filename=params.output.reflections)
 
 
 if __name__ == "__main__":
