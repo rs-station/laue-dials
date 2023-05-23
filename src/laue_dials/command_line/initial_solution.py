@@ -54,22 +54,15 @@ laue_output {
   }
 
   refined {
-    experiments = 'refined.expt'
-      .type = str
-      .help = "The output refined experiment list filename."
+      experiments = 'monochromatic.expt'
+        .type = str
+        .help = "The output experiment list stills filename."
 
-    reflections = 'refined.refl'
-      .type = str
-      .help = "The output refined reflection table filename."
+      reflections = 'monochromatic.refl'
+        .type = str
+        .help = "The output reflection table stills filename."
   }
 
-  experiments = 'monochromatic.expt'
-    .type = str
-    .help = "The output experiment list stills filename."
-
-  reflections = 'monochromatic.refl'
-    .type = str
-    .help = "The output reflection table stills filename."
 
   log = 'laue.initial_solution.log'
     .type = str
@@ -86,12 +79,6 @@ indexer {
 
 refiner {
   include scope dials.command_line.refine.phil_scope
-}
-
-splitter {
-  composite = True
-    .type = bool
-    .help = "Whether to keep all stills in one file (True) or write to separate files"
 }
 """,
     process_includes=True,
@@ -303,29 +290,6 @@ def run(args=None, *, phil=working_phil):
 
     logger.info("")
     logger.info("Time Taken Refining = %f seconds", time.time() - refine_time)
-
-    # Split sequence into stills
-    stills_time = time.time()
-
-    logger.info("")
-    logger.info("*" * 80)
-    logger.info("Splitting sequence into stills")
-    logger.info("*" * 80)
-
-    stills_expts, stills_refls = split_sequence(
-        params.splitter, refined_expts, refined_refls
-    )
-
-    logger.info("Saving experiment stills to %s", params.laue_output.experiments)
-    stills_expts.as_file(params.laue_output.experiments)
-
-    logger.info("Saving reflection stills to %s", params.laue_output.reflections)
-    stills_refls.as_file(filename=params.laue_output.reflections)
-
-    logger.info("")
-    logger.info(
-        "Time Taken Converting to Stills = %f seconds", time.time() - stills_time
-    )
 
     # Final logs
     logger.info("")
