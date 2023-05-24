@@ -42,7 +42,21 @@ Then, using the DIALS python environment, run the following:
 
    pip install laue-dials
 
-If any issues occur either with installation or use of the software, please file an issue at `issue tracker`_.
+``laue_dials`` consists of seven command-line scripts for the processing of Laue diffraction data, which are
+
+.. code:: python
+
+   laue.initial_solution
+   laue.sequence_to_stills
+   laue.optimize_indexing
+   laue.refine
+   laue.predict
+   laue.integrate
+   laue.combine_mtzs
+
+Note that you need to import the image data using ``dials.import``. For information on how to use this command, visit https://dials.github.io/documentation/programs/dials_import.html. An example of how to analyze a full dataset lives at https://github.com/rs-station/laue-dials/blob/main/examples/pipeline.py.
+
+If any issues occur either with installation or use of the software, please file an issue at `issue tracker`_. Any and all questions, concerns, or feature requests are welcome.
 
 .. _careless: https://github.com/rs-station/careless
 .. _DIALS: https://dials.github.io/index.html
