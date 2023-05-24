@@ -3,12 +3,13 @@ Split a sequence into a set of stills.
 
 Example:
 
-  dials.sequence_to_stills sequence.expt sequence.refl
+  laue.sequence_to_stills monochromatic.expt monochromatic.refl
 """
 
 
 import logging
 
+from dials.util import log
 from dxtbx.model import MosaicCrystalSauter2014
 from dxtbx.model.experiment_list import Experiment, ExperimentList
 from libtbx.phil import parse
@@ -24,7 +25,7 @@ from dials.model.data import Shoebox
 from dials.util import show_mail_handle_errors
 from dials.util.options import OptionParser, reflections_and_experiments_from_files
 
-logger = logging.getLogger("dials.command_line.sequence_to_stills")
+logger = logging.getLogger("laue.command_line.sequence_to_stills")
 
 # The phil scope
 phil_scope = parse(
@@ -34,6 +35,9 @@ output {
     .type = str
     .help = "Filename for the experimental models that have been converted to stills"
   reflections = stills.refl
+    .type = str
+    .help = "Filename for the reflection tables with split shoeboxes (3D to 2D)"
+  log = laue.sequence_to_stills.log
     .type = str
     .help = "Filename for the reflection tables with split shoeboxes (3D to 2D)"
   domain_size_ang = None
@@ -177,6 +181,9 @@ def run(args=None, phil=phil_scope):
         epilog=__doc__,
     )
     params, options = parser.parse_args(args=args, show_diff_phil=True)
+
+    # Configure logging
+    log.config(verbosity=options.verbose, logfile=params.output.log)
 
     # Try to load the models and data
     if not params.input.experiments or not params.input.reflections:
