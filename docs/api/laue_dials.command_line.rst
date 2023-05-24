@@ -6,6 +6,14 @@ laue\_dials.command\_line namespace
 Submodules
 ----------
 
+laue\_dials.command\_line.combine\_mtzs module
+----------------------------------------------
+
+.. automodule:: laue_dials.command_line.combine_mtzs
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 laue\_dials.command\_line.initial\_solution module
 --------------------------------------------------
 
