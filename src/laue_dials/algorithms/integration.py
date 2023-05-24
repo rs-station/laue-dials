@@ -3,9 +3,9 @@ This file contains useful classes and functions for profiling and integration
 """
 
 import warnings
-import pandas as pd
+
 import numpy as np
-import reciprocalspaceship as rs
+import pandas as pd
 from scipy.spatial import KDTree
 
 
@@ -159,7 +159,7 @@ class Profile:
 
     def integrate(self):
         bg = self.background
-        var = bg + self.counts
+        bg + self.counts
 
         self.I = ((self.counts - bg) * self.fg_mask).sum()
         self.SigI = np.sqrt(((self.counts + bg) * self.fg_mask).sum())

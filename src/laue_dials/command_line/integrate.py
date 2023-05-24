@@ -3,22 +3,21 @@
 This script generates integrated MTZ files from refined data with predictions
 """
 import logging
+from functools import partial
+from itertools import repeat
+from multiprocessing import Pool
 
+import gemmi
 import libtbx.phil
-from dials.util import log, show_mail_handle_errors
-from dials.util.options import ArgumentParser, reflections_and_experiments_from_files
-from dials.array_family.flex import reflection_table
-from dials.array_family import flex
-from cctbx import sgtbx
-
-from laue_dials.algorithms.integration import Profile, SegmentedImage
-
 import numpy as np
 import reciprocalspaceship as rs
-import gemmi
-from functools import partial
-from multiprocessing import Pool
-from itertools import repeat
+from cctbx import sgtbx
+from dials.array_family import flex
+from dials.util import log, show_mail_handle_errors
+from dials.util.options import (ArgumentParser,
+                                reflections_and_experiments_from_files)
+
+from laue_dials.algorithms.integration import SegmentedImage
 
 logger = logging.getLogger("laue-dials.command_line.integrate")
 
