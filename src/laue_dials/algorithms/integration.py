@@ -2,6 +2,7 @@
 This file contains useful classes and functions for profiling and integration
 """
 
+import warnings
 import pandas as pd
 import numpy as np
 import reciprocalspaceship as rs
@@ -40,7 +41,9 @@ class Profile:
         if self.cen_y is None:
             self.cen_y = np.average(self.y, weights=self.counts)
 
-        self.scale = np.cov(self.difference_vectors.T, aweights=counts)
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            self.scale = np.cov(self.difference_vectors.T, aweights=counts)
         self.slope = np.zeros(2)
         self.intercept = 0.0
         self.update_mask()
@@ -143,7 +146,9 @@ class Profile:
         weights = weights * self.fg_mask
         weights = weights / weights.mean()
 
-        scale = np.cov(self.difference_vectors.T, aweights=weights)
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            scale = np.cov(self.difference_vectors.T, aweights=weights)
 
         cen_x = np.average(self.x, weights=weights)
         cen_y = np.average(self.y, weights=weights)
