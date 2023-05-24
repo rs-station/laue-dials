@@ -45,3 +45,11 @@ laue\_dials.command\_line.refine module
    :members:
    :undoc-members:
    :show-inheritance:
+
+laue\_dials.command\_line.sequence\_to\_stills module
+-----------------------------------------------------
+
+.. automodule:: laue_dials.command_line.sequence_to_stills
+   :members:
+   :undoc-members:
+   :show-inheritance:

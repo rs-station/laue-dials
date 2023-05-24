@@ -14,6 +14,14 @@ laue\_dials.algorithms.diffgeo module
    :undoc-members:
    :show-inheritance:
 
+laue\_dials.algorithms.integration module
+-----------------------------------------
+
+.. automodule:: laue_dials.algorithms.integration
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 laue\_dials.algorithms.laue module
 ----------------------------------
 
