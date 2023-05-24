@@ -4,20 +4,18 @@ This script predicts reflections for integration
 """
 import logging
 
-from laue_dials.algorithms.outliers import gen_kde
-
-import libtbx.phil
-from dials.util import log, show_mail_handle_errors
-from dials.util.options import ArgumentParser, reflections_and_experiments_from_files
-from dxtbx.model import ExperimentList
-from dials.array_family.flex import reflection_table
-from dials.array_family import flex
-from dials.algorithms.spot_prediction import ray_intersection
-
-import numpy as np
 import gemmi
-
+import libtbx.phil
+import numpy as np
+from dials.algorithms.spot_prediction import ray_intersection
+from dials.array_family import flex
+from dials.array_family.flex import reflection_table
+from dials.util import log, show_mail_handle_errors
+from dials.util.options import (ArgumentParser,
+                                reflections_and_experiments_from_files)
 from tqdm import trange
+
+from laue_dials.algorithms.outliers import gen_kde
 
 logger = logging.getLogger("laue-dials.command_line.predict")
 
@@ -115,11 +113,11 @@ def predict_spots(params, refls, expts):
 
         # Get observed centroids
         sub_refls = refls.select(refls["imageset_id"] == img_num)
-        xobs = sub_refls["xyzobs.mm.value"].parts()[0].as_numpy_array()
-        yobs = sub_refls["xyzobs.mm.value"].parts()[1].as_numpy_array()
+        sub_refls["xyzobs.mm.value"].parts()[0].as_numpy_array()
+        sub_refls["xyzobs.mm.value"].parts()[1].as_numpy_array()
 
         # Wavelengths per spot
-        lams = sub_refls["wavelength"].as_numpy_array()
+        sub_refls["wavelength"].as_numpy_array()
 
         # Generate predictor object
         la = LauePredictor(
@@ -172,9 +170,9 @@ def predict_spots(params, refls, expts):
         # Cut off using log probabilities
         cutoff_log = params.cutoff_log_probability
         sel = np.log(probs) >= cutoff_log
-        x_sel = x[sel]
-        y_sel = y[sel]
-        probs_sel = probs[sel]
+        x[sel]
+        y[sel]
+        probs[sel]
         preds = preds.select(flex.bool(sel))
 
         # Append image predictions to dataset

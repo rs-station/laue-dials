@@ -3,7 +3,6 @@ Outlier rejection functions.
 """
 import numpy as np
 import scipy
-
 from dials.array_family import flex
 
 
