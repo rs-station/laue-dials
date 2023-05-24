@@ -229,9 +229,7 @@ class LaueAssigner(LaueBase):
             n x 3 array indicating the direction of the scatterd beam wavevector.
             This can be any length, it will be unit normalized in the constructor.
         """
-        super().__init__(s0, cell, R, lam_min, lam_max, dmin, spacegroup="1")
-
-        self.ewald_offset = None
+        super().__init__(s0, cell, R, lam_min, lam_max, dmin, spacegroup)
 
         self._s1 = s1 / np.linalg.norm(s1, axis=-1)[:, None]
         self._qobs = self._s1 - self.s0
@@ -292,13 +290,8 @@ class LaueAssigner(LaueBase):
         """update the list of inliers"""
         from sklearn.covariance import MinCovDet
 
-        idx = np.isfinite(self.wav)
-
-        X = np.concatenate(
-            (self.qobs[idx], self.qpred[idx] * self.wav[idx, None]), axis=-1
-        )
-        dist = np.ones(len(self._inliers)) * np.inf
-        dist[idx] = MinCovDet().fit(X).dist_
+        X = np.concatenate((self.qobs, self.qpred * self.wav[:, None]), axis=-1)
+        dist = MinCovDet().fit(X).dist_
         self.set_inliers(dist <= nstd**2.0)
 
     def assign(self):
@@ -336,20 +329,15 @@ class LaueAssigner(LaueBase):
 
         ido, idx = linear_sum_assignment(cost)
 
-        # Initialize variables to update
-        H = self.H
-        qpred = self.qpred
-        harmonics_obs = self.harmonics
-
         # Update appropriate variables
-        H[ido] = Hall[idx]
-        qpred[ido] = qall[idx]
-        harmonics_obs[ido] = harmonics[idx]
+        H = Hall[idx]
+        qpred = qall[idx]
+        harmonics = harmonics[idx]
 
         # Set all attributes to match the current assignment
         self.set_H(H)
         self.set_qpred(qpred)
-        self.set_harmonics(harmonics_obs)
+        self.set_harmonics(harmonics)
 
         # wav_pred = -2.*(self.s0 * qpred).sum(-1) / (qpred*qpred).sum(-1)
         with np.errstate(divide="ignore"):
@@ -362,11 +350,9 @@ class LaueAssigner(LaueBase):
         """Update the rotation matrix (self.R) based on the inlying refls"""
         from scipy.linalg import orthogonal_procrustes
 
-        idx = np.isfinite(self.wav)
-
         misset, _ = orthogonal_procrustes(
-            self.qobs[idx],
-            self.qpred[idx] * self.wav[idx, None],
+            self.qobs,
+            self.qpred * self.wav[:, None],
         )
         self.R = misset @ self.R
 
