@@ -48,7 +48,9 @@ output {
     .help = "The log filename."
   }
 
-n_proc = 8
+n_proc = 1
+  .type = int
+  .help = Number of parallel integrations to do
 """,
     process_includes=True,
 )
