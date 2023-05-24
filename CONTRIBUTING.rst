@@ -2,7 +2,7 @@
 Contributing
 ============
 
-Welcome to ``laue_dials`` developer's guide.
+Welcome to ``laue-dials`` developer's guide.
 
 This document focuses on outlining development processes, but `other kinds of contributions`_ are also
 appreciated.
@@ -14,7 +14,7 @@ ideas, issues, documentation, or code.
 Issue Reports
 =============
 
-If you experience bugs or general issues with ``laue_dials``, please have a look
+If you experience bugs or general issues with ``laue-dials``, please have a look
 on the `issue tracker`_. If you don't see anything useful there, please feel
 free to fire an issue report.
 
@@ -28,14 +28,14 @@ you help us to identify the root cause of the issue.
 Documentation Improvements
 ==========================
 
-You can help improve ``laue_dials`` docs by making them more readable and coherent, or
+You can help improve ``laue-dials`` docs by making them more readable and coherent, or
 by adding missing information and correcting mistakes.
 
-``laue_dials`` documentation uses Sphinx_ as its main documentation compiler.
+``laue-dials`` documentation uses Sphinx_ as its main documentation compiler.
 This means that the docs are kept in the same repository as the project code, and
 that any documentation update is done in the same way was a code contribution.
 When working on documentation changes in your local machine, you can
-compile them using |tox|_::
+compile them using ``tox``
 
     tox -e docs
 
@@ -72,8 +72,8 @@ Before you start coding, we recommend creating an isolated `virtual
 environment`_ to avoid any problems with your installed Python packages.
 This can easily be done via Miniconda_::
 
-    conda create -n laue_dials python=3 six virtualenv pytest pytest-cov
-    conda activate laue_dials
+    conda create -n laue-dials python=3 six virtualenv pytest pytest-cov
+    conda activate laue-dials
 
 Clone the repository
 --------------------
@@ -83,8 +83,8 @@ Clone the repository
    page. This creates a copy of the code under your account on |the repository service|.
 #. Clone this copy to your local disk::
 
-    git clone git@github.com:YourLogin/laue_dials.git
-    cd laue_dials
+    git clone git@github.com:YourLogin/laue-dials.git
+    cd laue-dials
 
 #. You should run::
 
@@ -97,7 +97,7 @@ Clone the repository
     pip install pre-commit
     pre-commit install
 
-   ``laue_dials`` comes with a lot of hooks configured to automatically help the
+   ``laue-dials`` comes with a lot of hooks configured to automatically help the
    developer to check the code being written. Compliance with all hooks is
    necessary to contribute code to maintain code quality.
 
@@ -144,9 +144,9 @@ Implement your changes
 
     tox
 
-   (after having installed |tox-conda|_ with ``pip install tox-conda`` or ``pipx``).
+   (after having installed ``tox-conda`` with ``pip install tox-conda`` or ``pipx``).
 
-   You can also use |tox-conda|_ to run several other pre-configured tasks in the
+   You can also use ``tox-conda`` to run several other pre-configured tasks in the
    repository. Try ``tox -av`` to see a list of the available checks.
 
 Submit your contribution
@@ -175,9 +175,9 @@ package:
    ``.eggs``, as well as the ``*.egg-info`` folders in the ``src`` folder or
    potentially in the root of your project.
 
-#. Sometimes |tox-conda|_ misses out when new dependencies are added, especially to
+#. Sometimes ``tox-conda`` misses out when new dependencies are added, especially to
    ``setup.cfg`` and ``docs/requirements.txt``. If you find any problems with
-   missing dependencies when running a command with |tox-conda|_, try to recreate the
+   missing dependencies when running a command with ``tox-conda``, try to recreate the
    ``tox`` environment using the ``-r`` flag. For example, instead of::
 
     tox -e docs
@@ -186,7 +186,7 @@ package:
 
     tox -r -e docs
 
-#. Make sure to have a reliable |tox-conda|_ installation that uses the correct
+#. Make sure to have a reliable ``tox-conda`` installation that uses the correct
    Python version (e.g., 3.7+). When in doubt you can run::
 
     tox --version
@@ -207,7 +207,7 @@ Releases
 
 If you are part of the group of maintainers and have correct user permissions
 on PyPI_, the following steps can be used to release a new version for
-``laue_dials``:
+``laue-dials``:
 
 #. Make sure all unit tests are successful.
 #. Update ``CHANGELOG.rst`` with new features and changes for the new release.
@@ -220,14 +220,13 @@ on PyPI_, the following steps can be used to release a new version for
 #. After Github Actions workflows have executed, check PyPI to ensure they worked correctly.
 
 .. <-- Documentation variables -->
-.. _repository: https://github.com/rs-station/laue_dials
-.. _issue tracker: https://github.com/rs-station/laue_dials/issues
+.. _repository: https://github.com/rs-station/laue-dials
+.. _issue tracker: https://github.com/rs-station/laue-dials/issues
 
 .. |the repository service| replace:: GitHub
 .. |contribute button| replace:: "Create pull request"
 .. |virtualenv| replace:: ``virtualenv``
 .. |pre-commit| replace:: ``pre-commit``
-.. |tox-conda| replace:: ``tox``
 
 
 .. _black: https://pypi.org/project/black/
@@ -251,7 +250,6 @@ on PyPI_, the following steps can be used to release a new version for
 .. _reStructuredText: https://www.sphinx-doc.org/en/master/usage/restructuredtext/
 .. _Sphinx: https://www.sphinx-doc.org/en/master/
 .. _TestPyPI: https://test.pypi.org
-.. _tox: https://tox.wiki/en/stable/
 .. _virtual environment: https://realpython.com/python-virtual-environments-a-primer/
 .. _virtualenv: https://virtualenv.pypa.io/en/stable/
 
