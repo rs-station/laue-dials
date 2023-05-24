@@ -6,11 +6,10 @@ This script combines integrated MTZ files by image into one single MTZ file.
 import logging
 
 import libtbx.phil
+import reciprocalspaceship as rs
 from dials.util import log, show_mail_handle_errors
 from dials.util.options import ArgumentParser
-
 from tqdm import trange
-import reciprocalspaceship as rs
 
 logger = logging.getLogger("laue-dials.command_line.combine_mtzs")
 
@@ -87,7 +86,7 @@ def run(args=None, *, phil=working_phil):
             total_integrated_mtz = rs.concat([total_integrated_mtz, img_mtz])
         except:
             # Print integration failure to user
-            j = i + 1
+            i + 1
             logger.info("Image {j:06d} could not be integrated.")
             continue
 
