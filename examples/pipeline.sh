@@ -42,3 +42,5 @@ do
 done
 
 laue.combine_mtzs integrated/integrated*.mtz
+
+# This is where laue_dials ends. The output file total_integrated.mtz can be merged in careless and refined in phenix to get a model
