@@ -107,46 +107,26 @@ def gen_beam_models(expts, refls):
     # Unassign all reflections from experiments
     new_refls["id"] = flex.int([-1] * len(new_refls))
 
-    # Initialize data frame
-    df = rs.DataSet(
-        {
-            "wavelength": refls["wavelength"],
-            "ID": refls["id"],
-            "new_ID": [-1] * len(refls),
-        }
-    )
-
     # Generate beams per reflection
     exp_id = -1
-    for i, refl in tqdm(df.iterrows()):
+    for i, refl in tqdm(enumerate(refls.rows())):
         try:
             # New beam per reflection
-            expt = expts[refl["ID"][i]]
-            expt.beam.get_s0()
+            expt = expts[refl["id"]]
             new_expt = expt
             new_expt.beam = deepcopy(expt.beam)
-            new_expt.beam.set_wavelength(refl["wavelength"][i])
-            s0 = (
-                expt.beam.get_s0() / np.linalg.norm(expt.beam.get_s0())
-            ) / new_expt.beam.get_wavelength()
-            new_expt.beam.set_s0(s0)
+            new_expt.beam.set_wavelength(refl["wavelength"]) #Also updates s0
             exp_id = exp_id + 1  # Increment experiment ID
             new_expt.identifier = str(exp_id)
             new_expts.append(new_expt)
-
-            # Write new beam identifiers to reflections
-            df.at[i, "new_ID"] = exp_id
+            new_refls['id'][i] = exp_id
         except:
             print("Warning: Unindexed strong spot has wavelength 0.")
-            df.at[i, "new_ID"] = -1
             continue
 
-    # Replace reflection IDs with new IDs
-    idx = flex.int(df["new_ID"])
-    new_refls["id"] = idx
-
     # Repredict centroids
-    ExperimentsPredictorFactory.from_experiments(new_expts)
+    predictor = ExperimentsPredictorFactory.from_experiments(new_expts)
+    new_refls = predictor(new_refls)
     return new_expts, new_refls
 
 
