@@ -115,11 +115,11 @@ def gen_beam_models(expts, refls):
             expt = expts[refl["id"]]
             new_expt = expt
             new_expt.beam = deepcopy(expt.beam)
-            new_expt.beam.set_wavelength(refl["wavelength"]) #Also updates s0
+            new_expt.beam.set_wavelength(refl["wavelength"])  # Also updates s0
             exp_id = exp_id + 1  # Increment experiment ID
             new_expt.identifier = str(exp_id)
             new_expts.append(new_expt)
-            new_refls['id'][i] = exp_id
+            new_refls["id"][i] = exp_id
         except:
             print("Warning: Unindexed strong spot has wavelength 0.")
             continue
