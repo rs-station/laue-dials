@@ -30,7 +30,7 @@ Examples:
 """
 
 # Set the phil scope
-master_phil = libtbx.phil.parse(
+main_phil = libtbx.phil.parse(
     """
 include scope dials.command_line.refine.phil_scope
 
@@ -43,11 +43,12 @@ store_beams = False
 
 refiner_phil = libtbx.phil.parse(
     """
-refinery {
-  engine = SparseLevMar
-}
 
 refinement {
+  refinery {
+    engine = SparseLevMar
+  }
+
   reflections {
     weighting_strategy {
       override = stills
@@ -93,7 +94,7 @@ output {
 """
 )
 
-working_phil = master_phil.fetch(sources=[refiner_phil])
+working_phil = main_phil.fetch(sources=[refiner_phil])
 
 
 @show_mail_handle_errors()
