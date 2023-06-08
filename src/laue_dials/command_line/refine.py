@@ -12,11 +12,8 @@ from dials.util import log, show_mail_handle_errors
 from dials.util.options import ArgumentParser
 from dxtbx.model.experiment_list import ExperimentListFactory
 
-from laue_dials.algorithms.laue import (
-    gen_beam_models,
-    remove_beam_models,
-    store_wavelengths,
-)
+from laue_dials.algorithms.laue import (gen_beam_models, remove_beam_models,
+                                        store_wavelengths)
 
 logger = logging.getLogger("laue-dials.command_line.refine")
 
