@@ -8,8 +8,7 @@ import logging
 import libtbx.phil
 from dials.array_family.flex import reflection_table
 from dials.util import log, show_mail_handle_errors
-from dials.util.options import (ArgumentParser,
-                                reflections_and_experiments_from_files)
+from dials.util.options import ArgumentParser, reflections_and_experiments_from_files
 from dxtbx.model import ExperimentList
 
 logger = logging.getLogger("laue-dials.command_line.optimize_indexing")
