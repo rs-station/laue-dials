@@ -10,8 +10,7 @@ import libtbx.phil
 from dials.util import log, show_mail_handle_errors
 from dials.util.options import ArgumentParser
 
-from laue_dials.algorithms.monochromatic import (find_spots, initial_index,
-                                                 scan_varying_refine)
+from laue_dials.algorithms.monochromatic import (find_spots, initial_index)
 
 logger = logging.getLogger("laue-dials.command_line.initial_solution")
 
@@ -211,6 +210,7 @@ def run(args=None, *, phil=working_phil):
     logger.info(
         "Time Taken for Total Processing = %f seconds", time.time() - start_time
     )
+
 
 if __name__ == "__main__":
     run()

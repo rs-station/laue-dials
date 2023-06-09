@@ -7,7 +7,7 @@ import numpy as np
 import reciprocalspaceship as rs
 from dials.array_family import flex
 from dxtbx.model import ExperimentList
-from tqdm import tqdm, trange
+from tqdm import trange
 
 from laue_dials.algorithms.diffgeo import hkl2ray
 
