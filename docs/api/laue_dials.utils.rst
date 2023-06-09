@@ -6,14 +6,6 @@ laue\_dials.utils namespace
 Submodules
 ----------
 
-laue\_dials.utils.expt\_utils module
-------------------------------------
-
-.. automodule:: laue_dials.utils.expt_utils
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 laue\_dials.utils.plots module
 ------------------------------
 
