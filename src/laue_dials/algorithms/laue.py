@@ -91,7 +91,7 @@ def gen_beam_models(expts, refls):
         -------
         new_expts : ExperimentList
             ExperimentList with additional beam models and adjusted identifiers
-        new_refls : reflection_table
+        refls : reflection_table
             A reflection_table with updated identifiers
     """
     # Imports
@@ -102,52 +102,43 @@ def gen_beam_models(expts, refls):
 
     # Instantiate new ExperimentList/reflection_table
     new_expts = ExperimentList()
-    new_refls = refls.copy()
 
     # Unassign all reflections from experiments
-    new_refls["id"] = flex.int([-1] * len(new_refls))
-
-    # Initialize data frame
-    df = rs.DataSet(
-        {
-            "wavelength": refls["wavelength"],
-            "ID": refls["id"],
-            "new_ID": [-1] * len(refls),
-        }
-    )
+    old_ids = refls["id"]
+    new_ids = np.full(len(refls), -1, dtype=int)
 
     # Generate beams per reflection
     exp_id = -1
-    for i, refl in tqdm(df.iterrows()):
+    fails = 0
+    for i in trange(len(refls)):
         try:
             # New beam per reflection
-            expt = expts[refl["ID"][i]]
-            expt.beam.get_s0()
+            exp_id = exp_id + 1
+            expt = expts[old_ids[exp_id + fails]]
             new_expt = expt
             new_expt.beam = deepcopy(expt.beam)
-            new_expt.beam.set_wavelength(refl["wavelength"][i])
+            new_expt.beam.set_wavelength(refls[i]["wavelength"])
             s0 = (
                 expt.beam.get_s0() / np.linalg.norm(expt.beam.get_s0())
             ) / new_expt.beam.get_wavelength()
             new_expt.beam.set_s0(s0)
-            exp_id = exp_id + 1  # Increment experiment ID
             new_expt.identifier = str(exp_id)
             new_expts.append(new_expt)
-
-            # Write new beam identifiers to reflections
-            df.at[i, "new_ID"] = exp_id
+            new_ids[exp_id + fails] = exp_id
         except:
             print("Warning: Unindexed strong spot has wavelength 0.")
-            df.at[i, "new_ID"] = -1
+            fails = fails + 1
+            exp_id = exp_id - 1
+            new_ids[exp_id + fails] = -1
             continue
 
-    # Replace reflection IDs with new IDs
-    idx = flex.int(df["new_ID"])
-    new_refls["id"] = idx
+    # Set refl IDs
+    refls["id"] = flex.int(new_ids)
 
     # Repredict centroids
-    ExperimentsPredictorFactory.from_experiments(new_expts)
-    return new_expts, new_refls
+    ref_predictor = ExperimentsPredictorFactory.from_experiments(new_expts)
+    ref_predictor(refls)
+    return new_expts, refls
 
 
 class LaueBase:
@@ -365,7 +356,7 @@ class LauePredictor(LaueBase):
         """
         Calls parent LaueBase init
         """
-        super().__init__(s0, cell, R, lam_min, lam_max, dmin, spacegroup="1")
+        super().__init__(s0, cell, R, lam_min, lam_max, dmin, spacegroup=spacegroup)
 
     def predict_s1(self, delete_harmonics=False):
         """

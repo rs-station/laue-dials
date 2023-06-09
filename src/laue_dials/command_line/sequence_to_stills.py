@@ -89,7 +89,7 @@ def sequence_to_stills(experiments, reflections, params):
                         deg=True,
                     )
                     * goniometer_setting_matrix
-                    * matrix.sqr(experiment.crystal.get_A_at_scan_point(i_scan_point))
+                    * matrix.sqr(experiment.crystal.get_A())
                 )
                 crystal = MosaicCrystalSauter2014(experiment.crystal)
                 crystal.set_A(A)
