@@ -32,7 +32,7 @@ Examples:
 # Set the phil scope
 master_phil = libtbx.phil.parse(
     """
-include scope dials.command_line.refine.phil_scope
+include scope dials.command_line.refine.working_phil
 
 store_beams = False
   .type = bool
@@ -150,12 +150,20 @@ def run(args=None, *, phil=working_phil):
         multi_expts, multi_refls, params
     )
 
+    # For the usual case of refinement of one crystal, print that model for information
+    crystals = refined_expts.crystals()
+    if len(crystals) == 1:
+        logger.info("")
+        logger.info("Final refined crystal model:")
+        logger.info(crystals[0])
+
     logger.info("")
     logger.info("*" * 80)
     logger.info("Storing refined wavelengths")
     logger.info("*" * 80)
 
     refined_refls = store_wavelengths(refined_expts, refined_refls)
+    refined_refls.map_centroids_to_reciprocal_space(refined_expts)
 
     # Strip beam objects and reset reflection IDs
     if not params.store_beams:
