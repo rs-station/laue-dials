@@ -109,8 +109,6 @@ indexer {
       goniometer {
         fix = *all in_beam_plane out_beam_plane
       }
-
-      scan_varying = True
     }
 
     reflections {
