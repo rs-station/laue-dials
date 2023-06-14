@@ -5,6 +5,7 @@ Classes and functions for Laue-specific processes.
 import gemmi
 import numpy as np
 import reciprocalspaceship as rs
+from tqdm import tqdm
 from dials.array_family import flex
 from dxtbx.model import ExperimentList
 from tqdm import trange
@@ -102,6 +103,7 @@ def gen_beam_models(expts, refls):
 
     # Instantiate new ExperimentList/reflection_table
     new_expts = ExperimentList()
+    new_refls = refls.copy()
 
     # Unassign all reflections from experiments
     new_refls["id"] = flex.int([-1] * len(new_refls))
