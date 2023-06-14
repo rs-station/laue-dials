@@ -97,8 +97,9 @@ def gen_beam_models(expts, refls):
     # Imports
     from copy import deepcopy
 
-    from dials.algorithms.refinement.prediction.managed_predictors import \
-        ExperimentsPredictorFactory
+    from dials.algorithms.refinement.prediction.managed_predictors import (
+        ExperimentsPredictorFactory,
+    )
 
     # Instantiate new ExperimentList/reflection_table
     new_expts = ExperimentList()
@@ -127,6 +128,7 @@ def gen_beam_models(expts, refls):
     predictor = ExperimentsPredictorFactory.from_experiments(new_expts)
     new_refls = predictor(new_refls)
     return new_expts, new_refls
+
 
 class LaueBase:
     """
