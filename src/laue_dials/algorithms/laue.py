@@ -7,7 +7,7 @@ import numpy as np
 import reciprocalspaceship as rs
 from dials.array_family import flex
 from dxtbx.model import ExperimentList
-from tqdm import tqdm, trange
+from tqdm import trange
 
 from laue_dials.algorithms.diffgeo import hkl2ray
 
@@ -91,7 +91,7 @@ def gen_beam_models(expts, refls):
         -------
         new_expts : ExperimentList
             ExperimentList with additional beam models and adjusted identifiers
-        new_refls : reflection_table
+        refls : reflection_table
             A reflection_table with updated identifiers
     """
     # Imports
@@ -102,7 +102,6 @@ def gen_beam_models(expts, refls):
 
     # Instantiate new ExperimentList/reflection_table
     new_expts = ExperimentList()
-    new_refls = refls.copy()
 
     # Unassign all reflections from experiments
     new_refls["id"] = flex.int([-1] * len(new_refls))
@@ -128,7 +127,6 @@ def gen_beam_models(expts, refls):
     predictor = ExperimentsPredictorFactory.from_experiments(new_expts)
     new_refls = predictor(new_refls)
     return new_expts, new_refls
-
 
 class LaueBase:
     """
@@ -345,7 +343,7 @@ class LauePredictor(LaueBase):
         """
         Calls parent LaueBase init
         """
-        super().__init__(s0, cell, R, lam_min, lam_max, dmin, spacegroup="1")
+        super().__init__(s0, cell, R, lam_min, lam_max, dmin, spacegroup=spacegroup)
 
     def predict_s1(self, delete_harmonics=False):
         """

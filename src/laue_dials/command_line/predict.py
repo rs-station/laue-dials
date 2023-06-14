@@ -51,7 +51,7 @@ wavelengths {
   lam_min = 0.95
     .type = float(value_min=0.1)
     .help = "Minimum wavelength for beam spectrum"
-  lam_max = 1.15
+  lam_max = 1.25
     .type = float(value_min=0.2)
     .help = "Maximum wavelength for beam spectrum"
   }
@@ -127,7 +127,7 @@ def predict_spots(params, refls, expts):
             params.wavelengths.lam_min,
             params.wavelengths.lam_max,
             params.reciprocal_grid.d_min,
-            spacegroup,
+            spacegroup=spacegroup,
         )
 
         # Predict spots
