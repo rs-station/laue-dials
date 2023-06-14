@@ -121,6 +121,11 @@ def run(args=None, *, phil=working_phil):
         logger.info("The following parameters have been modified:\n")
         logger.info(diff_phil)
 
+    # Print help if no input                                        
+    if not params.input.experiments or not params.input.reflections:
+        parser.print_help()                                         
+        return                                                      
+
     # Load files
     expts = ExperimentListFactory.from_json_file(
         params.input.experiments[0].filename, check_format=False

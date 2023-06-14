@@ -127,6 +127,11 @@ def run(args=None, *, phil=working_phil):
         logger.info("The following parameters have been modified:\n")
         logger.info(diff_phil)
 
+    # Print help if no input                                        
+    if not params.input.experiments or not params.input.reflections:
+        parser.print_help()                                         
+        return                                                      
+
     # Load data
     reflections, expts = reflections_and_experiments_from_files(
         params.input.reflections, params.input.experiments

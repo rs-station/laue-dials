@@ -73,6 +73,11 @@ def run(args=None, *, phil=working_phil):
         logger.info("The following parameters have been modified:\n")
         logger.info(diff_phil)
 
+    # Print help if no input                                        
+    if len(files) == 0:
+        parser.print_help()                                         
+        return                                                      
+
     # Loop over input files
     logger.info("Beginning combination.")
     total_integrated_mtz = rs.read_mtz(files[0])  # First still
