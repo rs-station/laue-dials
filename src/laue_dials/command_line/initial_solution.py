@@ -30,7 +30,7 @@ Examples:
 """
 
 # Set the phil scope
-master_phil = libtbx.phil.parse(
+main_phil = libtbx.phil.parse(
     """
 laue_output {
   strong_filename = 'strong.refl'
@@ -129,7 +129,7 @@ indexer {
 """
 )
 
-working_phil = master_phil.fetch(sources=[spotfinder_phil, indexer_phil])
+working_phil = main_phil.fetch(sources=[spotfinder_phil, indexer_phil])
 
 
 @show_mail_handle_errors()
