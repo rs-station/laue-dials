@@ -104,41 +104,29 @@ def gen_beam_models(expts, refls):
     new_expts = ExperimentList()
 
     # Unassign all reflections from experiments
-    old_ids = refls["id"]
-    new_ids = np.full(len(refls), -1, dtype=int)
+    new_refls["id"] = flex.int([-1] * len(new_refls))
 
     # Generate beams per reflection
     exp_id = -1
-    fails = 0
-    for i in trange(len(refls)):
+    for i, refl in tqdm(enumerate(refls.rows())):
         try:
             # New beam per reflection
-            exp_id = exp_id + 1
-            expt = expts[old_ids[exp_id + fails]]
+            expt = expts[refl["id"]]
             new_expt = expt
             new_expt.beam = deepcopy(expt.beam)
-            new_expt.beam.set_wavelength(refls[i]["wavelength"])
-            s0 = (
-                expt.beam.get_s0() / np.linalg.norm(expt.beam.get_s0())
-            ) / new_expt.beam.get_wavelength()
-            new_expt.beam.set_s0(s0)
+            new_expt.beam.set_wavelength(refl["wavelength"])  # Also updates s0
+            exp_id = exp_id + 1  # Increment experiment ID
             new_expt.identifier = str(exp_id)
             new_expts.append(new_expt)
-            new_ids[exp_id + fails] = exp_id
+            new_refls["id"][i] = exp_id
         except:
             print("Warning: Unindexed strong spot has wavelength 0.")
-            fails = fails + 1
-            exp_id = exp_id - 1
-            new_ids[exp_id + fails] = -1
             continue
 
-    # Set refl IDs
-    refls["id"] = flex.int(new_ids)
-
     # Repredict centroids
-    ref_predictor = ExperimentsPredictorFactory.from_experiments(new_expts)
-    ref_predictor(refls)
-    return new_expts, refls
+    predictor = ExperimentsPredictorFactory.from_experiments(new_expts)
+    new_refls = predictor(new_refls)
+    return new_expts, new_refls
 
 
 class LaueBase:
