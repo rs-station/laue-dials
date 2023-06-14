@@ -6,12 +6,12 @@ Example:
   laue.sequence_to_stills monochromatic.expt monochromatic.refl
 """
 
-
+import sys
 import logging
 
 from dials.array_family import flex
 from dials.array_family.flex import reflection_table
-from dials.util import log, show_mail_handle_errors
+from dials.util import show_mail_handle_errors
 from dials.util.options import (OptionParser,
                                 reflections_and_experiments_from_files)
 from dxtbx.model import MosaicCrystalSauter2014
@@ -177,8 +177,32 @@ def run(args=None, phil=phil_scope):
     )
     params, options = parser.parse_args(args=args, show_diff_phil=True)
 
-    # Configure logging
-    log.config(verbosity=options.verbose, logfile=params.output.log)
+    # Configure logging                                                         
+    console = logging.StreamHandler(sys.stdout)                                 
+    fh = logging.FileHandler(params.output.log, mode="w", encoding="utf-8")
+    loglevel = logging.INFO                                                     
+                                                                                
+    logger.addHandler(fh)                                                       
+    logger.addHandler(console)                                                  
+    logging.captureWarnings(True)                                               
+    warning_logger = logging.getLogger("py.warnings")                           
+    warning_logger.addHandler(fh)                                               
+    warning_logger.addHandler(console)                                          
+    dials_logger = logging.getLogger("dials")                                   
+    dials_logger.addHandler(fh)                                                 
+    dials_logger.addHandler(console)                                            
+    dxtbx_logger = logging.getLogger("dxtbx")                                   
+    dxtbx_logger.addHandler(fh)                                                 
+    dxtbx_logger.addHandler(console)                                            
+    xfel_logger = logging.getLogger("xfel")                                     
+    xfel_logger.addHandler(fh)                                                  
+    xfel_logger.addHandler(console)                                             
+                                                                                
+    logger.setLevel(loglevel)                                                   
+    dials_logger.setLevel(loglevel)                                             
+    dxtbx_logger.setLevel(loglevel)                                             
+    xfel_logger.setLevel(loglevel)                                              
+    fh.setLevel(loglevel)                                                       
 
     # Try to load the models and data
     if not params.input.experiments or not params.input.reflections:
@@ -193,12 +217,13 @@ def run(args=None, phil=phil_scope):
         experiments, reflections, params
     )
     # Write out the output experiments, reflections
-    print("Writing output data.")
+    logger.info("Writing output data.")
     total_reflections = reflection_table()
     for i in trange(len(new_experiments)):
         elist = ExperimentList()
         elist.append(new_experiments[i])
         total_reflections.extend(new_reflections[i])
+        logger.info(f"Saving image {i:06d} data.")
         elist.as_file(f"split_image{i:06d}.expt")
         new_reflections[i].as_file(f"split_image{i:06d}.refl")
 

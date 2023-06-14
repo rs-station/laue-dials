@@ -2,13 +2,15 @@
 """
 This script handles polychromatic geometry refinement.
 """
+
+import sys
 import logging
 import time
 
 import libtbx.phil
 from dials.array_family.flex import reflection_table
 from dials.command_line.refine import run_dials_refine
-from dials.util import log, show_mail_handle_errors
+from dials.util import show_mail_handle_errors
 from dials.util.options import ArgumentParser
 from dxtbx.model.experiment_list import ExperimentListFactory
 
@@ -90,6 +92,8 @@ output {
   experiments = poly_refined.expt
 
   reflections = poly_refined.refl
+
+  log = laue.poly_refined.log
 }
 """
 )
@@ -112,8 +116,32 @@ def run(args=None, *, phil=working_phil):
     )
     params, options = parser.parse_args(args=args, show_diff_phil=False)
 
-    # Configure logging
-    log.config(verbosity=options.verbose, logfile=params.output.log)
+    # Configure logging                                                         
+    console = logging.StreamHandler(sys.stdout)                                 
+    fh = logging.FileHandler(params.output.log, mode="w", encoding="utf-8")
+    loglevel = logging.INFO                                                     
+                                                                                
+    logger.addHandler(fh)                                                       
+    logger.addHandler(console)                                                  
+    logging.captureWarnings(True)                                               
+    warning_logger = logging.getLogger("py.warnings")                           
+    warning_logger.addHandler(fh)                                               
+    warning_logger.addHandler(console)                                          
+    dials_logger = logging.getLogger("dials")                                   
+    dials_logger.addHandler(fh)                                                 
+    dials_logger.addHandler(console)                                            
+    dxtbx_logger = logging.getLogger("dxtbx")                                   
+    dxtbx_logger.addHandler(fh)                                                 
+    dxtbx_logger.addHandler(console)                                            
+    xfel_logger = logging.getLogger("xfel")                                     
+    xfel_logger.addHandler(fh)                                                  
+    xfel_logger.addHandler(console)                                             
+                                                                                
+    logger.setLevel(loglevel)                                                   
+    dials_logger.setLevel(loglevel)                                             
+    dxtbx_logger.setLevel(loglevel)                                             
+    xfel_logger.setLevel(loglevel)                                              
+    fh.setLevel(loglevel)                                                       
 
     # Log diff phil
     diff_phil = parser.diff_phil.as_str()
