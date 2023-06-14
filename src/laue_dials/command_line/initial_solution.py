@@ -3,8 +3,8 @@
 This script performs a monochromatic pipeline for an initial solution to feed
 into the Laue pipeline.
 """
-import sys
 import logging
+import sys
 import time
 
 import libtbx.phil
@@ -181,10 +181,10 @@ def run(args=None, *, phil=working_phil):
         logger.info("The following parameters have been modified:\n")
         logger.info(diff_phil)
 
-    # Print help if no input                                        
+    # Print help if no input
     if not params.input.experiments:
-        parser.print_help()                                         
-        return                                                      
+        parser.print_help()
+        return
 
     # Import images into expt file
     imported_expts = params.input.experiments[0][1]
