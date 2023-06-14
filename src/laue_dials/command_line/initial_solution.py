@@ -10,7 +10,7 @@ import libtbx.phil
 from dials.util import log, show_mail_handle_errors
 from dials.util.options import ArgumentParser
 
-from laue_dials.algorithms.monochromatic import (find_spots, initial_index)
+from laue_dials.algorithms.monochromatic import find_spots, initial_index
 
 logger = logging.getLogger("laue-dials.command_line.initial_solution")
 
