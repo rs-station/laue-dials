@@ -107,7 +107,7 @@ def run(args=None, *, phil=working_phil):
         phil=phil,
         read_reflections=True,
         read_experiments=True,
-        check_format=True,
+        check_format=False,
         epilog=help_message,
     )
     params, options = parser.parse_args(args=args, show_diff_phil=False)
@@ -123,7 +123,7 @@ def run(args=None, *, phil=working_phil):
 
     # Load files
     expts = ExperimentListFactory.from_json_file(
-        params.input.experiments[0].filename, check_format=True
+        params.input.experiments[0].filename, check_format=False
     )
     refls = reflection_table.from_file(params.input.reflections[0].filename)
     refls = refls.select(refls["wavelength"] != 0)  # Remove unindexed reflections
