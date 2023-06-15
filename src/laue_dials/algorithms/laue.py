@@ -5,10 +5,9 @@ Classes and functions for Laue-specific processes.
 import gemmi
 import numpy as np
 import reciprocalspaceship as rs
-from tqdm import tqdm
 from dials.array_family import flex
 from dxtbx.model import ExperimentList
-from tqdm import trange
+from tqdm import tqdm, trange
 
 from laue_dials.algorithms.diffgeo import hkl2ray
 
