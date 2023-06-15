@@ -8,6 +8,7 @@ Example:
 
 import sys
 import logging
+import time
 
 from dials.array_family import flex
 from dials.array_family.flex import reflection_table
@@ -213,6 +214,9 @@ def run(args=None, phil=phil_scope):
         params.input.reflections, params.input.experiments
     )
 
+    # Get initial time for process
+    start_time = time.time()      
+
     (new_experiments, new_reflections) = sequence_to_stills(
         experiments, reflections, params
     )
@@ -227,9 +231,13 @@ def run(args=None, phil=phil_scope):
         elist.as_file(f"split_image{i:06d}.expt")
         new_reflections[i].as_file(f"split_image{i:06d}.refl")
 
+    # Final logs                                                                
+    logger.info("")                                                             
+    logger.info(                                                                
+        "Time Taken for Total Processing = %f seconds", time.time() - start_time
+    )                                                                           
     # ExperimentList(new_experiments).as_file('stills.expt')
     # total_reflections.as_file('stills.refl')
-
 
 if __name__ == "__main__":
     run()

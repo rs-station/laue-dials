@@ -5,6 +5,7 @@ This script optimizes Miller indices and wavelengths jointly.
 
 import sys
 import logging
+import time
 
 import libtbx.phil
 from dials.array_family.flex import reflection_table
@@ -240,6 +241,9 @@ def run(args=None, *, phil=working_phil):
         parser.print_help()
         return
 
+    # Get initial time for process
+    start_time = time.time()      
+
     # Loop over input files
     total_experiments = ExperimentList()
     total_reflections = reflection_table()
@@ -261,6 +265,11 @@ def run(args=None, *, phil=working_phil):
     logger.info("Saving optimized reflections to %s", params.output.reflections)
     total_reflections.as_file(filename=params.output.reflections)
 
+    # Final logs                                                                
+    logger.info("")                                                             
+    logger.info(                                                                
+        "Time Taken for Total Processing = %f seconds", time.time() - start_time
+    )                                                                           
 
 if __name__ == "__main__":
     run()

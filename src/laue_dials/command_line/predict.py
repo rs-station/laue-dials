@@ -5,6 +5,7 @@ This script predicts reflections for integration
 
 import sys
 import logging
+import time
 
 import gemmi
 import libtbx.phil
@@ -238,6 +239,9 @@ def run(args=None, *, phil=working_phil):
         parser.print_help()                                         
         return                                                      
 
+    # Get initial time for process
+    start_time = time.time()      
+
     # Load data
     reflections, experiments = reflections_and_experiments_from_files(
         params.input.reflections, params.input.experiments
@@ -293,6 +297,11 @@ def run(args=None, *, phil=working_phil):
     logger.info("Saving predicted reflections to %s", params.output.reflections)
     predicted_reflections.as_file(filename=params.output.reflections)
 
+    # Final logs                                                                
+    logger.info("")                                                             
+    logger.info(                                                                
+        "Time Taken for Total Processing = %f seconds", time.time() - start_time
+    )                                                                           
 
 if __name__ == "__main__":
     run()

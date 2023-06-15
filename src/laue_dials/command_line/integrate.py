@@ -5,6 +5,8 @@ This script generates integrated MTZ files from refined data with predictions
 
 import sys
 import logging
+import time
+
 from functools import partial
 from itertools import repeat
 from multiprocessing import Pool
@@ -176,6 +178,9 @@ def run(args=None, *, phil=working_phil):
     tables = list(map(get_refls, ids))
     inputs = list(zip(repeat(params), imagesets, tables))
 
+    # Get initial time for process
+    start_time = time.time()      
+
     # Multiprocess integration
     num_processes = params.n_proc
     print("Starting integration")
@@ -222,6 +227,11 @@ def run(args=None, *, phil=working_phil):
     logger.info("Saving integrated reflections to %s", params.output.filename)
     data.write_mtz(params.output.filename, skip_problem_mtztypes=True)
 
+    # Final logs                                                                
+    logger.info("")                                                             
+    logger.info(                                                                
+        "Time Taken for Total Processing = %f seconds", time.time() - start_time
+    )                                                                           
 
 if __name__ == "__main__":
     run()

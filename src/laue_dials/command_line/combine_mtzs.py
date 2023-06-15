@@ -5,6 +5,7 @@ This script combines integrated MTZ files by image into one single MTZ file.
 
 import sys
 import logging
+import time
 
 import libtbx.phil
 import reciprocalspaceship as rs
@@ -103,6 +104,9 @@ def run(args=None, *, phil=working_phil):
         parser.print_help()                                         
         return                                                      
 
+    # Get initial time for process
+    start_time = time.time()      
+
     # Loop over input files
     logger.info("Beginning combination.")
     total_integrated_mtz = rs.read_mtz(files[0])  # First still
@@ -127,6 +131,11 @@ def run(args=None, *, phil=working_phil):
     logger.info("Saving combined MTZ data to %s", params.output.filename)
     total_integrated_mtz.write_mtz(params.output.filename)
 
+    # Final logs                                                                
+    logger.info("")                                                             
+    logger.info(                                                                
+        "Time Taken for Total Processing = %f seconds", time.time() - start_time
+    )                                                                           
 
 if __name__ == "__main__":
     run()
