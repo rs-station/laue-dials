@@ -105,7 +105,7 @@ def run(args=None, *, phil=working_phil):
         return
 
     # Get initial time for process
-    start_time = time.time()      
+    start_time = time.time()
 
     # Loop over input files
     logger.info("Beginning combination.")
@@ -131,11 +131,12 @@ def run(args=None, *, phil=working_phil):
     logger.info("Saving combined MTZ data to %s", params.output.filename)
     total_integrated_mtz.write_mtz(params.output.filename)
 
-    # Final logs                                                                
-    logger.info("")                                                             
-    logger.info(                                                                
+    # Final logs
+    logger.info("")
+    logger.info(
         "Time Taken for Total Processing = %f seconds", time.time() - start_time
-    )                                                                           
+    )
+
 
 if __name__ == "__main__":
     run()
