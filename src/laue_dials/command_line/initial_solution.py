@@ -11,7 +11,7 @@ import libtbx.phil
 from dials.util import show_mail_handle_errors
 from dials.util.options import ArgumentParser
 
-from laue_dials.algorithms.monochromatic import find_spots, initial_index
+from laue_dials.algorithms.monochromatic import find_spots, initial_index, scan_varying_refine
 
 logger = logging.getLogger("laue-dials.command_line.initial_solution")
 
@@ -23,7 +23,8 @@ table to use as an initial monochromatic solution to feed
 into the remainder of the pipeline. The outputs are a pair of
 files (monochromatic.expt, monochromatic.refl) that constitute a
 monochromatic estimate of a geometric solution for the crystal and
-experiment. Spotfinding and indexing are done in this script.
+experiment. Spotfinding, indexing, scan-varying refinement,
+and conversion into stills are all done in this script.
 
 Examples:
 
@@ -39,13 +40,22 @@ laue_output {
     .help = "The output spotfinding reflection table filename."
 
   indexed {
-    experiments = 'monochromatic.expt'
+    experiments = 'indexed.expt'
       .type = str
       .help = "The output indexed experiment list filename."
 
-    reflections = 'monochromatic.refl'
+    reflections = 'indexed.refl'
       .type = str
       .help = "The output indexed reflection table filename."
+  }
+
+  refined {
+      experiments = 'monochromatic.expt'
+        .type = str
+        .help = "The output experiment list stills filename."
+      reflections = 'monochromatic.refl'
+        .type = str
+        .help = "The output reflection table stills filename."
   }
 
   log = 'laue.initial_solution.log'
@@ -59,6 +69,10 @@ spotfinder {
 
 indexer {
   include scope dials.command_line.index.phil_scope
+}
+
+refiner {
+  include scope dials.command_line.refine.phil_scope
 }
 """,
     process_includes=True,
@@ -128,7 +142,40 @@ indexer {
 """
 )
 
-working_phil = main_phil.fetch(sources=[spotfinder_phil, indexer_phil])
+refiner_phil = libtbx.phil.parse(
+    """
+refiner {
+  refinement {
+    parameterisation {
+      goniometer {
+        fix = None
+      }
+      beam {
+        fix = all
+      }
+      crystal {
+        fix = cell
+      }
+      detector {
+        fix = orientation
+      }
+      scan_varying = True
+    }
+    reflections {
+      outlier {
+        algorithm = tukey
+        tukey {
+          iqr_multiplier = 0.
+        }
+        minimum_number_of_reflections = 1
+      }
+    }
+  }
+}
+"""
+)
+
+working_phil = main_phil.fetch(sources=[spotfinder_phil, indexer_phil, refiner_phil])
 
 
 @show_mail_handle_errors()
@@ -233,12 +280,36 @@ def run(args=None, *, phil=working_phil):
     logger.info("")
     logger.info("Time Taken Indexing = %f seconds", time.time() - index_time)
 
+    # Perform scan-varying refinement
+    refine_time = time.time()
+
+    logger.info("")
+    logger.info("*" * 80)
+    logger.info("Performing geometric refinement")
+    logger.info("*" * 80)
+
+    refined_expts, refined_refls = scan_varying_refine(
+        params.refiner, indexed_expts, indexed_refls
+    )
+
+    logger.info(
+        "Saving refined experiments to %s", params.laue_output.refined.experiments
+    )
+    refined_expts.as_file(params.laue_output.refined.experiments)
+
+    logger.info(
+        "Saving refined reflections to %s", params.laue_output.refined.reflections
+    )
+    refined_refls.as_file(filename=params.laue_output.refined.reflections)
+
+    logger.info("")
+    logger.info("Time Taken Refining = %f seconds", time.time() - refine_time)
+
     # Final logs
     logger.info("")
     logger.info(
         "Time Taken for Total Processing = %f seconds", time.time() - start_time
     )
-
 
 if __name__ == "__main__":
     run()

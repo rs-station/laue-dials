@@ -90,7 +90,7 @@ def sequence_to_stills(experiments, reflections, params):
                         deg=True,
                     )
                     * goniometer_setting_matrix
-                    * matrix.sqr(experiment.crystal.get_A())
+                    * matrix.sqr(experiment.crystal.get_A_at_scan_point(i_scan_point))
                 )
                 crystal = MosaicCrystalSauter2014(experiment.crystal)
                 crystal.set_A(A)
@@ -128,8 +128,7 @@ def sequence_to_stills(experiments, reflections, params):
         # Split experiment by scan points
         for i_scan_point in range(*experiment.scan.get_array_range()):
             new_experiment = Experiment(
-                #                identifier = str(len(crystals)*expt_id + i_scan_point),
-                identifier=str(0),
+                identifier=str(i_scan_point),
                 detector=experiment.detector,
                 beam=experiment.beam,
                 crystal=crystals[i_scan_point],
@@ -145,12 +144,12 @@ def sequence_to_stills(experiments, reflections, params):
         subrefls = reflections.select((i_scan_point >= z1) & (i_scan_point < z2))
         new_refls = subrefls.copy()
         new_refls["xyzobs.px.value"] = subrefls["xyzobs.px.value"] - [0.0, 0.0, 0.5]
-        new_refls["imageset_id"] = flex.int(len(new_refls), 0)
+        new_refls["imageset_id"] = flex.int(len(new_refls), i_scan_point)
         x, y, _ = subrefls["xyzobs.mm.value"].parts()
         new_refls["xyzobs.mm.value"] = flex.vec3_double(
             x, y, flex.double(len(new_refls), 0)
         )
-        new_refls["id"] = flex.int(len(new_refls), 0)
+        new_refls["id"] = flex.int(len(new_refls), i_scan_point)
         new_reflections.append(new_refls)
     return (new_experiments, new_reflections)
 
@@ -224,20 +223,15 @@ def run(args=None, phil=phil_scope):
     logger.info("Writing output data.")
     total_reflections = reflection_table()
     for i in trange(len(new_experiments)):
-        elist = ExperimentList()
-        elist.append(new_experiments[i])
         total_reflections.extend(new_reflections[i])
-        logger.info(f"Saving image {i:06d} data.")
-        elist.as_file(f"split_image{i:06d}.expt")
-        new_reflections[i].as_file(f"split_image{i:06d}.refl")
 
     # Final logs                                                                
     logger.info("")                                                             
     logger.info(                                                                
-        "Time Taken for Total Processing = %f seconds", time.time() - start_time
+        "Time Taken to Split into Stills = %f seconds", time.time() - start_time
     )                                                                           
-    # ExperimentList(new_experiments).as_file('stills.expt')
-    # total_reflections.as_file('stills.refl')
+    ExperimentList(new_experiments).as_file('stills.expt')
+    total_reflections.as_file('stills.refl')
 
 if __name__ == "__main__":
     run()
