@@ -238,7 +238,7 @@ def run(args=None, *, phil=working_phil):
         return
 
     # Get initial time for process
-    start_time = time.time()      
+    start_time = time.time()
 
     # This will populate ['s1'] & ['rlp'] columns
     reflections.centroid_px_to_mm(experiments)
@@ -265,11 +265,12 @@ def run(args=None, *, phil=working_phil):
     logger.info("Saving optimized reflections to %s", params.output.reflections)
     total_reflections.as_file(filename=params.output.reflections)
 
-    # Final logs                                                                
-    logger.info("")                                                             
-    logger.info(                                                                
+    # Final logs
+    logger.info("")
+    logger.info(
         "Time Taken for Total Processing = %f seconds", time.time() - start_time
-    )                                                                           
+    )
+
 
 if __name__ == "__main__":
     run()

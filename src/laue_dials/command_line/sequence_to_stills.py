@@ -214,7 +214,7 @@ def run(args=None, phil=phil_scope):
     )
 
     # Get initial time for process
-    start_time = time.time()      
+    start_time = time.time()
 
     (new_experiments, new_reflections) = sequence_to_stills(
         experiments, reflections, params
