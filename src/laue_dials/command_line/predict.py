@@ -104,6 +104,9 @@ def predict_spots(params, refls, expts):
             cryst.get_space_group().type().universal_hermann_mauguin_symbol()
         )
 
+        # Get mask
+        mask = experiment.imageset.get_mask(0)[0]
+
         # Get beam vector
         s0 = np.array(experiment.beam.get_s0())
 
@@ -115,12 +118,7 @@ def predict_spots(params, refls, expts):
         U = np.asarray(cryst.get_U()).reshape(3, 3)
 
         # Get observed centroids
-        sub_refls = refls.select(refls["imageset_id"] == img_num)
-        sub_refls["xyzobs.mm.value"].parts()[0].as_numpy_array()
-        sub_refls["xyzobs.mm.value"].parts()[1].as_numpy_array()
-
-        # Wavelengths per spot
-        sub_refls["wavelength"].as_numpy_array()
+        sub_refls = refls.select(refls["id"] == img_num)
 
         # Generate predictor object
         la = LauePredictor(
@@ -145,7 +143,7 @@ def predict_spots(params, refls, expts):
 
         # Populate needed columns
         preds["id"] = flex.int([int(experiment.identifier)] * len(preds))
-        preds["imageset_id"] = flex.int([img_num] * len(preds))
+        preds["imageset_id"] = flex.int([sub_refls[0]['imageset_id']] * len(preds))
         preds["s1"] = flex.vec3_double(s1)
         preds["phi"] = flex.double(np.zeros(len(s1)))  # Data are stills
         preds["wavelength"] = flex.double(new_lams)
@@ -161,8 +159,25 @@ def predict_spots(params, refls, expts):
         _, _, kde = gen_kde(expts, refls)
 
         # Get predicted centroids
-        x = preds["xyzcal.mm"].parts()[0].as_numpy_array()
-        y = preds["xyzcal.mm"].parts()[1].as_numpy_array()
+        x, y, _ = preds["xyzcal.mm"].parts()
+
+        # Convert to pixel units
+        px_size = experiment.detector.to_dict()['panels'][0]['pixel_size']
+        x = x / px_size[0]
+        y = y / px_size[1]
+
+        # Convert centroids to integer pixels
+        x = np.asarray(flex.floor(x).iround())
+        y = np.asarray(flex.floor(y).iround())
+
+        # Remove predictions in masked areas
+        img_row_size = experiment.detector.to_dict()['panels'][0]['image_size'][1]
+        sel = np.full(len(x), True) 
+        for i in range(len(preds)):
+            if not mask[x[i] + img_row_size*y[i]]:
+                sel[i] = False
+        preds = preds.select(flex.bool(sel))
+        new_lams = new_lams[sel]
 
         # Get probability densities for predictions:
         rlps = preds["rlp"].as_numpy_array()
@@ -173,9 +188,6 @@ def predict_spots(params, refls, expts):
         # Cut off using log probabilities
         cutoff_log = params.cutoff_log_probability
         sel = np.log(probs) >= cutoff_log
-        x[sel]
-        y[sel]
-        probs[sel]
         preds = preds.select(flex.bool(sel))
 
         # Append image predictions to dataset
