@@ -75,17 +75,21 @@ def integrate_image(params, img_set, refls):
     isigi_cutoff = 2.0  # i/sigma cutoff for strong spot profiles
 
     # Make SegmentedImage
+    logger.info("Getting pixel data.")
     all_spots = refls["xyzcal.px"].as_numpy_array()[:, :2].astype("float32")
     pixels = img_set.get_raw_data(0)[0].as_numpy_array().astype("float32")
+    logger.info("Making SegmentedImage.")
     sim = SegmentedImage(pixels, all_spots)
 
     # Get integrated reflections only
     refls = refls.select(flex.bool(sim.used_reflections))
 
     # Integrate reflections
+    logger.info("Integrating image.")
     sim.integrate(isigi_cutoff)
 
     # Update reflection data
+    logger.info("Updating intensity data")
     i = np.zeros(len(refls))
     sigi = np.zeros(len(refls))
     bg = np.zeros(len(refls))
@@ -183,10 +187,11 @@ def run(args=None, *, phil=working_phil):
 
     # Multiprocess integration
     num_processes = params.n_proc
-    print("Starting integration")
+    logger.info("Starting integration.")
+    refls_arr = integrate_image(inputs[0][0], inputs[0][1], inputs[0][2])
     with Pool(processes=num_processes) as pool:
         refls_arr = pool.starmap(integrate_image, inputs)
-    print("Integration finished.")
+    logger.info("Integration finished.")
 
     # Construct an integrated reflection table
     final_refls = flex.reflection_table()
@@ -195,6 +200,7 @@ def run(args=None, *, phil=working_phil):
     refls = final_refls
 
     # Get data needed for MTZ file
+    logger.info("Converting to MTZ format.")
     hkl = refls["miller_index"].as_vec3_double()
     cell = np.zeros(6)
     for crystal in expts.crystals():
@@ -210,7 +216,7 @@ def run(args=None, *, phil=working_phil):
             "H": hkl.as_numpy_array()[:, 0].astype(np.int32),
             "K": hkl.as_numpy_array()[:, 1].astype(np.int32),
             "L": hkl.as_numpy_array()[:, 2].astype(np.int32),
-            "BATCH": refls["imageset_id"].as_numpy_array() + 1,
+            "BATCH": refls["id"].as_numpy_array() + 1,
             "I": refls["intensity.sum.value"].as_numpy_array(),
             "SIGI": refls["intensity.sum.variance"].as_numpy_array() ** 0.5,
             "xcal": refls["xyzcal.px"].as_numpy_array()[:, 0],

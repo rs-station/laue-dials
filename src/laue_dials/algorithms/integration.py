@@ -60,7 +60,7 @@ class Profile:
         self.integrate()
         return self
 
-    def fit(self, nsteps=20):
+    def fit(self, nsteps=5):
         self.success = True
         for i in range(nsteps):
             try:
