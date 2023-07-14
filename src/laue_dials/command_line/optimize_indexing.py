@@ -93,10 +93,6 @@ def index_image(params, refls, expts):
     if type(expts) != ExperimentList:
         expts = ExperimentList([expts])
 
-    # This will populate refls['s1'] & refls['rlp']
-    refls.centroid_px_to_mm(expts)
-    refls.map_centroids_to_reciprocal_space(expts)
-
     s0 = np.array(expts[0].beam.get_s0())
 
     # Write to reflection file
@@ -244,12 +240,16 @@ def run(args=None, *, phil=working_phil):
     # Get initial time for process
     start_time = time.time()      
 
+    # This will populate ['s1'] & ['rlp'] columns
+    reflections.centroid_px_to_mm(experiments)
+    reflections.map_centroids_to_reciprocal_space(experiments)
+
     # Loop over input files
     total_experiments = ExperimentList()
     total_reflections = reflection_table()
     for i in range(len(experiments)):
         # Reindex data
-        print(f"Reindexing experiment {i}.")
+        logger.info(f"Reindexing experiment {i}.")
         j = int(experiments[i].identifier)
         indexed_experiments, indexed_reflections = index_image(
             params, reflections.select(reflections["id"] == j), experiments[i]
