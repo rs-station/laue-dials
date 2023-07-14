@@ -143,7 +143,7 @@ def predict_spots(params, refls, expts):
 
         # Populate needed columns
         preds["id"] = flex.int([int(experiment.identifier)] * len(preds))
-        preds["imageset_id"] = flex.int([sub_refls[0]['imageset_id']] * len(preds))
+        preds["imageset_id"] = flex.int([sub_refls[0]["imageset_id"]] * len(preds))
         preds["s1"] = flex.vec3_double(s1)
         preds["phi"] = flex.double(np.zeros(len(s1)))  # Data are stills
         preds["wavelength"] = flex.double(new_lams)
@@ -162,7 +162,7 @@ def predict_spots(params, refls, expts):
         x, y, _ = preds["xyzcal.mm"].parts()
 
         # Convert to pixel units
-        px_size = experiment.detector.to_dict()['panels'][0]['pixel_size']
+        px_size = experiment.detector.to_dict()["panels"][0]["pixel_size"]
         x = x / px_size[0]
         y = y / px_size[1]
 
@@ -171,10 +171,10 @@ def predict_spots(params, refls, expts):
         y = np.asarray(flex.floor(y).iround())
 
         # Remove predictions in masked areas
-        img_row_size = experiment.detector.to_dict()['panels'][0]['image_size'][1]
-        sel = np.full(len(x), True) 
+        img_row_size = experiment.detector.to_dict()["panels"][0]["image_size"][1]
+        sel = np.full(len(x), True)
         for i in range(len(preds)):
-            if not mask[x[i] + img_row_size*y[i]]:
+            if not mask[x[i] + img_row_size * y[i]]:
                 sel[i] = False
         preds = preds.select(flex.bool(sel))
         new_lams = new_lams[sel]

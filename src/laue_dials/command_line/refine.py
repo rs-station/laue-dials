@@ -159,7 +159,9 @@ def run(args=None, *, phil=working_phil):
         params.input.experiments[0].filename, check_format=False
     )
     input_refls = reflection_table.from_file(params.input.reflections[0].filename)
-    input_refls = input_refls.select(input_refls["wavelength"] != 0)  # Remove unindexed reflections
+    input_refls = input_refls.select(
+        input_refls["wavelength"] != 0
+    )  # Remove unindexed reflections
 
     # Initialize arrays for final results
     total_refined_expts = ExperimentList()
@@ -170,7 +172,9 @@ def run(args=None, *, phil=working_phil):
 
     for i in range(len(input_expts)):
         expts = ExperimentList([input_expts[i]])
-        refls = input_refls.select(flex.bool(input_refls["id"] == int(expts[0].identifier)))
+        refls = input_refls.select(
+            flex.bool(input_refls["id"] == int(expts[0].identifier))
+        )
         original_ids = refls["id"]
         refls["id"] = flex.int([0] * len(refls))
         refls["imageset_id"] = flex.int([0] * len(refls))
@@ -180,40 +184,40 @@ def run(args=None, *, phil=working_phil):
         logger.info("*" * 80)
         logger.info(f"Generating beam models for experiment {i}.")
         logger.info("*" * 80)
-    
+
         multi_expts, multi_refls = gen_beam_models(expts, refls)
-    
+
         # Perform refinement
         logger.info("")
         logger.info("*" * 80)
         logger.info(f"Performing geometric refinement on experiment {i}.")
         logger.info("*" * 80)
-    
+
         refined_expts, refined_refls, _, _ = run_dials_refine(
             multi_expts, multi_refls, params
         )
-    
+
         # For the usual case of refinement of one crystal, print that model for information
         crystals = refined_expts.crystals()
         if len(crystals) == 1:
             logger.info("")
             logger.info(f"Final refined crystal model for experiment {i}.")
             logger.info(crystals[0])
-    
+
         logger.info("")
         logger.info("*" * 80)
         logger.info(f"Storing refined wavelengths for experiment {i}.")
         logger.info("*" * 80)
-    
+
         refined_refls = store_wavelengths(refined_expts, refined_refls)
         refined_refls.map_centroids_to_reciprocal_space(refined_expts)
-    
+
         # Strip beam objects and reset reflection IDs
         logger.info("")
         logger.info("*" * 80)
         logger.info(f"Removing beam objects for experiment {i}.")
         logger.info("*" * 80)
-    
+
         refined_expts = remove_beam_models(refined_expts, original_ids[0])
         refined_refls["id"] = original_ids
 
