@@ -45,13 +45,16 @@ def store_wavelengths(expts, refls):
     return new_refls
 
 
-def remove_beam_models(expts):
+def remove_beam_models(expts, new_id):
     """
     A function for removing beam models no longer needed after refinement
         Parameters
         ----------
         expts : ExperimentList
             ExperimentList to remove beams from
+
+        new_id : Int
+            ID to assign to final experiment
 
         Returns
         -------
@@ -72,7 +75,7 @@ def remove_beam_models(expts):
                 break
             i = i + 1
         expt = expts[i]
-        expt.identifier = str(img_num)  # Reset identifier to match image
+        expt.identifier = str(new_id)  # Reset identifier to match image
         new_expts.append(expt)
     return new_expts
 
