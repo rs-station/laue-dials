@@ -9,8 +9,9 @@ from dials.array_family import flex
 def gen_kde(elist, refls):
     """This function trains a Gaussian KDE on 1/d^2 and wavelengths of submitted strong spots"""
     # Firstly remove all harmonic reflections from consideration
-    harmonics = refls["harmonics"].as_numpy_array()
-    refls = refls.select(flex.bool(~harmonics))
+    if "harmonics" in refls:
+        harmonics = refls["harmonics"].as_numpy_array()
+        refls = refls.select(flex.bool(~harmonics))
 
     # Get rlps and normalize
     refls.map_centroids_to_reciprocal_space(elist)
