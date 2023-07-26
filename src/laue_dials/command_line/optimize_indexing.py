@@ -6,6 +6,9 @@ This script optimizes Miller indices and wavelengths jointly.
 import logging
 import sys
 import time
+from itertools import repeat
+from multiprocessing import Pool
+import numpy as np
 
 import libtbx.phil
 from dials.array_family.flex import reflection_table
@@ -52,6 +55,10 @@ output {
     .help = "The log filename."
   }
 
+n_proc = 1
+  .type = int
+  .help = Number of parallel processes to run
+
 n_macrocycles = 3
   .type = int(value_min=1)
   .help = "Number of macrocycles of index optimization to perform"
@@ -79,17 +86,15 @@ working_phil = phil_scope.fetch(sources=[phil_scope])
 
 
 def index_image(params, refls, expts):
-    #
     import gemmi
-    import numpy as np
     from cctbx.sgtbx import space_group
     from cctbx.uctbx import unit_cell
     from dials.array_family import flex
     from dxtbx.model import ExperimentList
-    from tqdm import trange
 
     from laue_dials.algorithms.laue import LaueAssigner
 
+    logger.info(f"Reindexing experiment {refls['id'][0]}.")
     if type(expts) != ExperimentList:
         expts = ExperimentList([expts])
 
@@ -136,7 +141,8 @@ def index_image(params, refls, expts):
 
         # Optimize Miller indices
         la.assign()
-        for j in trange(params.n_macrocycles):
+        for j in range(params.n_macrocycles):
+            logger.info(f"Running macrocycle {j}.")
             la.reset_inliers()
             la.update_rotation()
             la.assign()
@@ -170,6 +176,7 @@ def index_image(params, refls, expts):
         )
 
     # Return reindexed expts, refls
+    logger.info(f"Experiment {refls['id'][0]} reindexed.")
     return expts, refls
 
 
@@ -244,18 +251,27 @@ def run(args=None, *, phil=working_phil):
     reflections.centroid_px_to_mm(experiments)
     reflections.map_centroids_to_reciprocal_space(experiments)
 
-    # Loop over input files
+    # Prepare parallel input
+    ids = list(np.unique(reflections["id"]).astype(np.int32))
+    expts_arr = []
+    refls_arr = []
+    for i in ids: # Split DIALS objects into lists
+        expts_arr.append(ExperimentList([experiments[i]]))
+        refls_arr.append(reflections.select(reflections["id"] == i))
+    inputs = list(zip(repeat(params), refls_arr, expts_arr))
+
+    # Reindex data
+    num_processes = params.n_proc
+    with Pool(processes=num_processes) as pool:
+        output = pool.starmap(index_image, inputs)
+    logger.info(f"All images reindexed.")
+
+    # Convert reindexed data to DIALS objects
     total_experiments = ExperimentList()
     total_reflections = reflection_table()
-    for i in range(len(experiments)):
-        # Reindex data
-        logger.info(f"Reindexing experiment {i}.")
-        j = int(experiments[i].identifier)
-        indexed_experiments, indexed_reflections = index_image(
-            params, reflections.select(reflections["id"] == j), experiments[i]
-        )
-        total_experiments.extend(indexed_experiments)
-        total_reflections.extend(indexed_reflections)
+    for i in ids:
+        total_experiments.extend(output[i][0])
+        total_reflections.extend(output[i][1])
 
     # Save experiments
     logger.info("Saving optimized experiments to %s", params.output.experiments)
