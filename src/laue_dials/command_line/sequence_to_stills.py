@@ -225,13 +225,14 @@ def run(args=None, phil=phil_scope):
     for i in trange(len(new_experiments)):
         total_reflections.extend(new_reflections[i])
 
-    # Final logs                                                                
-    logger.info("")                                                             
-    logger.info(                                                                
+    # Final logs
+    logger.info("")
+    logger.info(
         "Time Taken to Split into Stills = %f seconds", time.time() - start_time
-    )                                                                           
-    ExperimentList(new_experiments).as_file('stills.expt')
-    total_reflections.as_file('stills.refl')
+    )
+    ExperimentList(new_experiments).as_file("stills.expt")
+    total_reflections.as_file("stills.refl")
+
 
 if __name__ == "__main__":
     run()

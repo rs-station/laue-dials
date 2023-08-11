@@ -223,7 +223,9 @@ def run(args=None, *, phil=working_phil):
         params.input.experiments[0].filename, check_format=False
     )
     input_refls = reflection_table.from_file(params.input.reflections[0].filename)
-    input_refls = input_refls.select(input_refls["wavelength"] != 0)  # Remove unindexed reflections
+    input_refls = input_refls.select(
+        input_refls["wavelength"] != 0
+    )  # Remove unindexed reflections
 
     # Get initial time for process
     start_time = time.time()
