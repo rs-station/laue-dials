@@ -6,6 +6,8 @@ This script predicts reflections for integration
 import logging
 import sys
 import time
+from itertools import repeat
+from multiprocessing import Pool
 
 import gemmi
 import libtbx.phil
@@ -16,7 +18,7 @@ from dials.array_family.flex import reflection_table
 from dials.util import show_mail_handle_errors
 from dials.util.options import (ArgumentParser,
                                 reflections_and_experiments_from_files)
-from tqdm import trange
+from dxtbx.model import ExperimentList
 
 from laue_dials.algorithms.outliers import gen_kde
 
@@ -50,6 +52,10 @@ output {
     .help = "The log filename."
   }
 
+n_proc = 1
+  .type = int
+  .help = Number of parallel processes to run
+
 wavelengths {
   lam_min = 0.95
     .type = float(value_min=0.1)
@@ -80,25 +86,19 @@ def predict_spots(params, refls, expts):
     A function for predicting spots given a geometry
     """
     from laue_dials.algorithms.laue import LauePredictor
+    img_num = refls["id"][0]
 
     # Remove outliers
-    print("Removing outliers")
+    logger.info(f"Removing outliers for experiment {img_num}.")
     refls = refls.select(refls.get_flags(refls.flags.used_in_refinement))
 
     # Set up reflection table to store valid predictions
     final_preds = reflection_table()
 
-    # Get experiment data from experiment objects
-    print("Making predictions per image")
-    for img_num in trange(len(expts.imagesets())):
-        i = 0
-        img = expts.imagesets()[img_num]
+    try:
+        # Get experiment data from experiment objects
+        logger.info(f"Making predictions for experiment {img_num}.")
         experiment = expts[0]
-        while True:  # Get first expt for this image
-            experiment = expts[i]
-            if experiment.imageset == img:
-                break
-            i = i + 1
         cryst = experiment.crystal
         spacegroup = gemmi.SpaceGroup(
             cryst.get_space_group().type().universal_hermann_mauguin_symbol()
@@ -155,9 +155,6 @@ def predict_spots(params, refls, expts):
         preds = preds.select(intersects)
         new_lams = new_lams[intersects]
 
-        # Generate a KDE
-        _, _, kde = gen_kde(expts, refls)
-
         # Get predicted centroids
         x, y, _ = preds["xyzcal.mm"].parts()
 
@@ -178,20 +175,12 @@ def predict_spots(params, refls, expts):
                 sel[i] = False
         preds = preds.select(flex.bool(sel))
         new_lams = new_lams[sel]
+    except:
+        logger.warning(f"WARNING: Could not predict reflections for experiment {img_num}. Image skipped.")
+        return reflection_table() # Return empty on failure
 
-        # Get probability densities for predictions:
-        rlps = preds["rlp"].as_numpy_array()
-        norms = (np.linalg.norm(rlps, axis=1)) ** 2
-        pred_data = [norms, new_lams]
-        probs = kde.pdf(pred_data)
-
-        # Cut off using log probabilities
-        cutoff_log = params.cutoff_log_probability
-        sel = np.log(probs) >= cutoff_log
-        preds = preds.select(flex.bool(sel))
-
-        # Append image predictions to dataset
-        final_preds.extend(preds)
+    # Append image predictions to dataset
+    final_preds.extend(preds)
 
     # Return predicted refls
     return final_preds
@@ -265,19 +254,53 @@ def run(args=None, *, phil=working_phil):
         parser.print_help()
         return
 
-    # Loop over experiments
-    # Reindex data
-    print(f"Predicting reflections")
-    predicted_reflections = predict_spots(params, reflections, experiments)
+    # Prepare parallel input
+    ids = list(np.unique(reflections["id"]).astype(np.int32))
+    expts_arr = []
+    refls_arr = []
+    for i in range(len(ids)): # Split DIALS objects into lists
+        expts_arr.append(ExperimentList([experiments[i]]))
+        refls_arr.append(reflections.select(reflections["id"] == ids[i]))
+    inputs = list(zip(repeat(params), refls_arr, expts_arr))
+
+    # Predict reflections
+    logger.info(f"Predicting reflections")
+    num_processes = params.n_proc
+    with Pool(processes=num_processes) as pool:
+        output = pool.starmap(predict_spots, inputs)
+
+    # Convert output to single reflection table
+    predicted_reflections = reflection_table()
+    for table in output:
+        predicted_reflections.extend(table)
+
+    # Generate a KDE
+    logger.info("Training model for resolution-dependent bandwidth")
+    _, _, kde = gen_kde(experiments, predicted_reflections)
+
+    # Get probability densities for predictions:
+    logger.info("Calculating prediction probabilities")
+    rlps = predicted_reflections["rlp"].as_numpy_array()
+    norms = (np.linalg.norm(rlps, axis=1)) ** 2
+    lams = predicted_reflections["wavelength"].as_numpy_array()
+    pred_data = [norms, lams]
+    probs = kde.pdf(pred_data)
+
+    # Cut off using log probabilities
+    logger.info("Removing improbable reflections")
+    cutoff_log = params.cutoff_log_probability
+    sel = np.log(probs) >= cutoff_log
+    predicted_reflections = predicted_reflections.select(flex.bool(sel))
 
     # Mark strong spots
+    logger.info("Marking strong predictions")
     idpred, idstrong = predicted_reflections.match_by_hkle(reflections)
     strongs = np.zeros(len(predicted_reflections), dtype=int)
     strongs[idpred] = 1
     predicted_reflections["strong"] = flex.int(strongs)
 
-    print(f"Assigning intensities")
-    for i in trange(len(idstrong)):
+    logger.info(f"Assigning intensities")
+    for i in range(len(idstrong)):
         predicted_reflections["intensity.sum.value"][idpred[i]] = reflections[
             "intensity.sum.value"
         ][idstrong[i]]

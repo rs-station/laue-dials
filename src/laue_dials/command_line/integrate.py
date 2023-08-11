@@ -187,7 +187,6 @@ def run(args=None, *, phil=working_phil):
     # Multiprocess integration
     num_processes = params.n_proc
     logger.info("Starting integration.")
-    refls_arr = integrate_image(inputs[0][0], inputs[0][1], inputs[0][2])
     with Pool(processes=num_processes) as pool:
         refls_arr = pool.starmap(integrate_image, inputs)
     logger.info("Integration finished.")
