@@ -6,11 +6,11 @@ This script handles polychromatic geometry refinement.
 import logging
 import sys
 import time
-import numpy as np
 from itertools import repeat
 from multiprocessing import Pool
 
 import libtbx.phil
+import numpy as np
 from dials.array_family import flex
 from dials.array_family.flex import reflection_table
 from dials.command_line.refine import run_dials_refine
@@ -109,6 +109,7 @@ output {
 
 working_phil = main_phil.fetch(sources=[refiner_phil])
 
+
 def refine_image(params, expts, refls):
     img_num = refls["id"][0]
     original_ids = refls["id"]
@@ -133,8 +134,10 @@ def refine_image(params, expts, refls):
             multi_expts, multi_refls, params
         )
     except:
-        logger.warning(f"WARNING: Experiment {img_num} could not be refined. Skipping image.")
-        return ExperimentList(), reflection_table() # Return empty
+        logger.warning(
+            f"WARNING: Experiment {img_num} could not be refined. Skipping image."
+        )
+        return ExperimentList(), reflection_table()  # Return empty
 
     crystals = refined_expts.crystals()
     # For the usual case of refinement of one crystal, print that model for information
@@ -162,7 +165,6 @@ def refine_image(params, expts, refls):
 
     logger.info(f"Finished refining image {img_num}.")
     return refined_expts, refined_refls
-
 
 
 @show_mail_handle_errors()

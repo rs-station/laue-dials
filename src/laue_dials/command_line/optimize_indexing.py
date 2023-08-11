@@ -8,9 +8,9 @@ import sys
 import time
 from itertools import repeat
 from multiprocessing import Pool
-import numpy as np
 
 import libtbx.phil
+import numpy as np
 from dials.array_family.flex import reflection_table
 from dials.util import show_mail_handle_errors
 from dials.util.options import (ArgumentParser,
@@ -255,7 +255,7 @@ def run(args=None, *, phil=working_phil):
     ids = list(np.unique(reflections["id"]).astype(np.int32))
     expts_arr = []
     refls_arr = []
-    for i in ids: # Split DIALS objects into lists
+    for i in ids:  # Split DIALS objects into lists
         expts_arr.append(ExperimentList([experiments[i]]))
         refls_arr.append(reflections.select(reflections["id"] == i))
     inputs = list(zip(repeat(params), refls_arr, expts_arr))
