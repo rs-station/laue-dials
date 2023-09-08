@@ -13,4 +13,3 @@ gemmi
 matplotlib
 scipy
 jupyter
-bash_kernel
