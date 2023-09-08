@@ -24,6 +24,8 @@ jobs:
 
     - name: Check versions of files
       run: |
+        pwd
+        ls
         cat setup.sfg
         cat docs/conf.py
         cat docs/cli/initial_solution.rst
