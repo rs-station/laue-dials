@@ -19,8 +19,11 @@ from dials.util.options import ArgumentParser
 from dxtbx.model import ExperimentList
 from dxtbx.model.experiment_list import ExperimentListFactory
 
-from laue_dials.algorithms.laue import (gen_beam_models, remove_beam_models,
-                                        store_wavelengths)
+from laue_dials.algorithms.laue import (
+    gen_beam_models,
+    remove_beam_models,
+    store_wavelengths,
+)
 
 logger = logging.getLogger("laue-dials.command_line.refine")
 
@@ -92,7 +95,7 @@ refinement {
 
       min_nref_per_parameter = 1
     }
-    
+
     spherical_relp_model = True
   }
 }
