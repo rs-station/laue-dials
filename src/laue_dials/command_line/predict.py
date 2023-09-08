@@ -89,7 +89,6 @@ def predict_spots(params, refls, expts):
     img_num = refls["id"][0]
 
     # Remove outliers
-    logger.info(f"Removing outliers for experiment {img_num}.")
     refls = refls.select(refls.get_flags(refls.flags.used_in_refinement))
 
     # Set up reflection table to store valid predictions
@@ -97,7 +96,6 @@ def predict_spots(params, refls, expts):
 
     try:
         # Get experiment data from experiment objects
-        logger.info(f"Making predictions for experiment {img_num}.")
         experiment = expts[0]
         cryst = experiment.crystal
         spacegroup = gemmi.SpaceGroup(

@@ -74,21 +74,17 @@ def integrate_image(params, img_set, refls):
     isigi_cutoff = 2.0  # i/sigma cutoff for strong spot profiles
 
     # Make SegmentedImage
-    logger.info("Getting pixel data.")
     all_spots = refls["xyzcal.px"].as_numpy_array()[:, :2].astype("float32")
     pixels = img_set.get_raw_data(0)[0].as_numpy_array().astype("float32")
-    logger.info("Making SegmentedImage.")
     sim = SegmentedImage(pixels, all_spots)
 
     # Get integrated reflections only
     refls = refls.select(flex.bool(sim.used_reflections))
 
     # Integrate reflections
-    logger.info("Integrating image.")
     sim.integrate(isigi_cutoff)
 
     # Update reflection data
-    logger.info("Updating intensity data")
     i = np.zeros(len(refls))
     sigi = np.zeros(len(refls))
     bg = np.zeros(len(refls))

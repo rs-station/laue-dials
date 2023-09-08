@@ -115,19 +115,9 @@ def refine_image(params, expts, refls):
     refls["id"] = flex.int([0] * len(refls))
     refls["imageset_id"] = flex.int([0] * len(refls))
     # Generate beam models
-    logger.info("")
-    logger.info("*" * 80)
-    logger.info(f"Generating beam models for experiment {img_num}.")
-    logger.info("*" * 80)
-
     multi_expts, multi_refls = gen_beam_models(expts, refls)
 
     # Perform refinement
-    logger.info("")
-    logger.info("*" * 80)
-    logger.info(f"Performing geometric refinement on experiment {img_num}.")
-    logger.info("*" * 80)
-
     try:
         refined_expts, refined_refls, _, _ = run_dials_refine(
             multi_expts, multi_refls, params
@@ -137,30 +127,16 @@ def refine_image(params, expts, refls):
         return ExperimentList(), reflection_table() # Return empty
 
     crystals = refined_expts.crystals()
-    # For the usual case of refinement of one crystal, print that model for information
-    if len(crystals) == 1:
-        logger.info("")
-        logger.info(f"Final refined crystal model for experiment {img_num}.")
-        logger.info(crystals[0])
 
-    logger.info("")
-    logger.info("*" * 80)
-    logger.info(f"Storing refined wavelengths for experiment {img_num}.")
-    logger.info("*" * 80)
-
+    # Write wavelengths and centroid data
     refined_refls = store_wavelengths(refined_expts, refined_refls)
     refined_refls.map_centroids_to_reciprocal_space(refined_expts)
 
     # Strip beam objects and reset reflection IDs
-    logger.info("")
-    logger.info("*" * 80)
-    logger.info(f"Removing beam objects for experiment {img_num}.")
-    logger.info("*" * 80)
-
     refined_expts = remove_beam_models(refined_expts, original_ids[0])
     refined_refls["id"] = original_ids
 
-    logger.info(f"Finished refining image {img_num}.")
+    # Return refined data
     return refined_expts, refined_refls
 
 

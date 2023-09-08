@@ -94,7 +94,6 @@ def index_image(params, refls, expts):
 
     from laue_dials.algorithms.laue import LaueAssigner
 
-    logger.info(f"Reindexing experiment {refls['id'][0]}.")
     if type(expts) != ExperimentList:
         expts = ExperimentList([expts])
 
@@ -142,7 +141,6 @@ def index_image(params, refls, expts):
         # Optimize Miller indices
         la.assign()
         for j in range(params.n_macrocycles):
-            logger.info(f"Running macrocycle {j}.")
             la.reset_inliers()
             la.update_rotation()
             la.assign()
@@ -176,7 +174,6 @@ def index_image(params, refls, expts):
         )
 
     # Return reindexed expts, refls
-    logger.info(f"Experiment {refls['id'][0]} reindexed.")
     return expts, refls
 
 
