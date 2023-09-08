@@ -37,10 +37,12 @@ jobs:
         conda config --set solver libmamba
         conda create -c conda-forge -y --name dials dials
         conda info
-        $CONDA/bin/activate dials
+        conda activate dials
+        echo $CONDA_PREFIX
 
     - name: Install pip dependencies
       run: |
+        echo $CONDA_PREFIX
         python -m pip install --upgrade pip
         pip install -e ".[docs]"
 
