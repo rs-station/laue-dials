@@ -86,6 +86,7 @@ def predict_spots(params, refls, expts):
     A function for predicting spots given a geometry
     """
     from laue_dials.algorithms.laue import LauePredictor
+
     img_num = refls["id"][0]
 
     # Remove outliers
@@ -174,8 +175,10 @@ def predict_spots(params, refls, expts):
         preds = preds.select(flex.bool(sel))
         new_lams = new_lams[sel]
     except:
-        logger.warning(f"WARNING: Could not predict reflections for experiment {img_num}. Image skipped.")
-        return reflection_table() # Return empty on failure
+        logger.warning(
+            f"WARNING: Could not predict reflections for experiment {img_num}. Image skipped."
+        )
+        return reflection_table()  # Return empty on failure
 
     # Append image predictions to dataset
     final_preds.extend(preds)
@@ -256,7 +259,7 @@ def run(args=None, *, phil=working_phil):
     ids = list(np.unique(reflections["id"]).astype(np.int32))
     expts_arr = []
     refls_arr = []
-    for i in range(len(ids)): # Split DIALS objects into lists
+    for i in range(len(ids)):  # Split DIALS objects into lists
         expts_arr.append(ExperimentList([experiments[i]]))
         refls_arr.append(reflections.select(reflections["id"] == ids[i]))
     inputs = list(zip(repeat(params), refls_arr, expts_arr))
