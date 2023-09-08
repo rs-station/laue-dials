@@ -36,24 +36,27 @@ jobs:
         miniconda-version: "latest"
         channels: conda-forge, defaults
 
-    - name: Install DIALS environment
+    - name: Install DIALS environment and more
       run: |
         conda install -n base conda-libmamba-solver
         conda config --set solver libmamba
         conda install -c conda-forge -y dials
         conda info
         conda list
-
-    - name: Install pip dependencies
-      run: |
         python -m pip install --upgrade pip
         pip install -e ".[docs]"
-
-    - name: Build documentation
-      run: |
         cd docs
+        conda list
         make clean
         make html
+  # - name: Install pip dependencies
+  #    run: |
+        
+
+
+   # - name: Build documentation
+   #   run: |
+
         
     - name: Commit documentation changes to gh-pages
       run: |
