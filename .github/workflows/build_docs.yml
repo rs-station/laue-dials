@@ -31,6 +31,8 @@ jobs:
 
     - name: Install DIALS environment
       run: |
+        conda install -n base conda-libmamba-solver
+        conda config --set solver libmamba
         conda create -c conda-forge -y --name dials dials
         conda info
         $CONDA/bin/activate dials
