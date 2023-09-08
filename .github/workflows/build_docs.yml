@@ -44,6 +44,7 @@ jobs:
 
     - name: Build documentation
       run: |
+        git checkout sphinx
         cd docs
         make clean
         make html
