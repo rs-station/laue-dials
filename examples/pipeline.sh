@@ -3,13 +3,6 @@
 
 FILE_INPUT_TEMPLATE="PATH/TO/DATA/e080_###.mccd"
 
-# Make needed directories
-mkdir stills
-mkdir optimized
-mkdir refined
-mkdir predicted
-mkdir integrated
-
 # Import data into DIALS files
 dials.import geometry.scan.oscillation=0,1 \
     geometry.goniometer.axes=0,1,0 \
@@ -22,25 +15,12 @@ laue.initial_solution imported.expt indexer.indexing.known_symmetry.space_group=
 
 # Split sequence into stills
 laue.sequence_to_stills monochromatic.*
-mv split_image* stills/
 
 # Polychromatic portion
 N=12 # Max multiprocessing
-for i in $(seq -f "%06g" 0 178) # Can change 178 to smaller number of images to analyze
-do
-  ((j=j%N)); ((j++==0)) && wait; # Batch processing
-  (echo "Analyzing image ${i}.";
-
-  laue.optimize_indexing stills/split_image${i}.* output.experiments="optimized/optimized${i}.expt" output.reflections="optimized/optimized${i}.refl" log="optimized/laue.optimize_indexing${i}.log";
-
-  laue.refine optimized/optimized${i}.* output.experiments="refined/poly_refined${i}.expt" output.reflections="refined/poly_refined${i}.refl" output.log="refined/laue.poly_refined${i}.log";
-
-  laue.predict refined/poly_refined${i}.* output.reflections="predicted/predicted${i}.refl" output.log="predicted/laue.predict${i}.log";
-
-  laue.integrate refined/poly_refined${i}.expt predicted/predicted${i}.refl output.filename="integrated/integrated${i}.mtz" output.log="integrated/laue.integrate${i}.log" n_proc=12
-  );
-done
-
-laue.combine_mtzs integrated/integrated*.mtz
+laue.optimize_indexing stills.* output.experiments="optimized.expt" output.reflections="optimized.refl" log="laue.optimize_indexing.log" n_proc=N
+laue.refine optimized.* output.experiments="poly_refined.expt" output.reflections="poly_refined.refl" output.log="laue.poly_refined.log" n_proc=N
+laue.predict poly_refined.* output.reflections="predicted.refl" output.log="laue.predict.log" n_proc=N
+laue.integrate poly_refined.expt predicted.refl output.filename="integrated.mtz" output.log="laue.integrate.log" n_proc=N
 
 # This is where laue_dials ends. The output file total_integrated.mtz can be merged in careless and refined in phenix to get a model
