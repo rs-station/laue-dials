@@ -22,4 +22,3 @@ Full parameter definitions
 .. phil:: laue_dials.command_line.sequence_to_stills.phil_scope
    :expert-level: 2
    :attributes-level: 2
-
