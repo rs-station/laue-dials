@@ -129,7 +129,7 @@ def refine_image(params, expts, refls):
         )
         return ExperimentList(), reflection_table()  # Return empty
 
-    crystals = refined_expts.crystals()
+    refined_expts.crystals()
 
     # Write wavelengths and centroid data
     refined_refls = store_wavelengths(refined_expts, refined_refls)
