@@ -26,7 +26,7 @@ jobs:
       run: |
         pwd
         ls
-        cat setup.sfg
+        cat setup.cfg
         cat docs/conf.py
         cat docs/cli/initial_solution.rst
         
