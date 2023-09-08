@@ -27,22 +27,17 @@ jobs:
       with:
         miniconda-version: "latest"
         channels: conda-forge, defaults
-        use-only-tar-bz2: true
-        auto-update-conda: true
-        auto-activate-base: true
 
     - name: Install DIALS environment
       run: |
         conda install -n base conda-libmamba-solver
         conda config --set solver libmamba
-        conda create -c conda-forge -y --name dials dials
+        conda install -c conda-forge -y dials
         conda info
-        conda activate dials
-        echo $CONDA_PREFIX
+        conda list
 
     - name: Install pip dependencies
       run: |
-        echo $CONDA_PREFIX
         python -m pip install --upgrade pip
         pip install -e ".[docs]"
 
