@@ -92,7 +92,7 @@ refinement {
 
       min_nref_per_parameter = 1
     }
-    
+
     spherical_relp_model = True
   }
 }
