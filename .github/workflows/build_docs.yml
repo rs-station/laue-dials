@@ -28,7 +28,7 @@ jobs:
         cat setup.cfg
         cat docs/conf.py
         cat docs/cli/initial_solution.rst
-        
+
     - name: Install Miniconda
       uses: conda-incubator/setup-miniconda@v2
       with:
@@ -50,7 +50,7 @@ jobs:
         export SPHINXBUILD="$CONDA/bin/sphinx-build"
         make clean
         make html
-        
+
     - name: Commit documentation changes to gh-pages
       run: |
         cd docs
