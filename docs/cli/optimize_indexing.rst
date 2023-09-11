@@ -1,7 +1,7 @@
 .. _optimize_indexing:
 
 laue_dials.optimize_indexing
-================
+============================
 
 Introduction
 ------------

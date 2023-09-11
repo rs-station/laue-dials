@@ -1,7 +1,7 @@
 .. _initial_solution:
 
 laue_dials.initial_solution
-================
+===========================
 
 Introduction
 ------------

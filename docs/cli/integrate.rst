@@ -1,7 +1,7 @@
 .. _integrate:
 
 laue_dials.integrate
-================
+====================
 
 Introduction
 ------------

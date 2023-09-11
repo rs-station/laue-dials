@@ -1,7 +1,7 @@
 .. _predict:
 
 laue_dials.predict
-================
+==================
 
 Introduction
 ------------

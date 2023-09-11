@@ -1,7 +1,7 @@
 .. _refine:
 
 laue_dials.refine
-================
+=================
 
 Introduction
 ------------

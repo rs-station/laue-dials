@@ -1,7 +1,7 @@
 .. _sequence_to_stills:
 
 laue_dials.sequence_to_stills
-================
+=============================
 
 .. Introduction
 .. ------------
