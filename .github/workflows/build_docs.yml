@@ -41,11 +41,10 @@ jobs:
         conda install -n base conda-libmamba-solver
         conda config --set solver libmamba
         conda env list
-        conda install -c conda-forge -y dials
+        conda install -n test -c conda-forge -y dials
         conda info
         conda list
-        python -m pip install --upgrade pip
-        pip install -e ".[docs]"
+        $CONDA/envs/test/bin/pip install -e ".[docs]"
         cd docs
         conda list
         make clean
