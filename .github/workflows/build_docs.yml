@@ -1,4 +1,5 @@
 name: Documentation
+
 on:
   push:
     branches:
@@ -33,26 +34,22 @@ jobs:
       with:
         miniconda-version: "latest"
         channels: conda-forge, defaults
+        auto-activate-base: true
+        activate-environment: ""
 
     - name: Install DIALS environment and more
       run: |
         conda install -n base conda-libmamba-solver
         conda config --set solver libmamba
-        conda install -c conda-forge -y dials
+        conda install -n base -c conda-forge -y dials
         conda info
         conda list
-        python -m pip install --upgrade pip
-        pip install -e ".[docs]"
+        $CONDA/bin/pip install -e ".[docs]"
         cd docs
         conda list
+        export SPHINXBUILD="$CONDA/bin/sphinx-build"
         make clean
         make html
-  # - name: Install pip dependencies
-  #    run: |
-
-   # - name: Build documentation
-   #   run: |
-
         
     - name: Commit documentation changes to gh-pages
       run: |

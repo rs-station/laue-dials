@@ -1,6 +1,14 @@
 name: Format
 run-name: Code formatting by ${{ github.actor }}
-on: [push]
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
 jobs:
   format:
     runs-on: ${{ matrix.os }}
