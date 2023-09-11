@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>laue_dials.algorithms namespace &#8212; laue-dials</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=233b9934" />
+    <script src="../_static/jquery.js?v=5d32c60e"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+    <script src="../_static/documentation_options.js?v=7edaadd2"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="icon" href="../_static/rs-favicon_32x32.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="laue_dials.command_line namespace" href="laue_dials.command_line.html" />
+    <link rel="prev" title="laue_dials package" href="laue_dials.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-laue_dials.algorithms">
+<span id="laue-dials-algorithms-namespace"></span><h1>laue_dials.algorithms namespace<a class="headerlink" href="#module-laue_dials.algorithms" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-laue_dials.algorithms.diffgeo">
+<span id="laue-dials-algorithms-diffgeo-module"></span><h2>laue_dials.algorithms.diffgeo module<a class="headerlink" href="#module-laue_dials.algorithms.diffgeo" title="Link to this heading"></a></h2>
+<p>This file contains useful functions for diffraction geometry calculations</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="laue_dials.algorithms.diffgeo.align_hkls">
+<span class="sig-prename descclassname"><span class="pre">laue_dials.algorithms.diffgeo.</span></span><span class="sig-name descname"><span class="pre">align_hkls</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reference</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spacegroup</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">anomalous</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/algorithms/diffgeo.html#align_hkls"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.algorithms.diffgeo.align_hkls" title="Link to this definition"></a></dt>
+<dd><p>Use the point group operators in <cite>spacegroup</cite> to align target hkls to reference.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>reference</strong> (<em>array</em>) – n x 3 array of miller indices</p></li>
+<li><p><strong>target</strong> (<em>array</em>) – n x 3 array of miller indices</p></li>
+<li><p><strong>spacegroup</strong> (<em>gemmi.Spacegroup</em>) – The space group of reference/target.</p></li>
+<li><p><strong>anomalous</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a><em>(</em><em>optional</em><em>)</em>) – If true, test Friedel symmetries too.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>aligned</strong> – n x 3 array of miller indices equivalent to target</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="laue_dials.algorithms.diffgeo.get_UB_matrices">
+<span class="sig-prename descclassname"><span class="pre">laue_dials.algorithms.diffgeo.</span></span><span class="sig-name descname"><span class="pre">get_UB_matrices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/algorithms/diffgeo.html#get_UB_matrices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.algorithms.diffgeo.get_UB_matrices" title="Link to this definition"></a></dt>
+<dd><p>Convert the reciprocal space indexing matrix, A into the product of
+an orthogonal matrix U and a lower triangular matrix B</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>A</strong> (<em>np.array</em>) – A 3x3 indexing matrix such that the scattering vector <cite>S1-S0=Q=A&#64;h</cite></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>U</strong> (<em>np.array</em>) – An orthogonal 3x3 matrix</p></li>
+<li><p><strong>B</strong> (<em>np.array</em>) – A 3x3 lower triangular matrix</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="laue_dials.algorithms.diffgeo.hkl2ray">
+<span class="sig-prename descclassname"><span class="pre">laue_dials.algorithms.diffgeo.</span></span><span class="sig-name descname"><span class="pre">hkl2ray</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hkl</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelength</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/algorithms/diffgeo.html#hkl2ray"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.algorithms.diffgeo.hkl2ray" title="Link to this definition"></a></dt>
+<dd><p>Convert a miller index to the shortest member of its central ray.
+Optionally, adjust its wavelength accordingly.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>hkl</strong> (<em>array</em>) – <cite>n x 3</cite> array of miller indices. the dtype must be interpretable as an integer</p></li>
+<li><p><strong>wavelength</strong> (<em>array</em><em> (</em><em>optional</em><em>)</em>) – length <cite>n</cite> array of wavelengths corresponding to each miller index</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>reduced_hkl</strong> (<em>array</em>) – The miller index of the shortest vector on the same central ray as hkl</p></li>
+<li><p><strong>reduced_wavelength</strong> (<em>array (optional)</em>) – The wavelengths corresponding to reduced_hkl</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="laue_dials.algorithms.diffgeo.is_ray_equivalent">
+<span class="sig-prename descclassname"><span class="pre">laue_dials.algorithms.diffgeo.</span></span><span class="sig-name descname"><span class="pre">is_ray_equivalent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hkl1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hkl2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/algorithms/diffgeo.html#is_ray_equivalent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.algorithms.diffgeo.is_ray_equivalent" title="Link to this definition"></a></dt>
+<dd><p>Test for equivalency between two miller indices in a Laue experiment. Returns a boolean array for each of the <cite>n</cite> hkls in <cite>hkl{1,2}</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>hkl1</strong> (<em>array</em>) – <cite>n x 3</cite> array of miller indices. the dtype must be interpretable as an integer</p></li>
+<li><p><strong>hkl2</strong> (<em>array</em>) – <cite>n x 3</cite> array of miller indices. the dtype must be interpretable as an integer</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>equal_hkl</strong> – Boolean array for hkl equivalency by index from original arrays</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="laue_dials.algorithms.diffgeo.mat_to_rot_xyz">
+<span class="sig-prename descclassname"><span class="pre">laue_dials.algorithms.diffgeo.</span></span><span class="sig-name descname"><span class="pre">mat_to_rot_xyz</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">R</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/algorithms/diffgeo.html#mat_to_rot_xyz"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.algorithms.diffgeo.mat_to_rot_xyz" title="Link to this definition"></a></dt>
+<dd><p>Decompose a rotation matrix into euler angles</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>R</strong> (<em>array</em>) – 3 x 3 rotation matrix</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>rot_x, rot_y, rot_z</strong> – Euler angles to generate rotation matrix</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>floats</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="laue_dials.algorithms.diffgeo.normalize">
+<span class="sig-prename descclassname"><span class="pre">laue_dials.algorithms.diffgeo.</span></span><span class="sig-name descname"><span class="pre">normalize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/algorithms/diffgeo.html#normalize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.algorithms.diffgeo.normalize" title="Link to this definition"></a></dt>
+<dd><p>Normalize the last dimension of an array by dividing by its L2 norm</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>A</strong> (<em>np.array</em>) – A non-normal matrix</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>A</strong> – A normalized matrix</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="laue_dials.algorithms.diffgeo.orthogonalization">
+<span class="sig-prename descclassname"><span class="pre">laue_dials.algorithms.diffgeo.</span></span><span class="sig-name descname"><span class="pre">orthogonalization</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/algorithms/diffgeo.html#orthogonalization"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.algorithms.diffgeo.orthogonalization" title="Link to this definition"></a></dt>
+<dd><p>Compute the orthogonalization matrix from cell params</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong> (<em>floats</em>) – Floats representing the magnitudes of the three unit cell axes</p></li>
+<li><p><strong>b</strong> (<em>floats</em>) – Floats representing the magnitudes of the three unit cell axes</p></li>
+<li><p><strong>c</strong> (<em>floats</em>) – Floats representing the magnitudes of the three unit cell axes</p></li>
+<li><p><strong>alpha</strong> (<em>floats</em>) – Floats representing the three unit cell angles</p></li>
+<li><p><strong>beta</strong> (<em>floats</em>) – Floats representing the three unit cell angles</p></li>
+<li><p><strong>gamma</strong> (<em>floats</em>) – Floats representing the three unit cell angles</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>orthogonalization_matrix</strong> – 3 x 3 orthogonalization matrix for unit cell</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="laue_dials.algorithms.diffgeo.rot_xyz_to_mat">
+<span class="sig-prename descclassname"><span class="pre">laue_dials.algorithms.diffgeo.</span></span><span class="sig-name descname"><span class="pre">rot_xyz_to_mat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rot_x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rot_y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rot_z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/algorithms/diffgeo.html#rot_xyz_to_mat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.algorithms.diffgeo.rot_xyz_to_mat" title="Link to this definition"></a></dt>
+<dd><p>Convert euler angles into a rotation matrix</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rot_x</strong> (<em>floats</em>) – Euler angles to generate rotation matrix</p></li>
+<li><p><strong>rot_y</strong> (<em>floats</em>) – Euler angles to generate rotation matrix</p></li>
+<li><p><strong>rot_z</strong> (<em>floats</em>) – Euler angles to generate rotation matrix</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>R</strong> – 3 x 3 rotation matrix</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-laue_dials.algorithms.integration">
+<span id="laue-dials-algorithms-integration-module"></span><h2>laue_dials.algorithms.integration module<a class="headerlink" href="#module-laue_dials.algorithms.integration" title="Link to this heading"></a></h2>
+<p>This file contains useful classes and functions for profiling and integration</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="laue_dials.algorithms.integration.Profile">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">laue_dials.algorithms.integration.</span></span><span class="sig-name descname"><span class="pre">Profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">counts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cen_x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cen_y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fg_cutoff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bg_cutoff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minfrac</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frac_step_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/algorithms/integration.html#Profile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.algorithms.integration.Profile" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.11/library/functions.html#object" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="py property">
+<dt class="sig sig-object py" id="laue_dials.algorithms.integration.Profile.background">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">background</span></span><a class="headerlink" href="#laue_dials.algorithms.integration.Profile.background" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="laue_dials.algorithms.integration.Profile.difference_vectors">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">difference_vectors</span></span><a class="headerlink" href="#laue_dials.algorithms.integration.Profile.difference_vectors" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="laue_dials.algorithms.integration.Profile.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nsteps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/algorithms/integration.html#Profile.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.algorithms.integration.Profile.fit" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="laue_dials.algorithms.integration.Profile.from_dataframe">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dataframe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'dx'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'dy'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">count_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'counts'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/algorithms/integration.html#Profile.from_dataframe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.algorithms.integration.Profile.from_dataframe" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="laue_dials.algorithms.integration.Profile.integrate">
+<span class="sig-name descname"><span class="pre">integrate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/algorithms/integration.html#Profile.integrate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.algorithms.integration.Profile.integrate" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="laue_dials.algorithms.integration.Profile.set_profile_params">
+<span class="sig-name descname"><span class="pre">set_profile_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scale</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slope</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intercept</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cen_x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cen_y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/algorithms/integration.html#Profile.set_profile_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.algorithms.integration.Profile.set_profile_params" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="laue_dials.algorithms.integration.Profile.update_background_plane">
+<span class="sig-name descname"><span class="pre">update_background_plane</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.9</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/algorithms/integration.html#Profile.update_background_plane"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.algorithms.integration.Profile.update_background_plane" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="laue_dials.algorithms.integration.Profile.update_mask">
+<span class="sig-name descname"><span class="pre">update_mask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fg_cutoff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bg_cutoff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/algorithms/integration.html#Profile.update_mask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.algorithms.integration.Profile.update_mask" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="laue_dials.algorithms.integration.Profile.update_profile">
+<span class="sig-name descname"><span class="pre">update_profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.9</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/algorithms/integration.html#Profile.update_profile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.algorithms.integration.Profile.update_profile" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="laue_dials.algorithms.integration.SegmentedImage">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">laue_dials.algorithms.integration.</span></span><span class="sig-name descname"><span class="pre">SegmentedImage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pixels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">centroids</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/algorithms/integration.html#SegmentedImage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.algorithms.integration.SegmentedImage" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.11/library/functions.html#object" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="laue_dials.algorithms.integration.SegmentedImage.integrate">
+<span class="sig-name descname"><span class="pre">integrate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">isigi_cutoff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">knn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/algorithms/integration.html#SegmentedImage.integrate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.algorithms.integration.SegmentedImage.integrate" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-laue_dials.algorithms.laue">
+<span id="laue-dials-algorithms-laue-module"></span><h2>laue_dials.algorithms.laue module<a class="headerlink" href="#module-laue_dials.algorithms.laue" title="Link to this heading"></a></h2>
+<p>Classes and functions for Laue-specific processes.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="laue_dials.algorithms.laue.LaueAssigner">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">laue_dials.algorithms.laue.</span></span><span class="sig-name descname"><span class="pre">LaueAssigner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lam_min</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lam_max</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dmin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spacegroup</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/algorithms/laue.html#LaueAssigner"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.algorithms.laue.LaueAssigner" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#laue_dials.algorithms.laue.LaueBase" title="laue_dials.algorithms.laue.LaueBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">LaueBase</span></code></a></p>
+<p>An object to assign miller indices to a laue still</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="laue_dials.algorithms.laue.LaueAssigner.H">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">H</span></span><a class="headerlink" href="#laue_dials.algorithms.laue.LaueAssigner.H" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="laue_dials.algorithms.laue.LaueAssigner.assign">
+<span class="sig-name descname"><span class="pre">assign</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/algorithms/laue.html#LaueAssigner.assign"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.algorithms.laue.LaueAssigner.assign" title="Link to this definition"></a></dt>
+<dd><p>Assign miller indices to the inlier reflections
+This method will update:</p>
+<blockquote>
+<div><p>self.H     – miller indices
+self.wav   – wavelengths
+self.qpred – predicted scattering vector</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="laue_dials.algorithms.laue.LaueAssigner.harmonics">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">harmonics</span></span><a class="headerlink" href="#laue_dials.algorithms.laue.LaueAssigner.harmonics" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="laue_dials.algorithms.laue.LaueAssigner.qobs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">qobs</span></span><a class="headerlink" href="#laue_dials.algorithms.laue.LaueAssigner.qobs" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="laue_dials.algorithms.laue.LaueAssigner.qpred">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">qpred</span></span><a class="headerlink" href="#laue_dials.algorithms.laue.LaueAssigner.qpred" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="laue_dials.algorithms.laue.LaueAssigner.reject_outliers">
+<span class="sig-name descname"><span class="pre">reject_outliers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nstd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/algorithms/laue.html#LaueAssigner.reject_outliers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.algorithms.laue.LaueAssigner.reject_outliers" title="Link to this definition"></a></dt>
+<dd><p>update the list of inliers</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="laue_dials.algorithms.laue.LaueAssigner.reset_inliers">
+<span class="sig-name descname"><span class="pre">reset_inliers</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/algorithms/laue.html#LaueAssigner.reset_inliers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.algorithms.laue.LaueAssigner.reset_inliers" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="laue_dials.algorithms.laue.LaueAssigner.s1">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">s1</span></span><a class="headerlink" href="#laue_dials.algorithms.laue.LaueAssigner.s1" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="laue_dials.algorithms.laue.LaueAssigner.set_H">
+<span class="sig-name descname"><span class="pre">set_H</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">H</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/algorithms/laue.html#LaueAssigner.set_H"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.algorithms.laue.LaueAssigner.set_H" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="laue_dials.algorithms.laue.LaueAssigner.set_harmonics">
+<span class="sig-name descname"><span class="pre">set_harmonics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">harmonics</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/algorithms/laue.html#LaueAssigner.set_harmonics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.algorithms.laue.LaueAssigner.set_harmonics" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="laue_dials.algorithms.laue.LaueAssigner.set_inliers">
+<span class="sig-name descname"><span class="pre">set_inliers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inliers</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/algorithms/laue.html#LaueAssigner.set_inliers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.algorithms.laue.LaueAssigner.set_inliers" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="laue_dials.algorithms.laue.LaueAssigner.set_qpred">
+<span class="sig-name descname"><span class="pre">set_qpred</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qpred</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/algorithms/laue.html#LaueAssigner.set_qpred"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.algorithms.laue.LaueAssigner.set_qpred" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="laue_dials.algorithms.laue.LaueAssigner.set_wav">
+<span class="sig-name descname"><span class="pre">set_wav</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wav</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/algorithms/laue.html#LaueAssigner.set_wav"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.algorithms.laue.LaueAssigner.set_wav" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="laue_dials.algorithms.laue.LaueAssigner.update_rotation">
+<span class="sig-name descname"><span class="pre">update_rotation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/algorithms/laue.html#LaueAssigner.update_rotation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.algorithms.laue.LaueAssigner.update_rotation" title="Link to this definition"></a></dt>
+<dd><p>Update the rotation matrix (self.R) based on the inlying refls</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="laue_dials.algorithms.laue.LaueAssigner.wav">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">wav</span></span><a class="headerlink" href="#laue_dials.algorithms.laue.LaueAssigner.wav" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="laue_dials.algorithms.laue.LaueBase">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">laue_dials.algorithms.laue.</span></span><span class="sig-name descname"><span class="pre">LaueBase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lam_min</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lam_max</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dmin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spacegroup</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/algorithms/laue.html#LaueBase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.algorithms.laue.LaueBase" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.11/library/functions.html#object" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>A base class to be extended for Laue procedures</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="laue_dials.algorithms.laue.LaueBase.RB">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">RB</span></span><a class="headerlink" href="#laue_dials.algorithms.laue.LaueBase.RB" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="laue_dials.algorithms.laue.LauePredictor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">laue_dials.algorithms.laue.</span></span><span class="sig-name descname"><span class="pre">LauePredictor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lam_min</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lam_max</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dmin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spacegroup</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/algorithms/laue.html#LauePredictor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.algorithms.laue.LauePredictor" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#laue_dials.algorithms.laue.LaueBase" title="laue_dials.algorithms.laue.LaueBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">LaueBase</span></code></a></p>
+<p>An object to predict spots given a Laue experiment.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="laue_dials.algorithms.laue.LauePredictor.predict_s1">
+<span class="sig-name descname"><span class="pre">predict_s1</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">delete_harmonics</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/algorithms/laue.html#LauePredictor.predict_s1"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.algorithms.laue.LauePredictor.predict_s1" title="Link to this definition"></a></dt>
+<dd><p>Predicts all s1 vectors for all feasible spots given some resolution-dependent bandwidth
+This method provides:</p>
+<blockquote>
+<div><p>s1_pred – predicted feasible s1 vectors
+lams – the wavelengths (in Angstroms) associated with these s1 vectors
+qall – the q vectors associated with these s1 vectors
+Hall – the miller indices associated with s1 vectors</p>
+</div></blockquote>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="laue_dials.algorithms.laue.gen_beam_models">
+<span class="sig-prename descclassname"><span class="pre">laue_dials.algorithms.laue.</span></span><span class="sig-name descname"><span class="pre">gen_beam_models</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">refls</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/algorithms/laue.html#gen_beam_models"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.algorithms.laue.gen_beam_models" title="Link to this definition"></a></dt>
+<dd><dl>
+<dt>A function for generating beam models according to wavelengths in a reflection table</dt><dd><dl class="simple">
+<dt>expts<span class="classifier">ExperimentList</span></dt><dd><p>ExperimentList to insert beams into</p>
+</dd>
+<dt>refls<span class="classifier">reflection_table</span></dt><dd><p>A reflection_table containing wavelengths for beam models</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>new_expts<span class="classifier">ExperimentList</span></dt><dd><p>ExperimentList with additional beam models and adjusted identifiers</p>
+</dd>
+<dt>refls<span class="classifier">reflection_table</span></dt><dd><p>A reflection_table with updated identifiers</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="laue_dials.algorithms.laue.remove_beam_models">
+<span class="sig-prename descclassname"><span class="pre">laue_dials.algorithms.laue.</span></span><span class="sig-name descname"><span class="pre">remove_beam_models</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/algorithms/laue.html#remove_beam_models"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.algorithms.laue.remove_beam_models" title="Link to this definition"></a></dt>
+<dd><dl>
+<dt>A function for removing beam models no longer needed after refinement</dt><dd><dl class="simple">
+<dt>expts<span class="classifier">ExperimentList</span></dt><dd><p>ExperimentList to remove beams from</p>
+</dd>
+<dt>new_id<span class="classifier">Int</span></dt><dd><p>ID to assign to final experiment</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>new_expts<span class="classifier">ExperimentList</span></dt><dd><p>An ExperimentList with an experiment per image all sharing a beam</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="laue_dials.algorithms.laue.store_wavelengths">
+<span class="sig-prename descclassname"><span class="pre">laue_dials.algorithms.laue.</span></span><span class="sig-name descname"><span class="pre">store_wavelengths</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">refls</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/algorithms/laue.html#store_wavelengths"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.algorithms.laue.store_wavelengths" title="Link to this definition"></a></dt>
+<dd><dl>
+<dt>A function for storing wavelength data in beam objects in the reflection table</dt><dd><dl class="simple">
+<dt>expts<span class="classifier">ExperimentList</span></dt><dd><p>ExperimentList to retrieve wavelengths from</p>
+</dd>
+<dt>refls<span class="classifier">reflection_table</span></dt><dd><p>A reflection_table to store wavelengths in</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>new_refls<span class="classifier">reflection_table</span></dt><dd><p>A reflection_table with updated wavelengths</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-laue_dials.algorithms.monochromatic">
+<span id="laue-dials-algorithms-monochromatic-module"></span><h2>laue_dials.algorithms.monochromatic module<a class="headerlink" href="#module-laue_dials.algorithms.monochromatic" title="Link to this heading"></a></h2>
+<p>This file contains functions for monochromatic processing</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="laue_dials.algorithms.monochromatic.find_spots">
+<span class="sig-prename descclassname"><span class="pre">laue_dials.algorithms.monochromatic.</span></span><span class="sig-name descname"><span class="pre">find_spots</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expts</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/algorithms/monochromatic.html#find_spots"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.algorithms.monochromatic.find_spots" title="Link to this definition"></a></dt>
+<dd><p>Find strong reflections on images given a set of experiments</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>phil</strong> (<em>libtbx.phil.scope_extract</em>) – A phil scope extract containing the parameters for the DIALS spotfinding code</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>refls</strong> – A reflection table containing the found strong reflections</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>reflection_table</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="laue_dials.algorithms.monochromatic.initial_index">
+<span class="sig-prename descclassname"><span class="pre">laue_dials.algorithms.monochromatic.</span></span><span class="sig-name descname"><span class="pre">initial_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">refls</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/algorithms/monochromatic.html#initial_index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.algorithms.monochromatic.initial_index" title="Link to this definition"></a></dt>
+<dd><p>Indexes a dataset at a single wavelength using FFT3D</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>phil</strong> (<em>libtbx.phil.scope_extract</em>) – A phil scope extract containing the parameters for the DIALS indexing code</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>expts_indexed</strong> (<em>ExperimentList</em>) – An ExperimentList containing the indexing solution geometry</p></li>
+<li><p><strong>refls_indexed</strong> (<em>reflection_table</em>) – A reflection table containing reflections with indexing data</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="laue_dials.algorithms.monochromatic.scan_varying_refine">
+<span class="sig-prename descclassname"><span class="pre">laue_dials.algorithms.monochromatic.</span></span><span class="sig-name descname"><span class="pre">scan_varying_refine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">refls</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/algorithms/monochromatic.html#scan_varying_refine"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.algorithms.monochromatic.scan_varying_refine" title="Link to this definition"></a></dt>
+<dd><p>Performs scan-varying geometric refinement over a sequence of images</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>params</strong> (<em>phil</em>) – A phil scope containing the needed input for dials.refine</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>expts_refined</strong> (<em>ExperimentList</em>) – An ExperimentList containing the refined geometric solution</p></li>
+<li><p><strong>refls_refined</strong> (<em>reflection_table</em>) – A reflection table containing reflections with refined data</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="laue_dials.algorithms.monochromatic.split_sequence">
+<span class="sig-prename descclassname"><span class="pre">laue_dials.algorithms.monochromatic.</span></span><span class="sig-name descname"><span class="pre">split_sequence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">refls</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/algorithms/monochromatic.html#split_sequence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.algorithms.monochromatic.split_sequence" title="Link to this definition"></a></dt>
+<dd><p>Splits a sequence of images into stills</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>params</strong> (<em>phil</em>) – A phil scope containing the needed input for dials.sequence_to_stills</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>expts_stills</strong> (<em>ExperimentList</em>) – An ExperimentList containing stills of the input dataset</p></li>
+<li><p><strong>refls_stills</strong> (<em>reflection_table</em>) – A reflection table containing stills of the input dataset</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-laue_dials.algorithms.outliers">
+<span id="laue-dials-algorithms-outliers-module"></span><h2>laue_dials.algorithms.outliers module<a class="headerlink" href="#module-laue_dials.algorithms.outliers" title="Link to this heading"></a></h2>
+<p>Outlier rejection functions.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="laue_dials.algorithms.outliers.gen_kde">
+<span class="sig-prename descclassname"><span class="pre">laue_dials.algorithms.outliers.</span></span><span class="sig-name descname"><span class="pre">gen_kde</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">elist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">refls</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/algorithms/outliers.html#gen_kde"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.algorithms.outliers.gen_kde" title="Link to this definition"></a></dt>
+<dd><p>This function trains a Gaussian KDE on 1/d^2 and wavelengths of submitted strong spots</p>
+</dd></dl>
+
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">laue_dials</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributions &amp; Help</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cli/functions.html">Command-Line Reference</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">Full API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="laue_dials.html">laue_dials package</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">laue_dials</a><ul>
+  <li><a href="laue_dials.html">laue_dials package</a><ul>
+      <li>Previous: <a href="laue_dials.html" title="previous chapter">laue_dials package</a></li>
+      <li>Next: <a href="laue_dials.command_line.html" title="next chapter">laue_dials.command_line namespace</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2023, PrinceWalnut.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.2.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="../_sources/api/laue_dials.algorithms.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

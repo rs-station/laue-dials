@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>laue_dials.command_line.sequence_to_stills &#8212; laue-dials</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/alabaster.css?v=233b9934" />
+    <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+    <script src="../../../_static/documentation_options.js?v=7edaadd2"></script>
+    <script src="../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="icon" href="../../../_static/rs-favicon_32x32.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for laue_dials.command_line.sequence_to_stills</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Split a sequence into a set of stills.</span>
+
+<span class="sd">Example:</span>
+
+<span class="sd">  laue.sequence_to_stills monochromatic.expt monochromatic.refl</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="kn">from</span> <span class="nn">dials.array_family</span> <span class="kn">import</span> <span class="n">flex</span>
+<span class="kn">from</span> <span class="nn">dials.array_family.flex</span> <span class="kn">import</span> <span class="n">reflection_table</span>
+<span class="kn">from</span> <span class="nn">dials.util</span> <span class="kn">import</span> <span class="n">show_mail_handle_errors</span>
+<span class="kn">from</span> <span class="nn">dials.util.options</span> <span class="kn">import</span> <span class="p">(</span><span class="n">OptionParser</span><span class="p">,</span>
+                                <span class="n">reflections_and_experiments_from_files</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">dxtbx.model</span> <span class="kn">import</span> <span class="n">MosaicCrystalSauter2014</span>
+<span class="kn">from</span> <span class="nn">dxtbx.model.experiment_list</span> <span class="kn">import</span> <span class="n">Experiment</span><span class="p">,</span> <span class="n">ExperimentList</span>
+<span class="kn">from</span> <span class="nn">libtbx.phil</span> <span class="kn">import</span> <span class="n">parse</span>
+<span class="kn">from</span> <span class="nn">scitbx</span> <span class="kn">import</span> <span class="n">matrix</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">trange</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;laue.command_line.sequence_to_stills&quot;</span><span class="p">)</span>
+
+<span class="c1"># The phil scope</span>
+<span class="n">phil_scope</span> <span class="o">=</span> <span class="n">parse</span><span class="p">(</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">output {</span>
+<span class="sd">  experiments = stills.expt</span>
+<span class="sd">    .type = str</span>
+<span class="sd">    .help = &quot;Filename for the experimental models that have been converted to stills&quot;</span>
+<span class="sd">  reflections = stills.refl</span>
+<span class="sd">    .type = str</span>
+<span class="sd">    .help = &quot;Filename for the reflection tables with split shoeboxes (3D to 2D)&quot;</span>
+<span class="sd">  log = laue.sequence_to_stills.log</span>
+<span class="sd">    .type = str</span>
+<span class="sd">    .help = &quot;Filename for the reflection tables with split shoeboxes (3D to 2D)&quot;</span>
+<span class="sd">  domain_size_ang = None</span>
+<span class="sd">    .type = float</span>
+<span class="sd">    .help = &quot;Override for domain size. If None, use the crystal&#39;s domain size, if&quot;</span>
+<span class="sd">            &quot;available&quot;</span>
+<span class="sd">  half_mosaicity_deg = None</span>
+<span class="sd">    .type = float</span>
+<span class="sd">    .help = &quot;Override for mosaic angle. If None, use the crystal&#39;s mosaic angle, if&quot;</span>
+<span class="sd">            &quot;available&quot;</span>
+<span class="sd">}</span>
+<span class="sd">max_scan_points = None</span>
+<span class="sd">  .type = int</span>
+<span class="sd">  .expert_level = 2</span>
+<span class="sd">  .help = Limit number of scan points</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="sequence_to_stills">
+<a class="viewcode-back" href="../../../api/laue_dials.command_line.html#laue_dials.command_line.sequence_to_stills.sequence_to_stills">[docs]</a>
+<span class="k">def</span> <span class="nf">sequence_to_stills</span><span class="p">(</span><span class="n">experiments</span><span class="p">,</span> <span class="n">reflections</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">reflections</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+    <span class="n">reflections</span> <span class="o">=</span> <span class="n">reflections</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">new_experiments</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">new_reflections</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="n">first_loop</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">crystals</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">imagesets</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Building experiment lists.&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">expt_id</span><span class="p">,</span> <span class="n">experiment</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">experiments</span><span class="p">):</span>
+        <span class="c1"># Generate crystals and imagesets for each scan point on first loop</span>
+        <span class="k">if</span> <span class="n">first_loop</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i_scan_point</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">*</span><span class="n">experiment</span><span class="o">.</span><span class="n">scan</span><span class="o">.</span><span class="n">get_array_range</span><span class="p">()):</span>
+                <span class="c1"># Get the goniometer setting matrix</span>
+                <span class="n">goniometer_setting_matrix</span> <span class="o">=</span> <span class="n">matrix</span><span class="o">.</span><span class="n">sqr</span><span class="p">(</span>
+                    <span class="n">experiment</span><span class="o">.</span><span class="n">goniometer</span><span class="o">.</span><span class="n">get_setting_rotation</span><span class="p">()</span>
+                <span class="p">)</span>
+                <span class="n">goniometer_axis</span> <span class="o">=</span> <span class="n">matrix</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="n">experiment</span><span class="o">.</span><span class="n">goniometer</span><span class="o">.</span><span class="n">get_rotation_axis</span><span class="p">())</span>
+                <span class="n">step</span> <span class="o">=</span> <span class="n">experiment</span><span class="o">.</span><span class="n">scan</span><span class="o">.</span><span class="n">get_oscillation</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
+
+                <span class="c1"># The A matrix is the goniometer setting matrix for this scan point</span>
+                <span class="c1"># times the scan varying A matrix at this scan point. Note, the</span>
+                <span class="c1"># goniometer setting matrix for scan point zero will be the identity</span>
+                <span class="c1"># matrix and represents the beginning of the oscillation.</span>
+                <span class="c1"># For stills, the A matrix needs to be positioned in the midpoint of an</span>
+                <span class="c1"># oscillation step. Hence, here the goniometer setting matrixis rotated</span>
+                <span class="c1"># by a further half oscillation step.</span>
+                <span class="n">A</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">goniometer_axis</span><span class="o">.</span><span class="n">axis_and_angle_as_r3_rotation_matrix</span><span class="p">(</span>
+                        <span class="n">angle</span><span class="o">=</span><span class="n">experiment</span><span class="o">.</span><span class="n">scan</span><span class="o">.</span><span class="n">get_angle_from_array_index</span><span class="p">(</span><span class="n">i_scan_point</span><span class="p">)</span>
+                        <span class="o">+</span> <span class="p">(</span><span class="n">step</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span>
+                        <span class="n">deg</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="p">)</span>
+                    <span class="o">*</span> <span class="n">goniometer_setting_matrix</span>
+                    <span class="o">*</span> <span class="n">matrix</span><span class="o">.</span><span class="n">sqr</span><span class="p">(</span><span class="n">experiment</span><span class="o">.</span><span class="n">crystal</span><span class="o">.</span><span class="n">get_A_at_scan_point</span><span class="p">(</span><span class="n">i_scan_point</span><span class="p">))</span>
+                <span class="p">)</span>
+                <span class="n">crystal</span> <span class="o">=</span> <span class="n">MosaicCrystalSauter2014</span><span class="p">(</span><span class="n">experiment</span><span class="o">.</span><span class="n">crystal</span><span class="p">)</span>
+                <span class="n">crystal</span><span class="o">.</span><span class="n">set_A</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+
+                <span class="c1"># Copy in mosaic parameters if available</span>
+                <span class="k">if</span> <span class="n">params</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">domain_size_ang</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span>
+                    <span class="n">experiment</span><span class="o">.</span><span class="n">crystal</span><span class="p">,</span> <span class="s2">&quot;get_domain_size_ang&quot;</span>
+                <span class="p">):</span>
+                    <span class="n">crystal</span><span class="o">.</span><span class="n">set_domain_size_ang</span><span class="p">(</span>
+                        <span class="n">experiment</span><span class="o">.</span><span class="n">crystal</span><span class="o">.</span><span class="n">get_domain_size_ang</span><span class="p">()</span>
+                    <span class="p">)</span>
+                <span class="k">elif</span> <span class="n">params</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">domain_size_ang</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">crystal</span><span class="o">.</span><span class="n">set_domain_size_ang</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">domain_size_ang</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">params</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">half_mosaicity_deg</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span>
+                    <span class="n">experiment</span><span class="o">.</span><span class="n">crystal</span><span class="p">,</span> <span class="s2">&quot;get_half_mosaicity_deg&quot;</span>
+                <span class="p">):</span>
+                    <span class="n">crystal</span><span class="o">.</span><span class="n">set_half_mosaicity_deg</span><span class="p">(</span>
+                        <span class="n">experiment</span><span class="o">.</span><span class="n">crystal</span><span class="o">.</span><span class="n">get_half_mosaicity_deg</span><span class="p">()</span>
+                    <span class="p">)</span>
+                <span class="k">elif</span> <span class="n">params</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">half_mosaicity_deg</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">crystal</span><span class="o">.</span><span class="n">set_half_mosaicity_deg</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">half_mosaicity_deg</span><span class="p">)</span>
+
+                <span class="c1"># Add to list of crystals</span>
+                <span class="n">crystals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">crystal</span><span class="p">)</span>
+
+                <span class="c1"># Add to list of imagesets</span>
+                <span class="n">imagesets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">experiment</span><span class="o">.</span><span class="n">imageset</span><span class="o">.</span><span class="n">as_imageset</span><span class="p">()[</span><span class="n">i_scan_point</span> <span class="p">:</span> <span class="n">i_scan_point</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+                <span class="p">)</span>
+
+                <span class="c1"># Don&#39;t regenerate this list</span>
+                <span class="n">first_loop</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="c1"># Split experiment by scan points</span>
+        <span class="k">for</span> <span class="n">i_scan_point</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">*</span><span class="n">experiment</span><span class="o">.</span><span class="n">scan</span><span class="o">.</span><span class="n">get_array_range</span><span class="p">()):</span>
+            <span class="n">new_experiment</span> <span class="o">=</span> <span class="n">Experiment</span><span class="p">(</span>
+                <span class="n">identifier</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">i_scan_point</span><span class="p">),</span>
+                <span class="n">detector</span><span class="o">=</span><span class="n">experiment</span><span class="o">.</span><span class="n">detector</span><span class="p">,</span>
+                <span class="n">beam</span><span class="o">=</span><span class="n">experiment</span><span class="o">.</span><span class="n">beam</span><span class="p">,</span>
+                <span class="n">crystal</span><span class="o">=</span><span class="n">crystals</span><span class="p">[</span><span class="n">i_scan_point</span><span class="p">],</span>
+                <span class="n">imageset</span><span class="o">=</span><span class="n">imagesets</span><span class="p">[</span><span class="n">i_scan_point</span><span class="p">],</span>
+            <span class="p">)</span>
+            <span class="n">new_experiments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_experiment</span><span class="p">)</span>
+
+    <span class="c1"># ----------------EXPERIMENTS CREATED---------------------------------</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Building reflection table.&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i_scan_point</span> <span class="ow">in</span> <span class="n">trange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">crystals</span><span class="p">)):</span>
+        <span class="c1"># Get subset of reflections on this image</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">z1</span><span class="p">,</span> <span class="n">z2</span> <span class="o">=</span> <span class="n">reflections</span><span class="p">[</span><span class="s2">&quot;bbox&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">parts</span><span class="p">()</span>
+        <span class="n">subrefls</span> <span class="o">=</span> <span class="n">reflections</span><span class="o">.</span><span class="n">select</span><span class="p">((</span><span class="n">i_scan_point</span> <span class="o">&gt;=</span> <span class="n">z1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">i_scan_point</span> <span class="o">&lt;</span> <span class="n">z2</span><span class="p">))</span>
+        <span class="n">new_refls</span> <span class="o">=</span> <span class="n">subrefls</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">new_refls</span><span class="p">[</span><span class="s2">&quot;xyzobs.px.value&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">subrefls</span><span class="p">[</span><span class="s2">&quot;xyzobs.px.value&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]</span>
+        <span class="n">new_refls</span><span class="p">[</span><span class="s2">&quot;imageset_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">flex</span><span class="o">.</span><span class="n">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">new_refls</span><span class="p">),</span> <span class="n">i_scan_point</span><span class="p">)</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">subrefls</span><span class="p">[</span><span class="s2">&quot;xyzobs.mm.value&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">parts</span><span class="p">()</span>
+        <span class="n">new_refls</span><span class="p">[</span><span class="s2">&quot;xyzobs.mm.value&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">flex</span><span class="o">.</span><span class="n">vec3_double</span><span class="p">(</span>
+            <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">flex</span><span class="o">.</span><span class="n">double</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">new_refls</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">new_refls</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">flex</span><span class="o">.</span><span class="n">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">new_refls</span><span class="p">),</span> <span class="n">i_scan_point</span><span class="p">)</span>
+        <span class="n">new_reflections</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_refls</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">new_experiments</span><span class="p">,</span> <span class="n">new_reflections</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="run">
+<a class="viewcode-back" href="../../../api/laue_dials.command_line.html#laue_dials.command_line.sequence_to_stills.run">[docs]</a>
+<span class="nd">@show_mail_handle_errors</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="n">args</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">phil</span><span class="o">=</span><span class="n">phil_scope</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Validate the arguments and load experiments/reflections for sequence_to_stills</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        args: The command line arguments to use. Defaults to sys.argv[1:]</span>
+<span class="sd">        phil: The phil_scope. Defaults to the master phil_scope for this program</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># The script usage</span>
+    <span class="n">usage</span> <span class="o">=</span> <span class="s2">&quot;usage: laue.sequence_to_stills [options] [param.phil] models.expt reflections.refl&quot;</span>
+
+    <span class="c1"># Create the parser</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">OptionParser</span><span class="p">(</span>
+        <span class="n">usage</span><span class="o">=</span><span class="n">usage</span><span class="p">,</span>
+        <span class="n">phil</span><span class="o">=</span><span class="n">phil</span><span class="p">,</span>
+        <span class="n">read_experiments</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">read_reflections</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">check_format</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">epilog</span><span class="o">=</span><span class="vm">__doc__</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">params</span><span class="p">,</span> <span class="n">options</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">(</span><span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span> <span class="n">show_diff_phil</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Configure logging</span>
+    <span class="n">console</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span>
+    <span class="n">fh</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">FileHandler</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">log</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+    <span class="n">loglevel</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">INFO</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">fh</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">console</span><span class="p">)</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">captureWarnings</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">warning_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;py.warnings&quot;</span><span class="p">)</span>
+    <span class="n">warning_logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">fh</span><span class="p">)</span>
+    <span class="n">warning_logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">console</span><span class="p">)</span>
+    <span class="n">dials_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;dials&quot;</span><span class="p">)</span>
+    <span class="n">dials_logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">fh</span><span class="p">)</span>
+    <span class="n">dials_logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">console</span><span class="p">)</span>
+    <span class="n">dxtbx_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;dxtbx&quot;</span><span class="p">)</span>
+    <span class="n">dxtbx_logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">fh</span><span class="p">)</span>
+    <span class="n">dxtbx_logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">console</span><span class="p">)</span>
+    <span class="n">xfel_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;xfel&quot;</span><span class="p">)</span>
+    <span class="n">xfel_logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">fh</span><span class="p">)</span>
+    <span class="n">xfel_logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">console</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">loglevel</span><span class="p">)</span>
+    <span class="n">dials_logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">loglevel</span><span class="p">)</span>
+    <span class="n">dxtbx_logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">loglevel</span><span class="p">)</span>
+    <span class="n">xfel_logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">loglevel</span><span class="p">)</span>
+    <span class="n">fh</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">loglevel</span><span class="p">)</span>
+
+    <span class="c1"># Try to load the models and data</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">params</span><span class="o">.</span><span class="n">input</span><span class="o">.</span><span class="n">experiments</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">params</span><span class="o">.</span><span class="n">input</span><span class="o">.</span><span class="n">reflections</span><span class="p">:</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">print_help</span><span class="p">()</span>
+        <span class="k">return</span>
+
+    <span class="n">reflections</span><span class="p">,</span> <span class="n">experiments</span> <span class="o">=</span> <span class="n">reflections_and_experiments_from_files</span><span class="p">(</span>
+        <span class="n">params</span><span class="o">.</span><span class="n">input</span><span class="o">.</span><span class="n">reflections</span><span class="p">,</span> <span class="n">params</span><span class="o">.</span><span class="n">input</span><span class="o">.</span><span class="n">experiments</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Get initial time for process</span>
+    <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+    <span class="p">(</span><span class="n">new_experiments</span><span class="p">,</span> <span class="n">new_reflections</span><span class="p">)</span> <span class="o">=</span> <span class="n">sequence_to_stills</span><span class="p">(</span>
+        <span class="n">experiments</span><span class="p">,</span> <span class="n">reflections</span><span class="p">,</span> <span class="n">params</span>
+    <span class="p">)</span>
+    <span class="c1"># Write out the output experiments, reflections</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Writing output data.&quot;</span><span class="p">)</span>
+    <span class="n">total_reflections</span> <span class="o">=</span> <span class="n">reflection_table</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">trange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">new_experiments</span><span class="p">)):</span>
+        <span class="n">total_reflections</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">new_reflections</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+    <span class="c1"># Final logs</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="s2">&quot;Time Taken to Split into Stills = </span><span class="si">%f</span><span class="s2"> seconds&quot;</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span>
+    <span class="p">)</span>
+    <span class="n">ExperimentList</span><span class="p">(</span><span class="n">new_experiments</span><span class="p">)</span><span class="o">.</span><span class="n">as_file</span><span class="p">(</span><span class="s2">&quot;stills.expt&quot;</span><span class="p">)</span>
+    <span class="n">total_reflections</span><span class="o">.</span><span class="n">as_file</span><span class="p">(</span><span class="s2">&quot;stills.refl&quot;</span><span class="p">)</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">run</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">laue_dials</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributions &amp; Help</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cli/functions.html">Command-Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/modules.html">Full API Reference</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2023, PrinceWalnut.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.2.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

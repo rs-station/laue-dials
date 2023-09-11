@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>laue_dials.integrate &#8212; laue-dials</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=233b9934" />
+    <script src="../_static/jquery.js?v=5d32c60e"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+    <script src="../_static/documentation_options.js?v=7edaadd2"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="icon" href="../_static/rs-favicon_32x32.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="laue_dials" href="../api/modules.html" />
+    <link rel="prev" title="laue_dials.predict" href="predict.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="laue-dials-integrate">
+<span id="integrate"></span><h1>laue_dials.integrate<a class="headerlink" href="#laue-dials-integrate" title="Link to this heading"></a></h1>
+<section id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Link to this heading"></a></h2>
+<p>This program takes a refined geometry experiment file along with a predicted
+reflection table, and uses those to integrate intensities in the data set.</p>
+<p>The output is a MTZ file containing integrated intensities suitable for
+merging and scaling.</p>
+<p>Examples:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">laue</span><span class="o">.</span><span class="n">integrate</span> <span class="p">[</span><span class="n">options</span><span class="p">]</span> <span class="n">poly_refined</span><span class="o">.</span><span class="n">expt</span> <span class="n">predicted</span><span class="o">.</span><span class="n">refl</span>
+</pre></div>
+</div>
+</section>
+<section id="basic-parameters">
+<h2>Basic parameters<a class="headerlink" href="#basic-parameters" title="Link to this heading"></a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">output</span> <span class="p">{</span>
+  <span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;integrated.mtz&#39;</span>
+  <span class="n">log</span> <span class="o">=</span> <span class="s1">&#39;laue.integrate.log&#39;</span>
+<span class="p">}</span>
+<span class="n">n_proc</span> <span class="o">=</span> <span class="mi">1</span>
+</pre></div>
+</div>
+</section>
+<section id="full-parameter-definitions">
+<h2>Full parameter definitions<a class="headerlink" href="#full-parameter-definitions" title="Link to this heading"></a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">output</span> <span class="p">{</span>
+  <span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;integrated.mtz&#39;</span>
+    <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;The output MTZ filename.&quot;</span>
+    <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">str</span>
+  <span class="n">log</span> <span class="o">=</span> <span class="s1">&#39;laue.integrate.log&#39;</span>
+    <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;The log filename.&quot;</span>
+    <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">str</span>
+<span class="p">}</span>
+<span class="n">n_proc</span> <span class="o">=</span> <span class="mi">1</span>
+  <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Number of parallel integrations to do&quot;</span>
+  <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">laue_dials</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributions &amp; Help</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="functions.html">Command-Line Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="initial_solution.html">laue_dials.initial_solution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sequence_to_stills.html">laue_dials.sequence_to_stills</a></li>
+<li class="toctree-l2"><a class="reference internal" href="optimize_indexing.html">laue_dials.optimize_indexing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="refine.html">laue_dials.refine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="predict.html">laue_dials.predict</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">laue_dials.integrate</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api/modules.html">Full API Reference</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="functions.html">Functions</a><ul>
+      <li>Previous: <a href="predict.html" title="previous chapter">laue_dials.predict</a></li>
+      <li>Next: <a href="../api/modules.html" title="next chapter">laue_dials</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2023, PrinceWalnut.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.2.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="../_sources/cli/integrate.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
