@@ -35,16 +35,17 @@ jobs:
       with:
         miniconda-version: "latest"
         channels: conda-forge, defaults
+        auto-activate-base: true
+        activate-environment: ""
 
     - name: Install DIALS environment and more
       run: |
         conda install -n base conda-libmamba-solver
         conda config --set solver libmamba
-        conda env list
-        conda install -n test -c conda-forge -y dials
+        conda install -n base -c conda-forge -y dials
         conda info
         conda list
-        $CONDA/envs/test/bin/pip install -e ".[docs]"
+        $CONDA/bin/pip install -e ".[docs]"
         cd docs
         conda list
         make clean
