@@ -1,0 +1,52 @@
+name: Test Documentation
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    if: "!contains(github.event.head_commit.message, 'skip docs')"
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        ref: sphinx
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.9
+
+    - name: Check versions of files
+      run: |
+        pwd
+        ls
+        cat setup.cfg
+        cat docs/conf.py
+        cat docs/cli/initial_solution.rst
+
+    - name: Install Miniconda
+      uses: conda-incubator/setup-miniconda@v2
+      with:
+        miniconda-version: "latest"
+        channels: conda-forge, defaults
+        auto-activate-base: true
+        activate-environment: ""
+
+    - name: Install DIALS environment and more
+      run: |
+        conda install -n base conda-libmamba-solver
+        conda config --set solver libmamba
+        conda install -n base -c conda-forge -y dials
+        conda info
+        conda list
+        $CONDA/bin/pip install -e ".[docs]"
+        cd docs
+        conda list
+        export SPHINXBUILD="$CONDA/bin/sphinx-build"
+        make clean
+        make html
