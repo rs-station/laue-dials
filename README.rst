@@ -24,7 +24,8 @@ Data analysis package for Laue crystallography.
 Building off the ``DIALS`` framework, and including modern tools like ``numpy``, ``scipy``, and
 ``reciprocalspaceship``, this package allows for analysis of X-ray crystallographic data using
 wide-bandwidth light sources. This package is intended to be used in conjunction with `DIALS`_,
-`careless`_, and `Phenix`_ in order to generate molecular models from raw data.
+`careless`_, and `Phenix`_ in order to generate molecular models from raw data. For documentation, see
+https://rs-station.github.io/laue-dials/index.html.
 
 ============
 Installation
