@@ -158,19 +158,24 @@ def index_image(params, refls, expts):
         cryst.set_space_group(space_group(la.spacegroup.hall))
         cryst.set_unit_cell(unit_cell(la.cell.parameters))
 
+        # Filter out wavelengths beyond limits
+        spot_wavelengths = np.asarray(la._wav.tolist())
+        spot_wavelengths[spot_wavelengths < params.wavelengths.lam_min] = 0
+        spot_wavelengths[spot_wavelengths > params.wavelengths.lam_max] = 0
+
         # Write data to reflections
         refls["s1"].set_selected(idx, flex.vec3_double(s1))
         refls["miller_index"].set_selected(
             idx,
             flex.miller_index(la._H.astype("int").tolist()),
         )
-        refls["wavelength"].set_selected(
-            idx,
-            flex.double(la._wav.tolist()),
-        )
         refls["harmonics"].set_selected(
             idx,
             flex.bool(la._harmonics.tolist()),
+        )
+        refls["wavelength"].set_selected(
+            idx,
+            flex.double(spot_wavelengths),
         )
 
     # Return reindexed expts, refls
