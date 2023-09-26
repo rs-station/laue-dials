@@ -120,6 +120,7 @@ def predict_spots(params, refls, expts):
         sub_refls = refls.select(refls["id"] == img_num)
 
         # Generate predictor object
+        logger.info(f"Predicting spots on image {img_num}.")
         la = LauePredictor(
             s0,
             cell,
@@ -201,7 +202,7 @@ def run(args=None, *, phil=working_phil):
         epilog=help_message,
     )
 
-    params, options = parser.parse_args(args=args, show_diff_phil=True)
+    params, options = parser.parse_args(args=args, show_diff_phil=False)
 
     # Configure logging
     console = logging.StreamHandler(sys.stdout)
@@ -268,7 +269,8 @@ def run(args=None, *, phil=working_phil):
     logger.info(f"Predicting reflections")
     num_processes = params.n_proc
     with Pool(processes=num_processes) as pool:
-        output = pool.starmap(predict_spots, inputs)
+        output = pool.starmap(predict_spots, inputs, chunksize=1)
+    logger.info(f"Finished predicting feasible spots")
 
     # Convert output to single reflection table
     predicted_reflections = reflection_table()
