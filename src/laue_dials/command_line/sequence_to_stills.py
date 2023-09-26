@@ -10,6 +10,7 @@ import logging
 import sys
 import time
 
+import numpy as np
 from dials.array_family import flex
 from dials.array_family.flex import reflection_table
 from dials.util import show_mail_handle_errors
@@ -20,7 +21,6 @@ from dxtbx.model.experiment_list import Experiment, ExperimentList
 from libtbx.phil import parse
 from scitbx import matrix
 from tqdm import trange
-import numpy as np
 
 logger = logging.getLogger("laue.command_line.sequence_to_stills")
 
