@@ -185,7 +185,10 @@ def index_image(params, refls, expts):
     # Remove unindexed reflections
     if not params.keep_unindexed:
         all_wavelengths = refls["wavelength"].as_numpy_array()
-        keep = np.logical_and(all_wavelengths >= params.wavelengths.lam_min, all_wavelengths <= params.wavelengths.lam_max)
+        keep = np.logical_and(
+            all_wavelengths >= params.wavelengths.lam_min,
+            all_wavelengths <= params.wavelengths.lam_max,
+        )
         refls = refls.select(flex.bool(keep))
 
     # Return reindexed expts, refls
