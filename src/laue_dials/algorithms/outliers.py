@@ -23,6 +23,6 @@ def gen_kde(elist, refls):
 
     # Fit with kernel density estimator
     normalized_resolution = norms**2
-    train_data = np.asarray([normalized_resolution, lams])
+    train_data = np.vstack([lams, normalized_resolution])
     kde = scipy.stats.gaussian_kde(train_data)
     return normalized_resolution, lams, kde

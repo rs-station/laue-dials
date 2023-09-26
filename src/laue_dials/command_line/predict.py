@@ -250,6 +250,7 @@ def run(args=None, *, phil=working_phil):
         params.input.reflections, params.input.experiments
     )
     reflections = reflections[0]  # Get table out of list
+    reflections = reflections.select(reflections.get_flags(reflections.flags.used_in_refinement))
 
     # Sanity checks
     if len(experiments) == 0:
@@ -270,7 +271,7 @@ def run(args=None, *, phil=working_phil):
     num_processes = params.n_proc
     with Pool(processes=num_processes) as pool:
         output = pool.starmap(predict_spots, inputs, chunksize=1)
-    logger.info(f"Finished predicting feasible spots")
+    logger.info(f"Finished predicting feasible spots.")
 
     # Convert output to single reflection table
     predicted_reflections = reflection_table()
@@ -278,62 +279,69 @@ def run(args=None, *, phil=working_phil):
         predicted_reflections.extend(table)
 
     # Generate a KDE
-    logger.info("Training model for resolution-dependent bandwidth")
-    _, _, kde = gen_kde(experiments, predicted_reflections)
+    logger.info("Training KDE for resolution-dependent bandwidth.")
+    _, _, kde = gen_kde(experiments, reflections)
 
     # Get probability densities for predictions:
-    logger.info("Calculating prediction probabilities")
+    logger.info(f"Calculating prediction probabilities.")
     rlps = predicted_reflections["rlp"].as_numpy_array()
     norms = (np.linalg.norm(rlps, axis=1)) ** 2
     lams = predicted_reflections["wavelength"].as_numpy_array()
-    pred_data = [norms, lams]
-    probs = kde.pdf(pred_data)
+    pred_data = np.vstack([lams, norms])
 
+    # Split array into chunks
+    inputs = np.array_split(pred_data, num_processes, axis=1)
+
+    # Multiprocess PDF estimation
+    with Pool(processes=num_processes) as pool:
+        prob_list = pool.map(kde.pdf, inputs)
+    probs = np.concatenate(prob_list)
+    
     # Cut off using log probabilities
-    logger.info("Removing improbable reflections")
+    logger.info(f"Removing improbable reflections.")
     cutoff_log = params.cutoff_log_probability
     sel = np.log(probs) >= cutoff_log
-    predicted_reflections = predicted_reflections.select(flex.bool(sel))
+    final_predictions = predicted_reflections.select(flex.bool(sel))
 
     # Mark strong spots
     logger.info("Marking strong predictions")
-    idpred, idstrong = predicted_reflections.match_by_hkle(reflections)
-    strongs = np.zeros(len(predicted_reflections), dtype=int)
+    idpred, idstrong = final_predictions.match_by_hkle(reflections)
+    strongs = np.zeros(len(final_predictions), dtype=int)
     strongs[idpred] = 1
-    predicted_reflections["strong"] = flex.int(strongs)
+    final_predictions["strong"] = flex.int(strongs)
 
     logger.info(f"Assigning intensities")
     for i in range(len(idstrong)):
-        predicted_reflections["intensity.sum.value"][idpred[i]] = reflections[
+        final_predictions["intensity.sum.value"][idpred[i]] = reflections[
             "intensity.sum.value"
         ][idstrong[i]]
-        predicted_reflections["intensity.sum.variance"][idpred[i]] = reflections[
+        final_predictions["intensity.sum.variance"][idpred[i]] = reflections[
             "intensity.sum.variance"
         ][idstrong[i]]
-        predicted_reflections["xyzobs.mm.value"][idpred[i]] = reflections[
+        final_predictions["xyzobs.mm.value"][idpred[i]] = reflections[
             "xyzobs.mm.value"
         ][idstrong[i]]
-        predicted_reflections["xyzobs.mm.variance"][idpred[i]] = reflections[
+        final_predictions["xyzobs.mm.variance"][idpred[i]] = reflections[
             "xyzobs.mm.variance"
         ][idstrong[i]]
-        predicted_reflections["xyzobs.px.value"][idpred[i]] = reflections[
+        final_predictions["xyzobs.px.value"][idpred[i]] = reflections[
             "xyzobs.px.value"
         ][idstrong[i]]
-        predicted_reflections["xyzobs.px.variance"][idpred[i]] = reflections[
+        final_predictions["xyzobs.px.variance"][idpred[i]] = reflections[
             "xyzobs.px.variance"
         ][idstrong[i]]
 
     # Populate 'px' variety of predicted centroids
     # Based on flat rectangular detector
-    x, y, z = predicted_reflections["xyzcal.mm"].parts()
+    x, y, z = final_predictions["xyzcal.mm"].parts()
     expt = experiments[0]  # assuming shared detector models
     x = x / expt.detector.to_dict()["panels"][0]["pixel_size"][0]
     y = y / expt.detector.to_dict()["panels"][0]["pixel_size"][1]
-    predicted_reflections["xyzcal.px"] = flex.vec3_double(x, y, z)
+    final_predictions["xyzcal.px"] = flex.vec3_double(x, y, z)
 
     # Save reflections
     logger.info("Saving predicted reflections to %s", params.output.reflections)
-    predicted_reflections.as_file(filename=params.output.reflections)
+    final_predictions.as_file(filename=params.output.reflections)
 
     # Final logs
     logger.info("")
