@@ -131,6 +131,7 @@ def index_image(params, refls, expts):
         U = np.asarray(cryst.get_U()).reshape(3, 3)
 
         # Generate assigner object
+        logger.info(f"Reindexing image {experiment.identifier}.")
         la = LaueAssigner(
             s0,
             s1,
@@ -277,6 +278,7 @@ def run(args=None, *, phil=working_phil):
 
     # Reindex data
     num_processes = params.n_proc
+    logger.info("Reindexing images.")
     with Pool(processes=num_processes) as pool:
         output = pool.starmap(index_image, inputs)
     logger.info(f"All images reindexed.")
