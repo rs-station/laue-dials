@@ -55,6 +55,10 @@ output {
     .help = "The log filename."
   }
 
+keep_unindexed = False
+  .type = bool
+  .help = Whether to keep unindexed reflections
+
 n_proc = 1
   .type = int
   .help = Number of parallel processes to run
@@ -177,6 +181,12 @@ def index_image(params, refls, expts):
             idx,
             flex.double(spot_wavelengths),
         )
+
+    # Remove unindexed reflections
+    if not params.keep_unindexed:
+        all_wavelengths = refls["wavelength"].as_numpy_array()
+        keep = np.logical_and(all_wavelengths >= params.wavelengths.lam_min, all_wavelengths <= params.wavelengths.lam_max)
+        refls = refls.select(flex.bool(keep))
 
     # Return reindexed expts, refls
     return expts, refls
