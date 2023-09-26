@@ -13,7 +13,7 @@ import time
 from dials.array_family import flex
 from dials.array_family.flex import reflection_table
 from dials.util import show_mail_handle_errors
-from dials.util.options import (OptionParser,
+from dials.util.options import (ArgumentParser,
                                 reflections_and_experiments_from_files)
 from dxtbx.model import MosaicCrystalSauter2014
 from dxtbx.model.experiment_list import Experiment, ExperimentList
@@ -91,7 +91,7 @@ def sequence_to_stills(experiments, reflections, params):
                         deg=True,
                     )
                     * goniometer_setting_matrix
-                    * matrix.sqr(experiment.crystal.get_A_at_scan_point(i_scan_point))
+                    * matrix.sqr(experiment.crystal.get_A())
                 )
                 crystal = MosaicCrystalSauter2014(experiment.crystal)
                 crystal.set_A(A)
@@ -170,7 +170,7 @@ def run(args=None, phil=phil_scope):
     usage = "usage: laue.sequence_to_stills [options] [param.phil] models.expt reflections.refl"
 
     # Create the parser
-    parser = OptionParser(
+    parser = ArgumentParser(
         usage=usage,
         phil=phil,
         read_experiments=True,
