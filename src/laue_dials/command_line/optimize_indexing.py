@@ -280,7 +280,7 @@ def run(args=None, *, phil=working_phil):
     num_processes = params.n_proc
     logger.info("Reindexing images.")
     with Pool(processes=num_processes) as pool:
-        output = pool.starmap(index_image, inputs)
+        output = pool.starmap(index_image, inputs, chunksize=1)
     logger.info(f"All images reindexed.")
 
     # Convert reindexed data to DIALS objects
