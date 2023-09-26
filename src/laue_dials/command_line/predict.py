@@ -250,7 +250,9 @@ def run(args=None, *, phil=working_phil):
         params.input.reflections, params.input.experiments
     )
     reflections = reflections[0]  # Get table out of list
-    reflections = reflections.select(reflections.get_flags(reflections.flags.used_in_refinement))
+    reflections = reflections.select(
+        reflections.get_flags(reflections.flags.used_in_refinement)
+    )
 
     # Sanity checks
     if len(experiments) == 0:
@@ -296,7 +298,7 @@ def run(args=None, *, phil=working_phil):
     with Pool(processes=num_processes) as pool:
         prob_list = pool.map(kde.pdf, inputs)
     probs = np.concatenate(prob_list)
-    
+
     # Cut off using log probabilities
     logger.info(f"Removing improbable reflections.")
     cutoff_log = params.cutoff_log_probability
