@@ -29,6 +29,14 @@ Examples:
 phil_scope = libtbx.phil.parse(
     """
 
+  save = False
+    .type = bool
+    .help = "Whether to save the generated histogram."
+
+  output = "wavelengths.png"
+    .type = str
+    .help = "The filename for the generated histogram."
+
   refined_only = False
     .type = bool
     .help = "Only histogram wavelengths of refined reflections."
@@ -146,10 +154,13 @@ def run(args=None, *, phil=working_phil):
             "Wavelength restrictions have removed some reflections. Plot will not reflect entirety of the data."
         )
 
+    fig = plt.figure()
     plt.hist(lams, bins=params.n_bins)
     plt.title("Wavelength Spectrum")
     plt.xlabel("Wavelength (Angstroms)")
     plt.ylabel("Number of reflections")
+    if params.save:
+        fig.savefig(params.output)
     plt.show()
 
 
