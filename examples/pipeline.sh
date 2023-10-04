@@ -22,9 +22,11 @@ dials.import geometry.scan.oscillation=0,1 \
     input.template=$FILE_INPUT_TEMPLATE
 
 # Get a monochromatic geometry model
-laue.initial_solution imported.expt \
+laue.initial_solution imported.expt spotfinder.spotfinder.threshold.dispersion.gain=0.3 \
     indexer.indexing.known_symmetry.space_group=19 \
+    indexer.indexing.refinement_protocol.mode=refine_shells \
     indexer.refinement.parameterisation.auto_reduction.action=fix \
+    laue_output.index_only=False \
     spotfinder.lookup.mask="pixels.mask"
 
 # Split sequence into stills
