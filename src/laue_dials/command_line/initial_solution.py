@@ -302,26 +302,26 @@ def run(args=None, *, phil=working_phil):
     if not params.laue_output.index_only:
         # Perform scan-varying refinement
         refine_time = time.time()
-    
+
         logger.info("")
         logger.info("*" * 80)
         logger.info("Performing geometric refinement")
         logger.info("*" * 80)
-    
+
         refined_expts, refined_refls = scan_varying_refine(
             params.refiner, indexed_expts, indexed_refls
         )
-    
+
         logger.info(
             "Saving refined experiments to %s", params.laue_output.refined.experiments
         )
         refined_expts.as_file(params.laue_output.refined.experiments)
-    
+
         logger.info(
             "Saving refined reflections to %s", params.laue_output.refined.reflections
         )
         refined_refls.as_file(filename=params.laue_output.refined.reflections)
-    
+
         # In case indexing is last step
         final_expts = refined_expts
         final_refls = refined_refls
