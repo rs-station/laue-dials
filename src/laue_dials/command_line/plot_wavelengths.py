@@ -146,7 +146,6 @@ def run(args=None, *, phil=working_phil):
             "Wavelength restrictions have removed some reflections. Plot will not reflect entirety of the data."
         )
 
-    plt.ion()
     plt.hist(lams, bins=params.n_bins)
     plt.title("Wavelength Spectrum")
     plt.xlabel("Wavelength (Angstroms)")
