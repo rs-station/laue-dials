@@ -9,7 +9,7 @@
     <link rel="stylesheet" type="text/css" href="../../../_static/alabaster.css?v=233b9934" />
     <script src="../../../_static/jquery.js?v=5d32c60e"></script>
     <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-    <script src="../../../_static/documentation_options.js?v=0a79464e"></script>
+    <script src="../../../_static/documentation_options.js?v=81429f54"></script>
     <script src="../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="icon" href="../../../_static/rs-favicon_32x32.png"/>
@@ -338,26 +338,26 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="n">params</span><span class="o">.</span><span class="n">laue_output</span><span class="o">.</span><span class="n">index_only</span><span class="p">:</span>
         <span class="c1"># Perform scan-varying refinement</span>
         <span class="n">refine_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-    
+
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;*&quot;</span> <span class="o">*</span> <span class="mi">80</span><span class="p">)</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Performing geometric refinement&quot;</span><span class="p">)</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;*&quot;</span> <span class="o">*</span> <span class="mi">80</span><span class="p">)</span>
-    
+
         <span class="n">refined_expts</span><span class="p">,</span> <span class="n">refined_refls</span> <span class="o">=</span> <span class="n">scan_varying_refine</span><span class="p">(</span>
             <span class="n">params</span><span class="o">.</span><span class="n">refiner</span><span class="p">,</span> <span class="n">indexed_expts</span><span class="p">,</span> <span class="n">indexed_refls</span>
         <span class="p">)</span>
-    
+
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
             <span class="s2">&quot;Saving refined experiments to </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">params</span><span class="o">.</span><span class="n">laue_output</span><span class="o">.</span><span class="n">refined</span><span class="o">.</span><span class="n">experiments</span>
         <span class="p">)</span>
         <span class="n">refined_expts</span><span class="o">.</span><span class="n">as_file</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">laue_output</span><span class="o">.</span><span class="n">refined</span><span class="o">.</span><span class="n">experiments</span><span class="p">)</span>
-    
+
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
             <span class="s2">&quot;Saving refined reflections to </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">params</span><span class="o">.</span><span class="n">laue_output</span><span class="o">.</span><span class="n">refined</span><span class="o">.</span><span class="n">reflections</span>
         <span class="p">)</span>
         <span class="n">refined_refls</span><span class="o">.</span><span class="n">as_file</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">params</span><span class="o">.</span><span class="n">laue_output</span><span class="o">.</span><span class="n">refined</span><span class="o">.</span><span class="n">reflections</span><span class="p">)</span>
-    
+
         <span class="c1"># In case indexing is last step</span>
         <span class="n">final_expts</span> <span class="o">=</span> <span class="n">refined_expts</span>
         <span class="n">final_refls</span> <span class="o">=</span> <span class="n">refined_refls</span>
