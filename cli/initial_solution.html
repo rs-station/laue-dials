@@ -10,7 +10,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=233b9934" />
     <script src="../_static/jquery.js?v=5d32c60e"></script>
     <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-    <script src="../_static/documentation_options.js?v=2354e306"></script>
+    <script src="../_static/documentation_options.js?v=5b29a17f"></script>
     <script src="../_static/doctools.js?v=888ff710"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="icon" href="../_static/rs-favicon_32x32.png"/>
@@ -117,7 +117,7 @@ and conversion into stills are all done in this script.</p>
     <span class="n">threshold</span> <span class="p">{</span>
       <span class="n">algorithm</span> <span class="o">=</span> <span class="n">dispersion</span> <span class="o">*</span><span class="n">dispersion_extended</span> <span class="n">radial_profile</span>
       <span class="n">dispersion</span> <span class="p">{</span>
-        <span class="n">gain</span> <span class="o">=</span> <span class="mf">0.10</span>
+        <span class="n">gain</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="n">global_threshold</span> <span class="o">=</span> <span class="mi">0</span>
       <span class="p">}</span>
       <span class="n">radial_profile</span> <span class="p">{</span>
@@ -465,7 +465,7 @@ and conversion into stills are all done in this script.</p>
       <span class="n">dispersion</span>
         <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Extensions to do dispersion threshold.&quot;</span>
       <span class="p">{</span>
-        <span class="n">gain</span> <span class="o">=</span> <span class="mf">0.10</span>
+        <span class="n">gain</span> <span class="o">=</span> <span class="kc">None</span>
           <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Use a flat gain map for the entire detector to act as a&quot;</span>
                   <span class="s2">&quot;multiplier for the gain set by the format. Cannot be used&quot;</span>
                   <span class="s2">&quot;in conjunction with lookup.gain_map parameter.&quot;</span>
