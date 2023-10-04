@@ -7,12 +7,9 @@ import logging
 import sys
 
 import libtbx.phil
-from dials.array_family import flex
 from dials.util import show_mail_handle_errors
 from dials.util.options import (ArgumentParser,
-                               reflections_and_experiments_from_files)
-
-import numpy as np
+                                reflections_and_experiments_from_files)
 from matplotlib import pyplot as plt
 
 logger = logging.getLogger("laue-dials.command_line.plot_wavelengths")
@@ -30,7 +27,7 @@ Examples:
 
 # Set the phil scope
 phil_scope = libtbx.phil.parse(
-   """
+    """
 
   refined_only = False
     .type = bool
@@ -118,7 +115,7 @@ def run(args=None, *, phil=working_phil):
     )
     refls = refls[0]
 
-#    refls = flex.reflection_table.from_file(params.input.reflections)
+    #    refls = flex.reflection_table.from_file(params.input.reflections)
     if params.refined_only:
         refls = refls.select(refls.get_flags(refls.flags.used_in_refinement))
 
@@ -130,12 +127,14 @@ def run(args=None, *, phil=working_phil):
     try:
         lams = refls["wavelength"].as_numpy_array()
     except:
-        logger.info("Wavelength data could not be read. Please check to ensure there is a populated wavelength column in the reflection table.")
+        logger.info(
+            "Wavelength data could not be read. Please check to ensure there is a populated wavelength column in the reflection table."
+        )
         return
 
     # Apply wavelength restrictions
     initial_count = len(lams)
-    
+
     if params.lam_min is not None:
         lams = lams[lams >= params.lam_min]
 
@@ -143,7 +142,9 @@ def run(args=None, *, phil=working_phil):
         lams = lams[lams <= params.lam_max]
 
     if initial_count != len(lams):
-        logger.info("Wavelength restrictions have removed some reflections. Plot will not reflect entirety of the data.")
+        logger.info(
+            "Wavelength restrictions have removed some reflections. Plot will not reflect entirety of the data."
+        )
 
     plt.ion()
     plt.hist(lams, bins=params.n_bins)
@@ -151,6 +152,7 @@ def run(args=None, *, phil=working_phil):
     plt.xlabel("Wavelength (Angstroms)")
     plt.ylabel("Number of reflections")
     plt.show()
+
 
 if __name__ == "__main__":
     run()
