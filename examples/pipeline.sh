@@ -2,6 +2,14 @@
 # here can be downloaded at https://zenodo.org/record/6407157. You may need to alter
 # option values for other datasets.
 
+#SBATCH --account=<project_id>
+#SBATCH --partition=main
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=8G
+#SBATCH --time=1:00:00
+
 FILE_INPUT_TEMPLATE="PATH/TO/DATA/e080_###.mccd"
 
 # Import data
