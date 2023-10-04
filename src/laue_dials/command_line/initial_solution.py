@@ -97,12 +97,6 @@ spotfinder_phil = libtbx.phil.parse(
     """
 spotfinder {
   spotfinder {
-    threshold {
-      dispersion {
-        gain = 0.10
-      }
-    }
-
     filter {
       max_separation = 10
     }
