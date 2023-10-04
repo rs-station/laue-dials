@@ -53,6 +53,7 @@ Then, using the DIALS python environment, run the following:
    laue.refine
    laue.predict
    laue.integrate
+   laue.plot_wavelengths
 
 Note that you need to import the image data using ``dials.import``. For information on how to use this command, visit https://dials.github.io/documentation/programs/dials_import.html. An example of how to analyze a full dataset lives at https://github.com/rs-station/laue-dials/blob/main/examples/pipeline.sh.
 
