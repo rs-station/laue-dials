@@ -9,7 +9,7 @@
     <link rel="stylesheet" type="text/css" href="../../../_static/alabaster.css?v=233b9934" />
     <script src="../../../_static/jquery.js?v=5d32c60e"></script>
     <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-    <script src="../../../_static/documentation_options.js?v=85116f36"></script>
+    <script src="../../../_static/documentation_options.js?v=0a79464e"></script>
     <script src="../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="icon" href="../../../_static/rs-favicon_32x32.png"/>
@@ -70,6 +70,20 @@
 <span class="n">main_phil</span> <span class="o">=</span> <span class="n">libtbx</span><span class="o">.</span><span class="n">phil</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">laue_output {</span>
+
+<span class="sd">  index_only = True</span>
+<span class="sd">    .type = bool</span>
+<span class="sd">    .help = &quot;Whether to only index or also refine the data.&quot;</span>
+
+<span class="sd">  final_output {</span>
+<span class="sd">      experiments = &#39;monochromatic.expt&#39;</span>
+<span class="sd">        .type = str</span>
+<span class="sd">        .help = &quot;The final output experiment list filename.&quot;</span>
+<span class="sd">      reflections = &#39;monochromatic.refl&#39;</span>
+<span class="sd">        .type = str</span>
+<span class="sd">        .help = &quot;The final output reflection table filename.&quot;</span>
+<span class="sd">  }</span>
+
 <span class="sd">  strong_filename = &#39;strong.refl&#39;</span>
 <span class="sd">    .type = str</span>
 <span class="sd">    .help = &quot;The output spotfinding reflection table filename.&quot;</span>
@@ -85,12 +99,12 @@
 <span class="sd">  }</span>
 
 <span class="sd">  refined {</span>
-<span class="sd">      experiments = &#39;monochromatic.expt&#39;</span>
+<span class="sd">      experiments = &#39;refined.expt&#39;</span>
 <span class="sd">        .type = str</span>
-<span class="sd">        .help = &quot;The output experiment list stills filename.&quot;</span>
-<span class="sd">      reflections = &#39;monochromatic.refl&#39;</span>
+<span class="sd">        .help = &quot;The output refined experiment list stills filename.&quot;</span>
+<span class="sd">      reflections = &#39;refined.refl&#39;</span>
 <span class="sd">        .type = str</span>
-<span class="sd">        .help = &quot;The output reflection table stills filename.&quot;</span>
+<span class="sd">        .help = &quot;The output refined reflection table stills filename.&quot;</span>
 <span class="sd">  }</span>
 
 <span class="sd">  log = &#39;laue.initial_solution.log&#39;</span>
@@ -142,7 +156,7 @@
 <span class="sd">indexer {</span>
 <span class="sd">  indexing {</span>
 <span class="sd">    refinement_procotol {</span>
-<span class="sd">      n_macrocycles = 10</span>
+<span class="sd">      mode = repredict_only</span>
 <span class="sd">    }</span>
 <span class="sd">  }</span>
 
@@ -317,32 +331,51 @@
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Time Taken Indexing = </span><span class="si">%f</span><span class="s2"> seconds&quot;</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">index_time</span><span class="p">)</span>
 
-    <span class="c1"># Perform scan-varying refinement</span>
-    <span class="n">refine_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="c1"># In case indexing is last step</span>
+    <span class="n">final_expts</span> <span class="o">=</span> <span class="n">indexed_expts</span>
+    <span class="n">final_refls</span> <span class="o">=</span> <span class="n">indexed_refls</span>
 
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;*&quot;</span> <span class="o">*</span> <span class="mi">80</span><span class="p">)</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Performing geometric refinement&quot;</span><span class="p">)</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;*&quot;</span> <span class="o">*</span> <span class="mi">80</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">params</span><span class="o">.</span><span class="n">laue_output</span><span class="o">.</span><span class="n">index_only</span><span class="p">:</span>
+        <span class="c1"># Perform scan-varying refinement</span>
+        <span class="n">refine_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;*&quot;</span> <span class="o">*</span> <span class="mi">80</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Performing geometric refinement&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;*&quot;</span> <span class="o">*</span> <span class="mi">80</span><span class="p">)</span>
+    
+        <span class="n">refined_expts</span><span class="p">,</span> <span class="n">refined_refls</span> <span class="o">=</span> <span class="n">scan_varying_refine</span><span class="p">(</span>
+            <span class="n">params</span><span class="o">.</span><span class="n">refiner</span><span class="p">,</span> <span class="n">indexed_expts</span><span class="p">,</span> <span class="n">indexed_refls</span>
+        <span class="p">)</span>
+    
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="s2">&quot;Saving refined experiments to </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">params</span><span class="o">.</span><span class="n">laue_output</span><span class="o">.</span><span class="n">refined</span><span class="o">.</span><span class="n">experiments</span>
+        <span class="p">)</span>
+        <span class="n">refined_expts</span><span class="o">.</span><span class="n">as_file</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">laue_output</span><span class="o">.</span><span class="n">refined</span><span class="o">.</span><span class="n">experiments</span><span class="p">)</span>
+    
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="s2">&quot;Saving refined reflections to </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">params</span><span class="o">.</span><span class="n">laue_output</span><span class="o">.</span><span class="n">refined</span><span class="o">.</span><span class="n">reflections</span>
+        <span class="p">)</span>
+        <span class="n">refined_refls</span><span class="o">.</span><span class="n">as_file</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">params</span><span class="o">.</span><span class="n">laue_output</span><span class="o">.</span><span class="n">refined</span><span class="o">.</span><span class="n">reflections</span><span class="p">)</span>
+    
+        <span class="c1"># In case indexing is last step</span>
+        <span class="n">final_expts</span> <span class="o">=</span> <span class="n">refined_expts</span>
+        <span class="n">final_refls</span> <span class="o">=</span> <span class="n">refined_refls</span>
 
-    <span class="n">refined_expts</span><span class="p">,</span> <span class="n">refined_refls</span> <span class="o">=</span> <span class="n">scan_varying_refine</span><span class="p">(</span>
-        <span class="n">params</span><span class="o">.</span><span class="n">refiner</span><span class="p">,</span> <span class="n">indexed_expts</span><span class="p">,</span> <span class="n">indexed_refls</span>
-    <span class="p">)</span>
-
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-        <span class="s2">&quot;Saving refined experiments to </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">params</span><span class="o">.</span><span class="n">laue_output</span><span class="o">.</span><span class="n">refined</span><span class="o">.</span><span class="n">experiments</span>
-    <span class="p">)</span>
-    <span class="n">refined_expts</span><span class="o">.</span><span class="n">as_file</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">laue_output</span><span class="o">.</span><span class="n">refined</span><span class="o">.</span><span class="n">experiments</span><span class="p">)</span>
-
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-        <span class="s2">&quot;Saving refined reflections to </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">params</span><span class="o">.</span><span class="n">laue_output</span><span class="o">.</span><span class="n">refined</span><span class="o">.</span><span class="n">reflections</span>
-    <span class="p">)</span>
-    <span class="n">refined_refls</span><span class="o">.</span><span class="n">as_file</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">params</span><span class="o">.</span><span class="n">laue_output</span><span class="o">.</span><span class="n">refined</span><span class="o">.</span><span class="n">reflections</span><span class="p">)</span>
-
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Time Taken Refining = </span><span class="si">%f</span><span class="s2"> seconds&quot;</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">refine_time</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Time Taken Refining = </span><span class="si">%f</span><span class="s2"> seconds&quot;</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">refine_time</span><span class="p">)</span>
 
     <span class="c1"># Final logs</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="s2">&quot;Saving final experiments to </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">params</span><span class="o">.</span><span class="n">laue_output</span><span class="o">.</span><span class="n">final_output</span><span class="o">.</span><span class="n">experiments</span>
+    <span class="p">)</span>
+    <span class="n">final_expts</span><span class="o">.</span><span class="n">as_file</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">laue_output</span><span class="o">.</span><span class="n">final_output</span><span class="o">.</span><span class="n">experiments</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="s2">&quot;Saving final reflections to </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">params</span><span class="o">.</span><span class="n">laue_output</span><span class="o">.</span><span class="n">final_output</span><span class="o">.</span><span class="n">reflections</span>
+    <span class="p">)</span>
+    <span class="n">final_refls</span><span class="o">.</span><span class="n">as_file</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">params</span><span class="o">.</span><span class="n">laue_output</span><span class="o">.</span><span class="n">final_output</span><span class="o">.</span><span class="n">reflections</span><span class="p">)</span>
+
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
         <span class="s2">&quot;Time Taken for Total Processing = </span><span class="si">%f</span><span class="s2"> seconds&quot;</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span>

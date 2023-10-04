@@ -10,7 +10,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=233b9934" />
     <script src="../_static/jquery.js?v=5d32c60e"></script>
     <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-    <script src="../_static/documentation_options.js?v=85116f36"></script>
+    <script src="../_static/documentation_options.js?v=0a79464e"></script>
     <script src="../_static/doctools.js?v=888ff710"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="icon" href="../_static/rs-favicon_32x32.png"/>
@@ -54,14 +54,19 @@ and conversion into stills are all done in this script.</p>
 <section id="basic-parameters">
 <h2>Basic parameters<a class="headerlink" href="#basic-parameters" title="Link to this heading"></a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">laue_output</span> <span class="p">{</span>
+  <span class="n">index_only</span> <span class="o">=</span> <span class="kc">True</span>
+  <span class="n">final_output</span> <span class="p">{</span>
+    <span class="n">experiments</span> <span class="o">=</span> <span class="s1">&#39;monochromatic.expt&#39;</span>
+    <span class="n">reflections</span> <span class="o">=</span> <span class="s1">&#39;monochromatic.refl&#39;</span>
+  <span class="p">}</span>
   <span class="n">strong_filename</span> <span class="o">=</span> <span class="s1">&#39;strong.refl&#39;</span>
   <span class="n">indexed</span> <span class="p">{</span>
     <span class="n">experiments</span> <span class="o">=</span> <span class="s1">&#39;indexed.expt&#39;</span>
     <span class="n">reflections</span> <span class="o">=</span> <span class="s1">&#39;indexed.refl&#39;</span>
   <span class="p">}</span>
   <span class="n">refined</span> <span class="p">{</span>
-    <span class="n">experiments</span> <span class="o">=</span> <span class="s1">&#39;monochromatic.expt&#39;</span>
-    <span class="n">reflections</span> <span class="o">=</span> <span class="s1">&#39;monochromatic.refl&#39;</span>
+    <span class="n">experiments</span> <span class="o">=</span> <span class="s1">&#39;refined.expt&#39;</span>
+    <span class="n">reflections</span> <span class="o">=</span> <span class="s1">&#39;refined.refl&#39;</span>
   <span class="p">}</span>
   <span class="n">log</span> <span class="o">=</span> <span class="s1">&#39;laue.initial_solution.log&#39;</span>
 <span class="p">}</span>
@@ -234,6 +239,17 @@ and conversion into stills are all done in this script.</p>
 <section id="full-parameter-definitions">
 <h2>Full parameter definitions<a class="headerlink" href="#full-parameter-definitions" title="Link to this heading"></a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">laue_output</span> <span class="p">{</span>
+  <span class="n">index_only</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Whether to only index or also refine the data.&quot;</span>
+    <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">bool</span>
+  <span class="n">final_output</span> <span class="p">{</span>
+    <span class="n">experiments</span> <span class="o">=</span> <span class="s1">&#39;monochromatic.expt&#39;</span>
+      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;The final output experiment list filename.&quot;</span>
+      <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">str</span>
+    <span class="n">reflections</span> <span class="o">=</span> <span class="s1">&#39;monochromatic.refl&#39;</span>
+      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;The final output reflection table filename.&quot;</span>
+      <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">str</span>
+  <span class="p">}</span>
   <span class="n">strong_filename</span> <span class="o">=</span> <span class="s1">&#39;strong.refl&#39;</span>
     <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;The output spotfinding reflection table filename.&quot;</span>
     <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">str</span>
@@ -246,11 +262,11 @@ and conversion into stills are all done in this script.</p>
       <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">str</span>
   <span class="p">}</span>
   <span class="n">refined</span> <span class="p">{</span>
-    <span class="n">experiments</span> <span class="o">=</span> <span class="s1">&#39;monochromatic.expt&#39;</span>
-      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;The output experiment list stills filename.&quot;</span>
+    <span class="n">experiments</span> <span class="o">=</span> <span class="s1">&#39;refined.expt&#39;</span>
+      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;The output refined experiment list stills filename.&quot;</span>
       <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">str</span>
-    <span class="n">reflections</span> <span class="o">=</span> <span class="s1">&#39;monochromatic.refl&#39;</span>
-      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;The output reflection table stills filename.&quot;</span>
+    <span class="n">reflections</span> <span class="o">=</span> <span class="s1">&#39;refined.refl&#39;</span>
+      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;The output refined reflection table stills filename.&quot;</span>
       <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">str</span>
   <span class="p">}</span>
   <span class="n">log</span> <span class="o">=</span> <span class="s1">&#39;laue.initial_solution.log&#39;</span>
