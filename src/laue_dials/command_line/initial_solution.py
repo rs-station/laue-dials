@@ -36,6 +36,20 @@ Examples:
 main_phil = libtbx.phil.parse(
     """
 laue_output {
+
+  index_only = True
+    .type = bool
+    .help = "Whether to only index or also refine the data."
+
+  final_output {
+      experiments = 'monochromatic.expt'
+        .type = str
+        .help = "The final output experiment list filename."
+      reflections = 'monochromatic.refl'
+        .type = str
+        .help = "The final output reflection table filename."
+  }
+
   strong_filename = 'strong.refl'
     .type = str
     .help = "The output spotfinding reflection table filename."
@@ -51,12 +65,12 @@ laue_output {
   }
 
   refined {
-      experiments = 'monochromatic.expt'
+      experiments = 'refined.expt'
         .type = str
-        .help = "The output experiment list stills filename."
-      reflections = 'monochromatic.refl'
+        .help = "The output refined experiment list stills filename."
+      reflections = 'refined.refl'
         .type = str
-        .help = "The output reflection table stills filename."
+        .help = "The output refined reflection table stills filename."
   }
 
   log = 'laue.initial_solution.log'
@@ -108,7 +122,7 @@ indexer_phil = libtbx.phil.parse(
 indexer {
   indexing {
     refinement_procotol {
-      n_macrocycles = 10
+      mode = repredict_only
     }
   }
 
@@ -281,32 +295,51 @@ def run(args=None, *, phil=working_phil):
     logger.info("")
     logger.info("Time Taken Indexing = %f seconds", time.time() - index_time)
 
-    # Perform scan-varying refinement
-    refine_time = time.time()
+    # In case indexing is last step
+    final_expts = indexed_expts
+    final_refls = indexed_refls
 
-    logger.info("")
-    logger.info("*" * 80)
-    logger.info("Performing geometric refinement")
-    logger.info("*" * 80)
+    if not params.laue_output.index_only:
+        # Perform scan-varying refinement
+        refine_time = time.time()
+    
+        logger.info("")
+        logger.info("*" * 80)
+        logger.info("Performing geometric refinement")
+        logger.info("*" * 80)
+    
+        refined_expts, refined_refls = scan_varying_refine(
+            params.refiner, indexed_expts, indexed_refls
+        )
+    
+        logger.info(
+            "Saving refined experiments to %s", params.laue_output.refined.experiments
+        )
+        refined_expts.as_file(params.laue_output.refined.experiments)
+    
+        logger.info(
+            "Saving refined reflections to %s", params.laue_output.refined.reflections
+        )
+        refined_refls.as_file(filename=params.laue_output.refined.reflections)
+    
+        # In case indexing is last step
+        final_expts = refined_expts
+        final_refls = refined_refls
 
-    refined_expts, refined_refls = scan_varying_refine(
-        params.refiner, indexed_expts, indexed_refls
-    )
-
-    logger.info(
-        "Saving refined experiments to %s", params.laue_output.refined.experiments
-    )
-    refined_expts.as_file(params.laue_output.refined.experiments)
-
-    logger.info(
-        "Saving refined reflections to %s", params.laue_output.refined.reflections
-    )
-    refined_refls.as_file(filename=params.laue_output.refined.reflections)
-
-    logger.info("")
-    logger.info("Time Taken Refining = %f seconds", time.time() - refine_time)
+        logger.info("")
+        logger.info("Time Taken Refining = %f seconds", time.time() - refine_time)
 
     # Final logs
+    logger.info(
+        "Saving final experiments to %s", params.laue_output.final_output.experiments
+    )
+    final_expts.as_file(params.laue_output.final_output.experiments)
+
+    logger.info(
+        "Saving final reflections to %s", params.laue_output.final_output.reflections
+    )
+    final_refls.as_file(filename=params.laue_output.final_output.reflections)
+
     logger.info("")
     logger.info(
         "Time Taken for Total Processing = %f seconds", time.time() - start_time
