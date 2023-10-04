@@ -29,6 +29,10 @@ Examples:
 phil_scope = libtbx.phil.parse(
     """
 
+  show = True
+    .type = bool
+    .help = "Whether to display the generated histogram."
+
   save = False
     .type = bool
     .help = "Whether to save the generated histogram."
@@ -161,7 +165,8 @@ def run(args=None, *, phil=working_phil):
     plt.ylabel("Number of reflections")
     if params.save:
         fig.savefig(params.output)
-    plt.show()
+    if params.show:
+        plt.show()
 
 
 if __name__ == "__main__":
