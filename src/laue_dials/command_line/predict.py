@@ -81,7 +81,7 @@ cutoff_log_probability = 0.
 working_phil = phil_scope.fetch(sources=[phil_scope])
 
 
-def predict_spots(params, refls, expts):
+def predict_spots(lam_min, lam_max, d_min, refls, expts):
     """
     A function for predicting spots given a geometry
     """
@@ -125,9 +125,9 @@ def predict_spots(params, refls, expts):
             s0,
             cell,
             U,
-            params.wavelengths.lam_min,
-            params.wavelengths.lam_max,
-            params.reciprocal_grid.d_min,
+            lam_min,
+            lam_max,
+            d_min,
             spacegroup=spacegroup,
         )
 
@@ -266,7 +266,7 @@ def run(args=None, *, phil=working_phil):
     for i in range(len(ids)):  # Split DIALS objects into lists
         expts_arr.append(ExperimentList([experiments[i]]))
         refls_arr.append(reflections.select(reflections["id"] == ids[i]))
-    inputs = list(zip(repeat(params), refls_arr, expts_arr))
+    inputs = list(zip(repeat(params.wavelengths.lam_min), repeat(params.wavelengths.lam_max), repeat(params.reciprocal_grid.d_min), refls_arr, expts_arr))
 
     # Predict reflections
     logger.info(f"Predicting reflections")
