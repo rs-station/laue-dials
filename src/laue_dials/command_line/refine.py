@@ -129,8 +129,6 @@ def refine_image(params, expts, refls):
         )
         return ExperimentList(), reflection_table()  # Return empty
 
-    refined_expts.crystals()
-
     # Write wavelengths and centroid data
     refined_refls = store_wavelengths(refined_expts, refined_refls)
     refined_refls.map_centroids_to_reciprocal_space(refined_expts)
