@@ -266,7 +266,15 @@ def run(args=None, *, phil=working_phil):
     for i in range(len(ids)):  # Split DIALS objects into lists
         expts_arr.append(ExperimentList([experiments[i]]))
         refls_arr.append(reflections.select(reflections["id"] == ids[i]))
-    inputs = list(zip(repeat(params.wavelengths.lam_min), repeat(params.wavelengths.lam_max), repeat(params.reciprocal_grid.d_min), refls_arr, expts_arr))
+    inputs = list(
+        zip(
+            repeat(params.wavelengths.lam_min),
+            repeat(params.wavelengths.lam_max),
+            repeat(params.reciprocal_grid.d_min),
+            refls_arr,
+            expts_arr,
+        )
+    )
 
     # Predict reflections
     logger.info(f"Predicting reflections")
