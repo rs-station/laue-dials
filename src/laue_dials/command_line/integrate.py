@@ -7,7 +7,6 @@ import logging
 import sys
 import time
 from functools import partial
-from itertools import repeat
 from multiprocessing import Pool
 
 import gemmi
@@ -67,10 +66,13 @@ def get_refls_image(refls, img_id):
     return refls.select(refls["id"] == img_id)
 
 
-def integrate_image(params, img_set, refls):
+def integrate_image(img_set, refls):
     """
     A function for integrating predicted spots on an image
     """
+    img_num = refls["id"][0]
+    logger.info(f"Integrating image {img_num}.")
+    proctime = time.time()
     isigi_cutoff = 2.0  # i/sigma cutoff for strong spot profiles
 
     # Make SegmentedImage
@@ -102,6 +104,7 @@ def integrate_image(params, img_set, refls):
     refls["background.sum.value"] = flex.double(bg)
     refls["background.sum.variance"] = flex.double(sigbg**2)
     refls = refls.select(refls["intensity.sum.value"] != 0)
+    logger.info(f"Image {img_num} took {time.time() - proctime} seconds.")
     return refls  # Updated reflection table
 
 
@@ -175,7 +178,7 @@ def run(args=None, *, phil=working_phil):
     ids = list(np.unique(preds["id"]).astype(np.int32))
     get_refls = partial(get_refls_image, preds)
     tables = list(map(get_refls, ids))
-    inputs = list(zip(repeat(params), imagesets, tables))
+    inputs = list(zip(imagesets, tables))
 
     # Get initial time for process
     start_time = time.time()
@@ -184,7 +187,7 @@ def run(args=None, *, phil=working_phil):
     num_processes = params.n_proc
     logger.info("Starting integration.")
     with Pool(processes=num_processes) as pool:
-        refls_arr = pool.starmap(integrate_image, inputs)
+        refls_arr = pool.starmap(integrate_image, inputs, chunksize=1)
     logger.info("Integration finished.")
 
     # Construct an integrated reflection table
