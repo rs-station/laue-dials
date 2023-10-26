@@ -7,6 +7,7 @@ import logging
 import sys
 import time
 from functools import partial
+from itertools import repeat
 from multiprocessing import Pool
 
 import gemmi
@@ -51,7 +52,11 @@ output {
 
 n_proc = 1
   .type = int
-  .help = Number of parallel integrations to do
+  .help = "Number of parallel integrations to do"
+
+isigi_cutoff = 2.0
+  .type = float
+  .help = "I/SIGI threshold to use for marking strong spots."
 """,
     process_includes=True,
 )
@@ -66,14 +71,13 @@ def get_refls_image(refls, img_id):
     return refls.select(refls["id"] == img_id)
 
 
-def integrate_image(img_set, refls):
+def integrate_image(img_set, refls, isigi_cutoff):
     """
     A function for integrating predicted spots on an image
     """
     img_num = refls["id"][0]
     logger.info(f"Integrating image {img_num}.")
     proctime = time.time()
-    isigi_cutoff = 2.0  # i/sigma cutoff for strong spot profiles
 
     # Make SegmentedImage
     all_spots = refls["xyzcal.px"].as_numpy_array()[:, :2].astype("float32")
@@ -178,7 +182,7 @@ def run(args=None, *, phil=working_phil):
     ids = list(np.unique(preds["id"]).astype(np.int32))
     get_refls = partial(get_refls_image, preds)
     tables = list(map(get_refls, ids))
-    inputs = list(zip(imagesets, tables))
+    inputs = list(zip(imagesets, tables, repeat(params.isigi_cutoff)))
 
     # Get initial time for process
     start_time = time.time()
@@ -191,6 +195,7 @@ def run(args=None, *, phil=working_phil):
     logger.info("Integration finished.")
 
     # Construct an integrated reflection table
+    logger.info("Constructing reflection table")
     final_refls = flex.reflection_table()
     for refls in refls_arr:
         final_refls.extend(refls)
