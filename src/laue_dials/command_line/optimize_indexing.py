@@ -68,16 +68,16 @@ n_macrocycles = 3
   .help = "Number of macrocycles of index optimization to perform"
 
 wavelengths {
-  lam_min = 0.95
+  lam_min = None
     .type = float(value_min=0.1)
     .help = "Minimum wavelength for beam spectrum"
-  lam_max = 1.15
+  lam_max = None
     .type = float(value_min=0.2)
     .help = "Maximum wavelength for beam spectrum"
   }
 
 reciprocal_grid {
-  d_min = 1.4
+  d_min = None
     .type = float(value_min=0.1)
     .help = "Minimum d-spacing for reflecting planes"
   }
@@ -259,6 +259,17 @@ def run(args=None, *, phil=working_phil):
     if len(experiments) == 0:
         parser.print_help()
         return
+
+    # Check for valid parameter values                                                    
+    if params.reciprocal_grid.d_min == None:                                              
+        logger.info("Please provide a d_min.")                                            
+        return                                                                            
+    elif params.wavelengths.lam_min == None or params.wavelengths.lam_max == None:        
+        logger.info("Please provide upper and lower boundaries for the wavelength spectrum.")                                                                                       
+        return                                                                            
+    elif params.wavelengths.lam_min > params.wavelengths.lam_max:                         
+        logger.info("Minimum wavelength cannot be greater than maximum wavelength.")      
+        return                                                                            
 
     # Get initial time for process
     start_time = time.time()
