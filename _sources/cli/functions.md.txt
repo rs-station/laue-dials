@@ -6,11 +6,13 @@
 .. toctree::
    :maxdepth: 1
 
-   initial_solution
+   find_spots
+   index
    sequence_to_stills
    optimize_indexing
    refine
    predict
    integrate
+   plot_wavelengths
 
 ```
