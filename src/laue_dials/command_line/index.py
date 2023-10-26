@@ -19,11 +19,11 @@ logger = logging.getLogger("laue-dials.command_line.index")
 help_message = """
 
 This program takes a DIALS imported experiment list (generated with
-dials.import) and a strong reflection table and generates an initial 
-monochromatic indexing solution to feed into the remainder of the pipeline. 
-The outputs are a pair of files (monochromatic.expt, monochromatic.refl) 
+dials.import) and a strong reflection table and generates an initial
+monochromatic indexing solution to feed into the remainder of the pipeline.
+The outputs are a pair of files (monochromatic.expt, monochromatic.refl)
 that constitute a monochromatic estimate of a geometric solution for the
-experiment. 
+experiment.
 
 Examples:
 

@@ -18,8 +18,8 @@ help_message = """
 
 This program takes a DIALS imported experiment list (generated with
 dials.import) and generates a reflection table of strong spots
-for the remainder of the pipeline. The output is a strong.refl file 
-that contains all the found strong spots for the experiment. 
+for the remainder of the pipeline. The output is a strong.refl file
+that contains all the found strong spots for the experiment.
 
 Examples:
 
