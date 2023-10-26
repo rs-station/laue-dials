@@ -60,6 +60,7 @@ output {
 
 working_phil = main_phil.fetch(sources=[spotfinder_phil])
 
+
 @show_mail_handle_errors()
 def run(args=None, *, phil=working_phil):
     # Parse arguments
@@ -119,7 +120,7 @@ def run(args=None, *, phil=working_phil):
     imported_expts = params.input.experiments[0][1]
 
     # Get initial time for process
-    start_time = time.time()
+    time.time()
 
     # Find strong spots
     spotfinding_time = time.time()
@@ -136,6 +137,7 @@ def run(args=None, *, phil=working_phil):
 
     logger.info("")
     logger.info("Time Taken Spotfinding = %f seconds", time.time() - spotfinding_time)
+
 
 if __name__ == "__main__":
     run()

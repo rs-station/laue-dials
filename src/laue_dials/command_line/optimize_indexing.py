@@ -260,16 +260,18 @@ def run(args=None, *, phil=working_phil):
         parser.print_help()
         return
 
-    # Check for valid parameter values                                                    
-    if params.reciprocal_grid.d_min == None:                                              
-        logger.info("Please provide a d_min.")                                            
-        return                                                                            
-    elif params.wavelengths.lam_min == None or params.wavelengths.lam_max == None:        
-        logger.info("Please provide upper and lower boundaries for the wavelength spectrum.")                                                                                       
-        return                                                                            
-    elif params.wavelengths.lam_min > params.wavelengths.lam_max:                         
-        logger.info("Minimum wavelength cannot be greater than maximum wavelength.")      
-        return                                                                            
+    # Check for valid parameter values
+    if params.reciprocal_grid.d_min == None:
+        logger.info("Please provide a d_min.")
+        return
+    elif params.wavelengths.lam_min == None or params.wavelengths.lam_max == None:
+        logger.info(
+            "Please provide upper and lower boundaries for the wavelength spectrum."
+        )
+        return
+    elif params.wavelengths.lam_min > params.wavelengths.lam_max:
+        logger.info("Minimum wavelength cannot be greater than maximum wavelength.")
+        return
 
     # Get initial time for process
     start_time = time.time()
