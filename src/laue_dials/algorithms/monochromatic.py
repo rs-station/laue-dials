@@ -41,7 +41,7 @@ def initial_index(params, expts, refls):
     """
     from dials.command_line.index import index
 
-    expts_indexed, refls_indexed = index(expts, [refls], params)
+    expts_indexed, refls_indexed = index(expts, refls, params)
     return expts_indexed, refls_indexed
 
 
