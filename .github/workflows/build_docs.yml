@@ -19,14 +19,6 @@ jobs:
       with:
         python-version: 3.9
 
-    - name: Check versions of files
-      run: |
-        pwd
-        ls
-        cat setup.cfg
-        cat docs/conf.py
-        cat docs/cli/optimize_indexing.rst
-
     - name: Install Miniconda
       uses: conda-incubator/setup-miniconda@v2
       with:
