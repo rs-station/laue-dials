@@ -3,6 +3,7 @@
 # under `install_requires` in `setup.cfg` is also listed here!
 dials
 sphinx
+myst-parser
 importlib-metadata
 reciprocalspaceship
 tqdm
