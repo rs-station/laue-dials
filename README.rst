@@ -43,11 +43,12 @@ Then, using the DIALS python environment, run the following:
 
    pip install laue-dials
 
-``laue-dials`` consists of seven command-line scripts for the processing of Laue diffraction data, which are
+``laue-dials`` consists of several command-line scripts for the processing of Laue diffraction data, which are
 
 .. code:: python
 
-   laue.initial_solution
+   laue.find_spots
+   laue.index
    laue.sequence_to_stills
    laue.optimize_indexing
    laue.refine
