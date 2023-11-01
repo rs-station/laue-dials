@@ -9,10 +9,7 @@ jobs:
   deploy:
     runs-on: [ubuntu-latest]
     steps:
-    - name: Install Python
-      uses: actions/checkout@v3
-      with:
-        python-version: '3.10'
+    - uses: actions/checkout@v3
     - name: Install Miniconda                 
       uses: conda-incubator/setup-miniconda@v2
       with:                                   
@@ -22,6 +19,9 @@ jobs:
         activate-environment: ""              
     - name: Install DIALS environment and more       
       run: |                                         
+        which python
+        python --version
+        echo $CONDA
         conda install -n base conda-libmamba-solver  
         conda config --set solver libmamba           
         conda install -n base -c conda-forge -y dials
@@ -32,11 +32,16 @@ jobs:
         make html                                    
     - name: Install dependencies
       run: |
+        which python
+        echo $CONDA
         python -m pip install --upgrade pip
         pip install -U setuptools setuptools_scm wheel
         pip install packaging twine typing-extensions tox-conda myst-parser docutils
     - name: Build the Python package
       run: |
+        which python
+        echo $CONDA
+        conda list
         tox -e build
         tox -e docs
     - name: Publish to PyPI
