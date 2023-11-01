@@ -16,7 +16,6 @@ jobs:
         miniconda-version: "latest"           
         channels: conda-forge, defaults       
         auto-activate-base: true              
-        activate-environment: ""              
     - name: Install DIALS environment and more       
       run: |                                         
         which python
