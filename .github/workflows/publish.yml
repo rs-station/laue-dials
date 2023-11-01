@@ -17,7 +17,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -U setuptools setuptools_scm wheel
-        pip install packaging twine typing-extensions tox-conda myst-parser
+        pip install packaging twine typing-extensions tox-conda myst-parser docutils
     - name: Build the Python package
       run: |
         tox -e build
