@@ -9,6 +9,7 @@ sphinx-rtd-theme
 nbsphinx
 sphinx-design
 autodocsumm
+docutils
 importlib-metadata
 reciprocalspaceship
 tqdm
