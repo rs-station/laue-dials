@@ -4,8 +4,8 @@
 dials
 sphinx
 myst-parser
-sphinxcontrib_autoprogram
-sphinx_rtd_theme
+sphinxcontrib-autoprogram
+sphinx-rtd-theme
 nbsphinx
 sphinx-design
 autodocsumm
