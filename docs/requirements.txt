@@ -4,6 +4,11 @@
 dials
 sphinx
 myst-parser
+sphinxcontrib_autoprogram
+sphinx_rtd_theme
+nbsphinx
+sphinx-design
+autodocsumm
 importlib-metadata
 reciprocalspaceship
 tqdm
