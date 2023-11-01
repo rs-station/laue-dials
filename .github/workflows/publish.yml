@@ -16,8 +16,11 @@ jobs:
         miniconda-version: "latest"           
         channels: conda-forge, defaults       
         auto-activate-base: true              
-    - name: Install DIALS environment and more       
+        activate-environment: ""
+    - name: Install DIALS environment and all dependencies
       run: |                                         
+        source $CONDA/etc/profile.d/conda.sh
+        conda activate
         which python
         python --version
         echo $CONDA
@@ -29,15 +32,14 @@ jobs:
         export SPHINXBUILD="$CONDA/bin/sphinx-build" 
         make clean                                   
         make html                                    
-    - name: Install dependencies
-      run: |
         which python
         echo $CONDA
         python -m pip install --upgrade pip
-        pip install -U setuptools setuptools_scm wheel
-        pip install packaging twine typing-extensions tox-conda myst-parser docutils
+        pip install -U setuptools setuptools_scm wheel packaging twine typing-extensions tox-conda myst-parser docutils
     - name: Build the Python package
       run: |
+        source $CONDA/etc/profile.d/conda.sh
+        conda activate
         which python
         echo $CONDA
         conda list
