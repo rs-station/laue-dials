@@ -41,17 +41,24 @@ To install ``laue-dials``, the DIALS code must first be installed using
 
    conda install -c conda-forge dials
 
-Then, using the DIALS python environment, run the following:
+Then, using the same python environment, run the following to install ``laue-dials`` from ``pip``:
 
 .. code:: python
 
    pip install laue-dials
 
-``laue-dials`` consists of seven command-line scripts for the processing of Laue diffraction data, which are
+or alternatively, install the development version of ``laue-dials`` from GitHub:
 
 .. code:: python
 
-   laue.initial_solution
+   pip install git+https://github.com/rs-station/laue-dials.git
+
+``laue-dials`` consists of several command-line scripts for the processing of Laue diffraction data, which are
+
+.. code:: python
+
+   laue.find_spots
+   laue.index
    laue.sequence_to_stills
    laue.optimize_indexing
    laue.refine

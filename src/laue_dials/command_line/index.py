@@ -9,20 +9,21 @@ import time
 import libtbx.phil
 from dials.util import show_mail_handle_errors
 from dials.util.options import (ArgumentParser,
-                               reflections_and_experiments_from_files)
+                                reflections_and_experiments_from_files)
 
-from laue_dials.algorithms.monochromatic import (initial_index, scan_varying_refine)
+from laue_dials.algorithms.monochromatic import (initial_index,
+                                                 scan_varying_refine)
 
 logger = logging.getLogger("laue-dials.command_line.index")
 
 help_message = """
 
 This program takes a DIALS imported experiment list (generated with
-dials.import) and a strong reflection table and generates an initial 
-monochromatic indexing solution to feed into the remainder of the pipeline. 
-The outputs are a pair of files (monochromatic.expt, monochromatic.refl) 
+dials.import) and a strong reflection table and generates an initial
+monochromatic indexing solution to feed into the remainder of the pipeline.
+The outputs are a pair of files (monochromatic.expt, monochromatic.refl)
 that constitute a monochromatic estimate of a geometric solution for the
-experiment. 
+experiment.
 
 Examples:
 

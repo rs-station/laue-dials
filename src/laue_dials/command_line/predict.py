@@ -247,7 +247,9 @@ def run(args=None, *, phil=working_phil):
         logger.info("Please provide a d_min.")
         return
     elif params.wavelengths.lam_min == None or params.wavelengths.lam_max == None:
-        logger.info("Please provide upper and lower boundaries for the wavelength spectrum.")
+        logger.info(
+            "Please provide upper and lower boundaries for the wavelength spectrum."
+        )
         return
     elif params.wavelengths.lam_min > params.wavelengths.lam_max:
         logger.info("Minimum wavelength cannot be greater than maximum wavelength.")
