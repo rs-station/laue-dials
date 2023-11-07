@@ -2,6 +2,10 @@
    :alt: Build Status
    :target: https://github.com/rs-station/laue-dials/actions/workflows/build.yml
 
+.. image:: https://github.com/rs-station/laue-dials/actions/workflows/build_docs.yml/badge.svg
+   :alt: Documentation Status
+   :target: https://github.com/rs-station/laue-dials/actions/workflows/build_docs.yml
+
 .. image:: https://img.shields.io/pypi/v/laue-dials?color=blue
    :alt: PyPI Release
    :target: https://pypi.org/project/laue-dials/
