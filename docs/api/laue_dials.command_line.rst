@@ -6,10 +6,18 @@ laue\_dials.command\_line namespace
 Submodules
 ----------
 
-laue\_dials.command\_line.initial\_solution module
---------------------------------------------------
+laue\_dials.command\_line.find\_spots module
+--------------------------------------------
 
-.. automodule:: laue_dials.command_line.initial_solution
+.. automodule:: laue_dials.command_line.find_spots
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+laue\_dials.command\_line.index module
+--------------------------------------
+
+.. automodule:: laue_dials.command_line.index
    :members:
    :undoc-members:
    :show-inheritance:
@@ -26,6 +34,14 @@ laue\_dials.command\_line.optimize\_indexing module
 ---------------------------------------------------
 
 .. automodule:: laue_dials.command_line.optimize_indexing
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+laue\_dials.command\_line.plot\_wavelengths module
+--------------------------------------------------
+
+.. automodule:: laue_dials.command_line.plot_wavelengths
    :members:
    :undoc-members:
    :show-inheritance:

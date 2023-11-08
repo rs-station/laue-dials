@@ -9,16 +9,40 @@ jobs:
   deploy:
     runs-on: [ubuntu-latest]
     steps:
-    - name: Install Python
-      uses: actions/checkout@v3
-      with:
-        python-version: '3.11'
-    - name: Install dependencies
-      run: |
+    - uses: actions/checkout@v3
+    - name: Install Miniconda                 
+      uses: conda-incubator/setup-miniconda@v2
+      with:                                   
+        miniconda-version: "latest"           
+        channels: conda-forge, defaults       
+        auto-activate-base: true              
+        activate-environment: ""
+    - name: Install DIALS environment and all dependencies
+      run: |                                         
+        source $CONDA/etc/profile.d/conda.sh
+        conda activate
+        which python
+        python --version
+        echo $CONDA
+        conda install -n base conda-libmamba-solver  
+        conda config --set solver libmamba           
+        conda install -n base -c conda-forge -y dials
+        $CONDA/bin/pip install -e ".[docs]"          
+        cd docs                                      
+        export SPHINXBUILD="$CONDA/bin/sphinx-build" 
+        make clean                                   
+        make html                                    
+        which python
+        echo $CONDA
         python -m pip install --upgrade pip
-        pip install packaging setuptools twine wheel typing-extensions tox-conda
+        pip install -U setuptools setuptools_scm wheel packaging twine typing-extensions tox-conda myst-parser docutils
     - name: Build the Python package
       run: |
+        source $CONDA/etc/profile.d/conda.sh
+        conda activate
+        which python
+        echo $CONDA
+        conda list
         tox -e build
         tox -e docs
     - name: Publish to PyPI
