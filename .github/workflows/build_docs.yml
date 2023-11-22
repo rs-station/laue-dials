@@ -36,10 +36,11 @@ jobs:
         python -m pip install --upgrade pip        
         pip install -U setuptools setuptools_scm wheel
         conda list                                 
+        which pip
+        pip list
                                                    
     - name: Install DIALS environment and more
       run: |
-        conda install setuptools>=68.2.2
         conda install -n base -c conda-forge -y dials
         conda info
         conda list
