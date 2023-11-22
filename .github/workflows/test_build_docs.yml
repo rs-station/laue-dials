@@ -28,7 +28,6 @@ jobs:
       run: |                                       
         source $CONDA/etc/profile.d/conda.sh       
         conda activate                             
-        conda update setuptools
         which python                               
         python --version                           
         echo $CONDA                                
@@ -40,6 +39,7 @@ jobs:
                                                    
     - name: Install DIALS environment and more
       run: |
+        conda install setuptools>=68.2.2
         conda install -n base -c conda-forge -y dials
         conda info
         conda list
