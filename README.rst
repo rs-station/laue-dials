@@ -4,7 +4,7 @@
 
 .. image:: https://github.com/rs-station/laue-dials/actions/workflows/build_docs.yml/badge.svg
    :alt: Documentation Status
-   :target: https://github.com/rs-station/laue-dials/actions/workflows/build_docs.yml
+   :target: https://rs-station.github.io/laue-dials/
 
 .. image:: https://img.shields.io/pypi/v/laue-dials?color=blue
    :alt: PyPI Release
