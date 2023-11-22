@@ -29,13 +29,11 @@ jobs:
         conda install -n base conda-libmamba-solver
         conda config --set solver libmamba
         python -m pip install --upgrade pip
-        pip install -U setuptools setuptools_scm wheel
-        conda list
-        which pip
-        pip list 
 
     - name: Install DIALS environment and all dependencies
       run: |
+        source $CONDA/etc/profile.d/conda.sh
+        conda activate
         conda install -n base -c conda-forge -y dials
         pip install -e ".[docs]"
         cd docs

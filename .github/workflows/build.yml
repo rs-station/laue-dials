@@ -33,7 +33,6 @@ jobs:
         conda install -n base conda-libmamba-solver
         conda config --set solver libmamba         
         python -m pip install --upgrade pip        
-        conda list                                 
 
     - name: Build with tox
       run: |
