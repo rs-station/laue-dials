@@ -9,7 +9,7 @@
     <link rel="stylesheet" type="text/css" href="../../../_static/alabaster.css?v=233b9934" />
     <script src="../../../_static/jquery.js?v=5d32c60e"></script>
     <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-    <script src="../../../_static/documentation_options.js?v=41accd32"></script>
+    <script src="../../../_static/documentation_options.js?v=a19e65df"></script>
     <script src="../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="icon" href="../../../_static/rs-favicon_32x32.png"/>
@@ -93,7 +93,7 @@
 <span class="sd">  .type = bool</span>
 <span class="sd">  .help = Whether to keep unindexed reflections</span>
 
-<span class="sd">n_proc = 1</span>
+<span class="sd">nproc = 1</span>
 <span class="sd">  .type = int</span>
 <span class="sd">  .help = Number of parallel processes to run</span>
 
@@ -329,7 +329,7 @@
     <span class="n">inputs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">repeat</span><span class="p">(</span><span class="n">params</span><span class="p">),</span> <span class="n">refls_arr</span><span class="p">,</span> <span class="n">expts_arr</span><span class="p">))</span>
 
     <span class="c1"># Reindex data</span>
-    <span class="n">num_processes</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">n_proc</span>
+    <span class="n">num_processes</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">nproc</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Reindexing images.&quot;</span><span class="p">)</span>
     <span class="k">with</span> <span class="n">Pool</span><span class="p">(</span><span class="n">processes</span><span class="o">=</span><span class="n">num_processes</span><span class="p">)</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
         <span class="n">output</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">starmap</span><span class="p">(</span><span class="n">index_image</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">chunksize</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
