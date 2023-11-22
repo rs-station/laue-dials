@@ -41,7 +41,7 @@ main_phil = libtbx.phil.parse(
     """
 include scope dials.command_line.refine.working_phil
 
-n_proc = 1
+nproc = 1
   .type = int
   .help = Number of parallel processes to run
 """,
@@ -216,7 +216,7 @@ def run(args=None, *, phil=working_phil):
     inputs = list(zip(repeat(params), expts_arr, refls_arr))
 
     # Refine data
-    num_processes = params.n_proc
+    num_processes = params.nproc
     with Pool(processes=num_processes) as pool:
         output = pool.starmap(refine_image, inputs)
 

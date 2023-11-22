@@ -59,7 +59,7 @@ keep_unindexed = False
   .type = bool
   .help = Whether to keep unindexed reflections
 
-n_proc = 1
+nproc = 1
   .type = int
   .help = Number of parallel processes to run
 
@@ -290,7 +290,7 @@ def run(args=None, *, phil=working_phil):
     inputs = list(zip(repeat(params), refls_arr, expts_arr))
 
     # Reindex data
-    num_processes = params.n_proc
+    num_processes = params.nproc
     logger.info("Reindexing images.")
     with Pool(processes=num_processes) as pool:
         output = pool.starmap(index_image, inputs, chunksize=1)

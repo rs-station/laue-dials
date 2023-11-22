@@ -50,7 +50,7 @@ output {
     .help = "The log filename."
   }
 
-n_proc = 1
+nproc = 1
   .type = int
   .help = "Number of parallel integrations to do"
 
@@ -188,7 +188,7 @@ def run(args=None, *, phil=working_phil):
     start_time = time.time()
 
     # Multiprocess integration
-    num_processes = params.n_proc
+    num_processes = params.nproc
     logger.info("Starting integration.")
     with Pool(processes=num_processes) as pool:
         refls_arr = pool.starmap(integrate_image, inputs, chunksize=1)

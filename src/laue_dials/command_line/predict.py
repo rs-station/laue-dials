@@ -52,7 +52,7 @@ output {
     .help = "The log filename."
   }
 
-n_proc = 1
+nproc = 1
   .type = int
   .help = Number of parallel processes to run
 
@@ -291,7 +291,7 @@ def run(args=None, *, phil=working_phil):
 
     # Predict reflections
     logger.info(f"Predicting reflections")
-    num_processes = params.n_proc
+    num_processes = params.nproc
     with Pool(processes=num_processes) as pool:
         output = pool.starmap(predict_spots, inputs, chunksize=1)
     logger.info(f"Finished predicting feasible spots.")

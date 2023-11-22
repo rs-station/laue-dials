@@ -47,14 +47,14 @@ laue.optimize_indexing stills.* \
     wavelengths.lam_min=0.95 \
     wavelengths.lam_max=1.15 \
     reciprocal_grid.d_min=1.4 \
-    n_proc=$N
+    nproc=$N
 
 N=8 # Max multiprocessing
 laue.refine optimized.* \
     output.experiments="poly_refined.expt" \
     output.reflections="poly_refined.refl" \
     output.log="laue.poly_refined.log" \
-    n_proc=$N
+    nproc=$N
 
 laue.predict poly_refined.* \
     output.reflections="predicted.refl" \
@@ -62,11 +62,11 @@ laue.predict poly_refined.* \
     wavelengths.lam_min=0.95 \
     wavelengths.lam_max=1.15 \
     reciprocal_grid.d_min=1.4 \
-    n_proc=$N
+    nproc=$N
 
 laue.integrate poly_refined.expt predicted.refl \
     output.filename="integrated.mtz" \
     output.log="laue.integrate.log" \
-    n_proc=$N
+    nproc=$N
 
 # This is where laue_dials ends. The output file integrated.mtz can be merged in careless and refined in phenix to get a model
