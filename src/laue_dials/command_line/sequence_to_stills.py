@@ -96,9 +96,7 @@ def sequence_to_stills(experiments, reflections, params):
             if params.output.domain_size_ang is None and hasattr(
                 experiment.crystal, "get_domain_size_ang"
             ):
-                crystal.set_domain_size_ang(
-                    experiment.crystal.get_domain_size_ang()
-                )
+                crystal.set_domain_size_ang(experiment.crystal.get_domain_size_ang())
             elif params.output.domain_size_ang is not None:
                 crystal.set_domain_size_ang(params.output.domain_size_ang)
 
@@ -117,7 +115,9 @@ def sequence_to_stills(experiments, reflections, params):
                 detector=experiment.detector,
                 beam=experiment.beam,
                 crystal=crystal,
-                imageset=experiment.imageset.as_imageset()[i_scan_point : i_scan_point + 1],
+                imageset=experiment.imageset.as_imageset()[
+                    i_scan_point : i_scan_point + 1
+                ],
             )
             new_experiments.append(new_experiment)
 
@@ -129,7 +129,7 @@ def sequence_to_stills(experiments, reflections, params):
     id_counter = 0
     for expt_id, experiment in enumerate(experiments):
         # Get subset of reflections for this pass
-        pass_refls = reflections.select(reflections['imageset_id'] == expt_id)
+        pass_refls = reflections.select(reflections["imageset_id"] == expt_id)
         for i_scan_point in range(*experiment.scan.get_array_range()):
             # Get subset of reflections on this image
             _, _, _, _, z1, z2 = pass_refls["bbox"].parts()
