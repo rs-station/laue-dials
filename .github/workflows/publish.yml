@@ -23,6 +23,7 @@ jobs:
       run: |
         source $CONDA/etc/profile.d/conda.sh
         conda activate
+        conda update setuptools
         which python
         python --version
         echo $CONDA
