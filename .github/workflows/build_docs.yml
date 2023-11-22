@@ -41,6 +41,11 @@ jobs:
                                                    
     - name: Install DIALS environment and more
       run: |
+        which python                               
+        which pip
+        python --version                           
+        pip list
+        conda list                                 
         conda install -n base -c conda-forge -y dials
         conda info
         conda list
