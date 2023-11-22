@@ -29,6 +29,7 @@ jobs:
         conda install -n base conda-libmamba-solver
         conda config --set solver libmamba
         python -m pip install --upgrade pip
+        conda update setuptools
         conda list
 
     - name: Install DIALS environment and all dependencies
