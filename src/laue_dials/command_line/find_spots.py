@@ -33,21 +33,19 @@ Examples:
 # Set the phil scope
 main_phil = libtbx.phil.parse(
     """
-laue_output {
+include scope dials.command_line.find_spots.phil_scope
+""",
+    process_includes=True,
+)
 
-  filename = 'strong.refl'
-    .type = str
-    .help = "The output spotfinding reflection table filename."
-
+output_phil = libtbx.phil.parse(
+    """
+output {
   log = 'laue.find_spots.log'
     .type = str
     .help = "The log filename."
 }
-
-include scope dials.command_line.find_spots.phil_scope
-
-""",
-    process_includes=True,
+"""
 )
 
 spotfinder_phil = libtbx.phil.parse(
@@ -62,7 +60,7 @@ output {
 """
 )
 
-working_phil = main_phil.fetch(sources=[spotfinder_phil])
+working_phil = main_phil.fetch(sources=[output_phil, spotfinder_phil])
 
 
 @show_mail_handle_errors()
@@ -84,7 +82,7 @@ def run(args=None, *, phil=working_phil):
 
     # Configure logging
     console = logging.StreamHandler(sys.stdout)
-    fh = logging.FileHandler(params.laue_output.log, mode="w", encoding="utf-8")
+    fh = logging.FileHandler(params.output.log, mode="w", encoding="utf-8")
     loglevel = logging.INFO
 
     logger.addHandler(fh)
@@ -135,9 +133,6 @@ def run(args=None, *, phil=working_phil):
     logger.info("*" * 80)
 
     strong_refls = find_spots(params, imported_expts)
-
-    logger.info("Saving strong spots to %s", params.laue_output.filename)
-    strong_refls.as_file(filename=params.laue_output.filename)
 
     logger.info("")
     logger.info("Time Taken Spotfinding = %f seconds", time.time() - spotfinding_time)
