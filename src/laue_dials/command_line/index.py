@@ -14,9 +14,9 @@ from dials.util.options import (ArgumentParser,
 from laue_dials.algorithms.monochromatic import (initial_index,
                                                  scan_varying_refine)
 from laue_dials.utils.version import laue_version
-                                                 
-# Print laue-dials + DIALS versions              
-laue_version()                                   
+
+# Print laue-dials + DIALS versions
+laue_version()
 
 logger = logging.getLogger("laue-dials.command_line.index")
 

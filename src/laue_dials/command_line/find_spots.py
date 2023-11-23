@@ -132,7 +132,7 @@ def run(args=None, *, phil=working_phil):
     logger.info("Finding strong spots")
     logger.info("*" * 80)
 
-    strong_refls = find_spots(params, imported_expts)
+    find_spots(params, imported_expts)
 
     logger.info("")
     logger.info("Time Taken Spotfinding = %f seconds", time.time() - spotfinding_time)

@@ -13,9 +13,9 @@ from dials.util.options import (ArgumentParser,
 from matplotlib import pyplot as plt
 
 from laue_dials.utils.version import laue_version
-                                                 
-# Print laue-dials + DIALS versions              
-laue_version()                                   
+
+# Print laue-dials + DIALS versions
+laue_version()
 
 logger = logging.getLogger("laue-dials.command_line.plot_wavelengths")
 
