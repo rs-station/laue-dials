@@ -230,8 +230,8 @@ def run(args=None, phil=phil_scope):
     logger.info(
         "Time Taken to Split into Stills = %f seconds", time.time() - start_time
     )
-    ExperimentList(new_experiments).as_file("stills.expt")
-    total_reflections.as_file("stills.refl")
+    ExperimentList(new_experiments).as_file(params.output.experiments)
+    total_reflections.as_file(params.output.reflections)
 
 
 if __name__ == "__main__":
