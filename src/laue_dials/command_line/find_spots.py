@@ -11,6 +11,10 @@ from dials.util import show_mail_handle_errors
 from dials.util.options import ArgumentParser
 
 from laue_dials.algorithms.monochromatic import find_spots
+from laue_dials.utils.version import laue_version
+
+# Print laue-dials + DIALS versions
+laue_version()
 
 logger = logging.getLogger("laue-dials.command_line.find_spots")
 

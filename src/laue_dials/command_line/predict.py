@@ -21,6 +21,10 @@ from dials.util.options import (ArgumentParser,
 from dxtbx.model import ExperimentList
 
 from laue_dials.algorithms.outliers import gen_kde
+from laue_dials.utils.version import laue_version
+                                                 
+# Print laue-dials + DIALS versions              
+laue_version()                                   
 
 logger = logging.getLogger("laue-dials.command_line.predict")
 

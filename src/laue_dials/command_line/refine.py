@@ -21,6 +21,10 @@ from dxtbx.model.experiment_list import ExperimentListFactory
 
 from laue_dials.algorithms.laue import (gen_beam_models, remove_beam_models,
                                         store_wavelengths)
+from laue_dials.utils.version import laue_version
+                                                 
+# Print laue-dials + DIALS versions              
+laue_version()                                   
 
 logger = logging.getLogger("laue-dials.command_line.refine")
 

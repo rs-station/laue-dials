@@ -12,6 +12,11 @@ from dials.util.options import (ArgumentParser,
                                 reflections_and_experiments_from_files)
 from matplotlib import pyplot as plt
 
+from laue_dials.utils.version import laue_version
+                                                 
+# Print laue-dials + DIALS versions              
+laue_version()                                   
+
 logger = logging.getLogger("laue-dials.command_line.plot_wavelengths")
 
 help_message = """

@@ -17,6 +17,11 @@ from dials.util.options import (ArgumentParser,
                                 reflections_and_experiments_from_files)
 from dxtbx.model import ExperimentList
 
+from laue_dials.utils.version import laue_version
+                                                 
+# Print laue-dials + DIALS versions              
+laue_version()                                   
+
 logger = logging.getLogger("laue-dials.command_line.optimize_indexing")
 
 help_message = """
