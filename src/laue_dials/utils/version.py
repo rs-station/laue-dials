@@ -3,7 +3,10 @@ from importlib.metadata import version
 import os
 
 def laue_version():
-    width = os.get_terminal_size().columns 
+    try:
+        width = os.get_terminal_size().columns 
+    except:
+        width = 65
     dials_version = version('dials')
     laue_dials_version = version('laue-dials')
 
