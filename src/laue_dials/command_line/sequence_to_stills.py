@@ -23,9 +23,9 @@ from scitbx import matrix
 from tqdm import trange
 
 from laue_dials.utils.version import laue_version
-                                                 
-# Print laue-dials + DIALS versions              
-laue_version()                                   
+
+# Print laue-dials + DIALS versions
+laue_version()
 
 logger = logging.getLogger("laue.command_line.sequence_to_stills")
 
