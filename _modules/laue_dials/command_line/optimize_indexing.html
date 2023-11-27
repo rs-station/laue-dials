@@ -9,7 +9,7 @@
     <link rel="stylesheet" type="text/css" href="../../../_static/alabaster.css?v=233b9934" />
     <script src="../../../_static/jquery.js?v=5d32c60e"></script>
     <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-    <script src="../../../_static/documentation_options.js?v=a19e65df"></script>
+    <script src="../../../_static/documentation_options.js?v=eecf40eb"></script>
     <script src="../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="icon" href="../../../_static/rs-favicon_32x32.png"/>
@@ -46,10 +46,16 @@
 <span class="kn">import</span> <span class="nn">libtbx.phil</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">dials.array_family.flex</span> <span class="kn">import</span> <span class="n">reflection_table</span>
+<span class="kn">from</span> <span class="nn">dials.array_family</span> <span class="kn">import</span> <span class="n">flex</span>
 <span class="kn">from</span> <span class="nn">dials.util</span> <span class="kn">import</span> <span class="n">show_mail_handle_errors</span>
 <span class="kn">from</span> <span class="nn">dials.util.options</span> <span class="kn">import</span> <span class="p">(</span><span class="n">ArgumentParser</span><span class="p">,</span>
                                 <span class="n">reflections_and_experiments_from_files</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">dxtbx.model</span> <span class="kn">import</span> <span class="n">ExperimentList</span>
+
+<span class="kn">from</span> <span class="nn">laue_dials.utils.version</span> <span class="kn">import</span> <span class="n">laue_version</span>
+
+<span class="c1"># Print laue-dials + DIALS versions</span>
+<span class="n">laue_version</span><span class="p">()</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;laue-dials.command_line.optimize_indexing&quot;</span><span class="p">)</span>
 
@@ -341,6 +347,13 @@
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">ids</span><span class="p">:</span>
         <span class="n">total_experiments</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">output</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
         <span class="n">total_reflections</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">output</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="c1"># Give all unindexed experiments wavelength 0</span>
+    <span class="n">hkls</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">total_reflections</span><span class="p">[</span><span class="s1">&#39;miller_index&#39;</span><span class="p">])</span>
+    <span class="n">sel</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">hkls</span> <span class="o">==</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">lams</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">total_reflections</span><span class="p">[</span><span class="s1">&#39;wavelength&#39;</span><span class="p">])</span>
+    <span class="n">lams</span><span class="p">[</span><span class="n">sel</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="n">total_reflections</span><span class="p">[</span><span class="s1">&#39;wavelength&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">flex</span><span class="o">.</span><span class="n">double</span><span class="p">(</span><span class="n">lams</span><span class="p">)</span>
 
     <span class="c1"># Save experiments</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Saving optimized experiments to </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">params</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">experiments</span><span class="p">)</span>

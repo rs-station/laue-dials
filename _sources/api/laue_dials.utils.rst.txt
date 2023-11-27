@@ -21,3 +21,11 @@ laue\_dials.utils.refl\_utils module
    :members:
    :undoc-members:
    :show-inheritance:
+
+laue\_dials.utils.version module
+--------------------------------
+
+.. automodule:: laue_dials.utils.version
+   :members:
+   :undoc-members:
+   :show-inheritance:
