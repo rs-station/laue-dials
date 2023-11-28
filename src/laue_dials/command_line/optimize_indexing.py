@@ -11,8 +11,8 @@ from multiprocessing import Pool
 
 import libtbx.phil
 import numpy as np
-from dials.array_family.flex import reflection_table
 from dials.array_family import flex
+from dials.array_family.flex import reflection_table
 from dials.util import show_mail_handle_errors
 from dials.util.options import (ArgumentParser,
                                 reflections_and_experiments_from_files)
@@ -310,11 +310,11 @@ def run(args=None, *, phil=working_phil):
         total_reflections.extend(output[i][1])
 
     # Give all unindexed experiments wavelength 0
-    hkls = np.asarray(total_reflections['miller_index'])
-    sel = np.all(hkls == [0,0,0], axis=1)
-    lams = np.asarray(total_reflections['wavelength'])
-    lams[sel] = 0.
-    total_reflections['wavelength'] = flex.double(lams)
+    hkls = np.asarray(total_reflections["miller_index"])
+    sel = np.all(hkls == [0, 0, 0], axis=1)
+    lams = np.asarray(total_reflections["wavelength"])
+    lams[sel] = 0.0
+    total_reflections["wavelength"] = flex.double(lams)
 
     # Save experiments
     logger.info("Saving optimized experiments to %s", params.output.experiments)
