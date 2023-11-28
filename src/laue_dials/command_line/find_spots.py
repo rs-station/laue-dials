@@ -50,10 +50,6 @@ output {
 
 spotfinder_phil = libtbx.phil.parse(
     """
-spotfinder {
-  force_2d = True
-}
-
 output {
   shoeboxes = False
 }
