@@ -7,11 +7,12 @@ Contents
 .. toctree::
    :maxdepth: 2
 
+   Command-Line Reference <cli/functions>
+   Tutorial <tutorial>
    Contributions & Help <contributing>
    License <license>
    Authors <authors>
    Changelog <changelog>
-   Command-Line Reference <cli/functions>
    Full API Reference <api/modules>
 
 
