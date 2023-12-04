@@ -11,6 +11,16 @@ from tqdm import tqdm, trange
 
 from laue_dials.algorithms.diffgeo import hkl2ray
 
+def norm2(array, axis=-1, keepdims=False):
+    """Faster version of np.linalg.norm for 3d coords and L2 norm"""
+    a2 = np.square(array)
+    out = 0.
+    for vec in np.split(a2, a2.shape[axis], axis=axis):
+        out += vec
+    out = np.sqrt(out)
+    if not keepdims:
+        out = np.squeeze(out, axis=axis)
+    return out
 
 def store_wavelengths(expts, refls):
     """
@@ -197,6 +207,46 @@ class LaueBase:
     def RB(self):
         return self.R @ self.B
 
+    def predict_s1(self, delete_harmonics=False):
+        """
+        Predicts all s1 vectors for all feasible spots given some resolution-dependent bandwidth
+        This method provides:
+            s1_pred -- predicted feasible s1 vectors
+            lams -- the wavelengths (in Angstroms) associated with these s1 vectors
+            qall -- the q vectors associated with these s1 vectors
+            Hall -- the miller indices associated with s1 vectors
+        """
+        # Generate the feasible set of reflections from the current geometry
+        Hall = self.Hall
+        qall = (self.RB @ Hall.T).T
+        feasible = (
+            norm2(qall + self.s0 / self.lam_min, axis=-1) < 1 / self.lam_min
+        ) & (norm2(qall + self.s0 / self.lam_max, axis=-1) > 1 / self.lam_max)
+        Hall = Hall[feasible]
+        qall = qall[feasible]
+
+        # Remove harmonics from the feasible set
+        Raypred = hkl2ray(Hall)
+        _, idx, counts = np.unique(
+            Raypred, return_index=True, return_counts=True, axis=0
+        )
+        Hall = Hall[idx]  # Remove duplicates
+        qall = qall[idx]
+        if delete_harmonics:
+            idx = counts > 1  # Remove last harmonic
+            Hall = Hall[idx]
+            qall = qall[idx]
+
+        # For each q, find the wavelength of the Ewald sphere it lies on
+        lams = -2.0 * (self.s0 * qall).sum(-1) / (qall * qall).sum(-1)
+
+        # Using this wavelength per q, generate s1 vectors
+        s0 = self.s0[None, :] / lams[:, None]
+        s1_pred = qall + s0
+
+        # Write s1 predictions
+        return s1_pred, lams, qall, Hall
+
 
 class LaueAssigner(LaueBase):
     """
@@ -213,68 +263,20 @@ class LaueAssigner(LaueBase):
         """
         super().__init__(s0, cell, R, lam_min, lam_max, dmin, spacegroup)
 
-        self._s1 = s1 / np.linalg.norm(s1, axis=-1)[:, None]
-        self._qobs = self._s1 - self.s0
-        self._qpred = np.zeros_like(self._s1)
-        self._H = np.zeros_like(self._s1)
-        self._wav = np.zeros(len(self._H))
-        self._harmonics = np.zeros(len(self._s1), dtype=bool)
-        self._inliers = np.ones(len(self._s1), dtype=bool)
+        self.s1 = s1 / norm2(s1, axis=-1, keepdims=True)
+        self.qobs = self.s1 - self.s0
+        self.qpred = np.zeros_like(self.s1)
+        self.H = np.zeros_like(self.s1)
+        self.wav = np.zeros(len(self.H))
+        self.harmonics = np.zeros(len(self.s1), dtype=bool)
 
-    @property
-    def s1(self):
-        return self._s1[self._inliers]
-
-    @property
-    def qobs(self):
-        return self._qobs[self._inliers]
-
-    @property
-    def qpred(self):
-        return self._qpred[self._inliers]
-
-    @property
-    def H(self):
-        return self._H[self._inliers]
-
-    @property
-    def wav(self):
-        return self._wav[self._inliers]
-
-    @property
-    def harmonics(self):
-        return self._harmonics[self._inliers]
-
-    # <-- setters that operate on the currently inlying set
-    def set_qpred(self, qpred):
-        self._qpred[self._inliers] = qpred
-
-    def set_H(self, H):
-        self._H[self._inliers] = H
-        self._H[~self._inliers] = 0.0
-
-    def set_wav(self, wav):
-        self._wav[self._inliers] = wav
-        self._wav[~self._inliers] = 0.0
-
-    def set_inliers(self, inliers):
-        self._inliers[self._inliers] = inliers
-
-    def set_harmonics(self, harmonics):
-        self._harmonics[self._inliers] = harmonics
-
-    # --> setters that operate on the currently inlying set
-
-    def reset_inliers(self):
-        self._inliers = np.ones(len(self._inliers), dtype=bool)
-
-    def reject_outliers(self, nstd=10.0):
-        """update the list of inliers"""
-        from sklearn.covariance import MinCovDet
-
-        X = np.concatenate((self.qobs, self.qpred * self.wav[:, None]), axis=-1)
-        dist = MinCovDet().fit(X).dist_
-        self.set_inliers(dist <= nstd**2.0)
+    def plot_preds(self):
+        from matplotlib import pyplot as plt
+        xyobs = self.s1[:,:2] / self.wav[:,None]
+        xycal = self.predict_s1()[0][:,:2]
+        plt.plot(xyobs[:,0], xyobs[:,1], 'k.', label='Observed')
+        plt.scatter(xycal[:,0], xycal[:,1], s=80, facecolors='none', edgecolors='r', label='Calculated')
+        plt.legend()
 
     def assign(self):
         """
@@ -288,8 +290,8 @@ class LaueAssigner(LaueBase):
         Hall = self.Hall
         qall = (self.RB @ Hall.T).T
         feasible = (
-            np.linalg.norm(qall + self.s0 / self.lam_min, axis=-1) < 1 / self.lam_min
-        ) & (np.linalg.norm(qall + self.s0 / self.lam_max, axis=-1) > 1 / self.lam_max)
+            norm2(qall + self.s0 / self.lam_min, axis=-1) < 1 / self.lam_min
+        ) & (norm2(qall + self.s0 / self.lam_max, axis=-1) > 1 / self.lam_max)
         Hall = Hall[feasible]
         qall = qall[feasible]
 
@@ -315,18 +317,18 @@ class LaueAssigner(LaueBase):
         H = Hall[idx]
         qpred = qall[idx]
         harmonics = harmonics[idx]
+        self.harmonics = harmonics
 
         # Set all attributes to match the current assignment
-        self.set_H(H)
-        self.set_qpred(qpred)
-        self.set_harmonics(harmonics)
+        self.H = H
+        self.qpred = qpred
 
         # wav_pred = -2.*(self.s0 * qpred).sum(-1) / (qpred*qpred).sum(-1)
         with np.errstate(divide="ignore"):
-            wav_obs = np.linalg.norm(self.qobs, axis=-1) / np.linalg.norm(
+            wav_obs = norm2(self.qobs, axis=-1) / norm2(
                 self.qpred, axis=-1
             )
-        self.set_wav(wav_obs)
+        self.wav = wav_obs
 
     def update_rotation(self):
         """Update the rotation matrix (self.R) based on the inlying refls"""
@@ -338,6 +340,121 @@ class LaueAssigner(LaueBase):
         )
         self.R = misset @ self.R
 
+    def refine_cell(self):
+        """ Refine the cell axes keeping b fixed """
+        from scipy.optimize import minimize
+        def loss_fun(params):
+            cell = gemmi.UnitCell(*params)
+            cell.fractionalization_matrix
+            B = np.array(self.cell.fractionalization_matrix).T
+
+    def index_pink(self, max_size=50):
+        """
+        Infer the setting rotation, self.R using the PinkIndexer algorithm 
+        (http://scripts.iucr.org/cgi-bin/paper?S2053273319015559). This implementation
+        will use at most max_size reflections
+        """
+        q = self.s1 - self.s0[None,:]
+        q_len = norm2(q, keepdims=True)
+        qhat = q / q_len
+
+        # Possible resolution range for each observation
+        res_min = self.lam_min / q_len.squeeze(-1)
+        res_max = self.lam_max / q_len.squeeze(-1)
+
+        if len(res_min) > max_size:
+            dmin = np.sort(res_min)[-max_size]
+        else:
+            dmin = res_min.min()
+
+        # Generate the feasible set of reflections from the current geometry
+        dall = self.cell.calculate_d_array(self.Hall)
+        in_res_range = dall >= dmin
+        Hall = self.Hall[in_res_range]
+        h = (self.B @ Hall.T).T
+        hhat = h / norm2(h, keepdims=True)
+        dall = dall[in_res_range]
+
+        #Remove entries that incompatible with resolution range of observation
+        mask = (res_max[:,None] >= dall) & (res_min[:,None] <= dall)
+        i,j = np.where(mask)
+
+        hhat = hhat[j]
+        qhat = qhat[i]
+
+        mhat = hhat + qhat
+        mhat = mhat / norm2(mhat, keepdims=True)
+
+        phi_grid_size = 200
+        phi = np.linspace(-2*np.pi, 0., phi_grid_size)
+        c1 = np.sin(phi / 2.)
+        c2 = -np.cos(phi / 2.)
+        d1 = np.einsum('ad,ad->a', mhat, qhat)
+        d2 = np.cross(qhat, mhat)
+        theta = 2 * np.arccos(-d1[...,None] * c1)
+        num = (mhat[...,None,:] * c2[...,:,None] + d2[...,None,:] * c1[...,:,None])
+        denom = np.sin(theta[...,None] / 2.)
+        ehat = num / denom
+        v = np.arctan(theta / 4)[...,None] * ehat
+
+        #Discretize
+        v_grid_size = 100
+        rad = np.arctan(np.pi / 4.) #Radius of ball in which rotograms live
+        _discretized = np.round(v_grid_size * v / rad).astype('int8')
+        discretized = _discretized.reshape((-1, 3))
+
+        # This block is optimized for speed. There are lot of nice, legible ways to 
+        # do this in numpy but they can be rather slow. Here's one example alternative:
+        # idx,counts = np.unique(discretized, axis=0, return_counts=True)
+        # max_idx = np.argmax(counts)
+        # grid_max = idx[max_idx] 
+        w = 2 * v_grid_size + 1
+        to_id = np.arange(w * w * w).reshape((w, w, w))
+        flat_ids = to_id[*discretized.T]
+        counts = np.bincount(flat_ids)
+        max_idx = np.argmax(counts)
+        brick = np.ones((w, w, w), dtype='int8')
+        vrange = np.arange(-v_grid_size, v_grid_size + 1, dtype='int8')
+        vrange = np.roll(vrange, v_grid_size + 1)
+        grid_max = np.array([
+            (vrange[:,None,None]*brick).flatten()[max_idx],
+            (vrange[None,:,None]*brick).flatten()[max_idx],
+            (vrange[None,None,:]*brick).flatten()[max_idx],
+        ])
+        v_max = rad * grid_max / v_grid_size
+
+        #This complicated indexing stuff will figure out the assignment
+        #corresponding to the best rotogram voxel.
+        flat_assignment = (_discretized == grid_max).all(-1).any(-1)
+        Hidx = i[flat_assignment]
+        Hobs = Hall[j[flat_assignment]]
+
+        from scipy.linalg import orthogonal_procrustes
+        qh = qhat[flat_assignment]
+        hh = hhat[flat_assignment]
+
+        a,b,c,alpha,beta,gamma = self.cell.parameters
+        def loss_fn(params, return_cell_R_B=False):
+            cell = gemmi.UnitCell(a, *params)
+            B = np.array(cell.fractionalization_matrix).T
+            hh = (B @ Hobs.T).T
+            R, _ = orthogonal_procrustes(hh, qh)
+            R = R.T
+            angles = rs.utils.angle_between(
+                (R@hh.T).T,
+                qh,
+            )
+            loss = angles.sum()
+            if return_cell_R_B:
+                return loss, cell, R, B
+            return loss
+
+        from scipy.optimize import minimize
+        guess = [b, c, alpha, beta, gamma]
+        loss_fn(guess)
+        result = minimize(loss_fn, guess)
+        #assert result.success
+        _, self.cell, self.R, self.B = loss_fn(result.x, True)
 
 class LauePredictor(LaueBase):
     """
@@ -350,42 +467,3 @@ class LauePredictor(LaueBase):
         """
         super().__init__(s0, cell, R, lam_min, lam_max, dmin, spacegroup=spacegroup)
 
-    def predict_s1(self, delete_harmonics=False):
-        """
-        Predicts all s1 vectors for all feasible spots given some resolution-dependent bandwidth
-        This method provides:
-            s1_pred -- predicted feasible s1 vectors
-            lams -- the wavelengths (in Angstroms) associated with these s1 vectors
-            qall -- the q vectors associated with these s1 vectors
-            Hall -- the miller indices associated with s1 vectors
-        """
-        # Generate the feasible set of reflections from the current geometry
-        Hall = self.Hall
-        qall = (self.RB @ Hall.T).T
-        feasible = (
-            np.linalg.norm(qall + self.s0 / self.lam_min, axis=-1) < 1 / self.lam_min
-        ) & (np.linalg.norm(qall + self.s0 / self.lam_max, axis=-1) > 1 / self.lam_max)
-        Hall = Hall[feasible]
-        qall = qall[feasible]
-
-        # Remove harmonics from the feasible set
-        Raypred = hkl2ray(Hall)
-        _, idx, counts = np.unique(
-            Raypred, return_index=True, return_counts=True, axis=0
-        )
-        Hall = Hall[idx]  # Remove duplicates
-        qall = qall[idx]
-        if delete_harmonics:
-            idx = counts > 1  # Remove last harmonic
-            Hall = Hall[idx]
-            qall = qall[idx]
-
-        # For each q, find the wavelength of the Ewald sphere it lies on
-        lams = -2.0 * (self.s0 * qall).sum(-1) / (qall * qall).sum(-1)
-
-        # Using this wavelength per q, generate s1 vectors
-        s0 = self.s0[None, :] / lams[:, None]
-        s1_pred = qall + s0
-
-        # Write s1 predictions
-        return s1_pred, lams, qall, Hall

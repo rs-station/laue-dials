@@ -135,6 +135,7 @@ def index_image(params, refls, expts):
 
         # Get U matrix
         U = np.asarray(cryst.get_U()).reshape(3, 3)
+        #U = np.eye(3)
 
         # Generate assigner object
         logger.info(f"Reindexing image {experiment.identifier}.")
@@ -148,19 +149,14 @@ def index_image(params, refls, expts):
             params.reciprocal_grid.d_min,
             spacegroup,
         )
-
-        # Optimize Miller indices
+        la.index_pink(max_size=50)
         la.assign()
-        for j in range(params.n_macrocycles):
-            la.reset_inliers()
-            la.update_rotation()
-            la.assign()
-            la.reject_outliers()
-            la.update_rotation()
-            la.assign()
-
-        # Update s1 based on new wavelengths
-        s1[la._inliers] = la.s1 / la.wav[:, None]
+        #for i in range(params.n_macrocycles):
+        #    la.update_rotation()
+        #    la.assign()
+        #from IPython import embed
+        #embed(colors='linux')
+        #XX
 
         # Reset crystal parameters based on new geometry
         cryst.set_U(la.R.flatten())
@@ -170,7 +166,7 @@ def index_image(params, refls, expts):
         cryst.set_unit_cell(unit_cell(la.cell.parameters))
 
         # Filter out wavelengths beyond limits
-        spot_wavelengths = np.asarray(la._wav.tolist())
+        spot_wavelengths = np.asarray(la.wav.tolist())
         spot_wavelengths[spot_wavelengths < params.wavelengths.lam_min] = 0
         spot_wavelengths[spot_wavelengths > params.wavelengths.lam_max] = 0
 
@@ -178,11 +174,11 @@ def index_image(params, refls, expts):
         refls["s1"].set_selected(idx, flex.vec3_double(s1))
         refls["miller_index"].set_selected(
             idx,
-            flex.miller_index(la._H.astype("int").tolist()),
+            flex.miller_index(la.H.astype("int").tolist()),
         )
         refls["harmonics"].set_selected(
             idx,
-            flex.bool(la._harmonics.tolist()),
+            flex.bool(la.harmonics.tolist()),
         )
         refls["wavelength"].set_selected(
             idx,
@@ -298,6 +294,8 @@ def run(args=None, *, phil=working_phil):
     # Reindex data
     num_processes = params.nproc
     logger.info("Reindexing images.")
+    #index_image(*inputs[87])
+    #output = [index_image(*i) for i in inputs] #cereal
     with Pool(processes=num_processes) as pool:
         output = pool.starmap(index_image, inputs, chunksize=1)
     logger.info(f"All images reindexed.")
