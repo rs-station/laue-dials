@@ -8,6 +8,7 @@ import sys
 import time
 from itertools import repeat
 from multiprocessing import Pool
+from cctbx.uctbx import unit_cell
 
 import libtbx.phil
 import numpy as np
@@ -87,7 +88,11 @@ reciprocal_grid {
     .type = float(value_min=0.1)
     .help = "Minimum d-spacing for reflecting planes"
   }
-
+geometry {
+  unit_cell = None
+    .type = floats(size=6)
+    .help = "Target unit cell for indexing"
+}
 """,
     process_includes=True,
 )
@@ -127,15 +132,18 @@ def index_image(params, refls, expts):
         subrefls = refls.select(idx)
 
         # Get unit cell params
-        cell_params = cryst.get_unit_cell().parameters()
+        if params.geometry.unit_cell is not None:
+            cell_params = params.geometry.unit_cell
+        else:
+            cell_params = cryst.get_unit_cell().parameters()
         cell = gemmi.UnitCell(*cell_params)
 
         # Generate s vectors
         s1 = subrefls["s1"].as_numpy_array()
 
         # Get U matrix
-        U = np.asarray(cryst.get_U()).reshape(3, 3)
-        #U = np.eye(3)
+        #U = np.asarray(cryst.get_U()).reshape(3, 3)
+        U = np.eye(3)
 
         # Generate assigner object
         logger.info(f"Reindexing image {experiment.identifier}.")
@@ -150,13 +158,12 @@ def index_image(params, refls, expts):
             spacegroup,
         )
         la.index_pink(max_size=50)
-        la.assign()
-        #for i in range(params.n_macrocycles):
-        #    la.update_rotation()
-        #    la.assign()
-        #from IPython import embed
-        #embed(colors='linux')
-        #XX
+        H = la.H
+        for i in range(params.n_macrocycles):
+            la.refine()
+            la.H = H
+            la.assign()
+            la.reject_outliers()
 
         # Reset crystal parameters based on new geometry
         cryst.set_U(la.R.flatten())

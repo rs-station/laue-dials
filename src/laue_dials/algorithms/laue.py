@@ -238,7 +238,7 @@ class LaueBase:
             qall = qall[idx]
 
         # For each q, find the wavelength of the Ewald sphere it lies on
-        lams = -2.0 * (self.s0 * qall).sum(-1) / (qall * qall).sum(-1)
+        lams = -2.0 * qall @ self.s0 / (qall * qall).sum(-1)
 
         # Using this wavelength per q, generate s1 vectors
         s0 = self.s0[None, :] / lams[:, None]
@@ -265,15 +265,20 @@ class LaueAssigner(LaueBase):
 
         self.s1 = s1 / norm2(s1, axis=-1, keepdims=True)
         self.qobs = self.s1 - self.s0
-        self.qpred = np.zeros_like(self.s1)
         self.H = np.zeros_like(self.s1)
-        self.wav = np.zeros(len(self.H))
         self.harmonics = np.zeros(len(self.s1), dtype=bool)
+
+    @property
+    def assigned(self):
+        """ mask of assigned observations """
+        return (self.H != 0).any(-1)
 
     def plot_preds(self):
         from matplotlib import pyplot as plt
-        xyobs = self.s1[:,:2] / self.wav[:,None]
-        xycal = self.predict_s1()[0][:,:2]
+        xyobs = self.s1[:,:2] / norm2(self.s1, keepdims=True)
+        spred = self.predict_s1()[0]
+        spred = spred / norm2(spred, keepdims=True)
+        xycal = spred[:,:2] 
         plt.plot(xyobs[:,0], xyobs[:,1], 'k.', label='Observed')
         plt.scatter(xycal[:,0], xycal[:,1], s=80, facecolors='none', edgecolors='r', label='Calculated')
         plt.legend()
@@ -284,69 +289,69 @@ class LaueAssigner(LaueBase):
         This method will update:
             self.H     -- miller indices
             self.wav   -- wavelengths
-            self.qpred -- predicted scattering vector
         """
+        assigned = self.assigned
+        if assigned.all():
+            # Don't do anything if everything is all assigned
+            return
+
         # Generate the feasible set of reflections from the current geometry
         Hall = self.Hall
-        qall = (self.RB @ Hall.T).T
-        feasible = (
-            norm2(qall + self.s0 / self.lam_min, axis=-1) < 1 / self.lam_min
-        ) & (norm2(qall + self.s0 / self.lam_max, axis=-1) > 1 / self.lam_max)
+        qall = (self.RB@Hall.T).T
+
+        wav_all = -2.0 * qall @ self.s0 / (qall * qall).sum(-1)
+        feasible = (wav_all >= self.lam_min) & (wav_all <= self.lam_max)
+
         Hall = Hall[feasible]
         qall = qall[feasible]
+        wav_all = wav_all[feasible]
 
-        # Keep track of harmonics in the feasible set
         Raypred = hkl2ray(Hall)
         _, idx, counts = np.unique(
             Raypred, return_index=True, return_counts=True, axis=0
         )
+
         harmonics = counts > 1
 
         # Remove harmonics from the feasible set
         Hall = Hall[idx]
         qall = qall[idx]
+        Raypred = Raypred[idx]
 
-        dmat = rs.utils.angle_between(self.qobs[..., None, :], qall[None, ..., :])
-        cost = dmat
+        # Do not re-assign previously assigned reflections
+        # We have to remove both observations and candidate RLPs
+        Ray_assigned = hkl2ray(self.H[assigned])
+        used = (Ray_assigned[:,None,:] == Raypred[None,:,:]).all(-1).any(-2)
+        unused = ~used
+        Raypred = Raypred[unused]
+        Hall = Hall[unused]
+        qall = qall[unused]
+
+
+        qobs = self.qobs[~assigned]
+        cost = rs.utils.angle_between(qobs[..., None, :], qall[None, ..., :])
+        #cost = np.square(qobs[..., None, :] - qall[None, ..., :]).sum(-1)
+
+        #dobs = norm2(qobs)
+        #dall = norm2(qall)
+        #compatible = (dobs[:,None] / self.lam_max <= dall) & (dobs[:,None] / self.lam_min >= dall)
+        #cost = np.where(compatible, cost, cost.max())
 
         from scipy.optimize import linear_sum_assignment
 
         ido, idx = linear_sum_assignment(cost)
 
         # Update appropriate variables
-        H = Hall[idx]
-        qpred = qall[idx]
-        harmonics = harmonics[idx]
-        self.harmonics = harmonics
+        H = self.H[~assigned]
+        H[ido] = Hall[idx]
+        self.H[~assigned] = H
 
-        # Set all attributes to match the current assignment
-        self.H = H
-        self.qpred = qpred
-
-        # wav_pred = -2.*(self.s0 * qpred).sum(-1) / (qpred*qpred).sum(-1)
-        with np.errstate(divide="ignore"):
-            wav_obs = norm2(self.qobs, axis=-1) / norm2(
-                self.qpred, axis=-1
-            )
-        self.wav = wav_obs
-
-    def update_rotation(self):
-        """Update the rotation matrix (self.R) based on the inlying refls"""
-        from scipy.linalg import orthogonal_procrustes
-
-        misset, _ = orthogonal_procrustes(
-            self.qobs,
-            self.qpred * self.wav[:, None],
-        )
-        self.R = misset @ self.R
-
-    def refine_cell(self):
-        """ Refine the cell axes keeping b fixed """
-        from scipy.optimize import minimize
-        def loss_fun(params):
-            cell = gemmi.UnitCell(*params)
-            cell.fractionalization_matrix
-            B = np.array(self.cell.fractionalization_matrix).T
+    @property
+    def wav(self):
+        qpred = (self.RB@self.H.T).T
+        num = -2.*qpred @ self.s0
+        denom = np.where(self.assigned, (qpred * qpred).sum(-1), 1.)
+        return num / denom
 
     def index_pink(self, max_size=50):
         """
@@ -409,8 +414,8 @@ class LaueAssigner(LaueBase):
         # max_idx = np.argmax(counts)
         # grid_max = idx[max_idx] 
         w = 2 * v_grid_size + 1
-        to_id = np.arange(w * w * w).reshape((w, w, w))
-        flat_ids = to_id[*discretized.T]
+        to_id = np.arange(w * w * w, dtype='int32').reshape((w, w, w)) # Converts grid points to a unique integer id
+        flat_ids = to_id[*discretized.T] # Convert 3-D grid values to integers
         counts = np.bincount(flat_ids)
         max_idx = np.argmax(counts)
         brick = np.ones((w, w, w), dtype='int8')
@@ -428,33 +433,60 @@ class LaueAssigner(LaueBase):
         flat_assignment = (_discretized == grid_max).all(-1).any(-1)
         Hidx = i[flat_assignment]
         Hobs = Hall[j[flat_assignment]]
+        self.H[Hidx] = Hobs
 
+    def refine(self):
+        """
+        Refine rotation and crystal basis from current assignment
+        """
         from scipy.linalg import orthogonal_procrustes
-        qh = qhat[flat_assignment]
-        hh = hhat[flat_assignment]
+        from scipy.optimize import minimize
+
+        mask = self.assigned
+
+        s1 = self.s1[mask] 
+        q = s1 - self.s0[None,:]
+        qhat = q / norm2(q, keepdims=True)
+        Hobs = self.H[mask]
 
         a,b,c,alpha,beta,gamma = self.cell.parameters
         def loss_fn(params, return_cell_R_B=False):
             cell = gemmi.UnitCell(a, *params)
             B = np.array(cell.fractionalization_matrix).T
-            hh = (B @ Hobs.T).T
-            R, _ = orthogonal_procrustes(hh, qh)
+            rlp = (B @ Hobs.T).T
+            rlp_hat = rlp / norm2(rlp, keepdims=True)
+
+            R, _ = orthogonal_procrustes(rlp_hat, qhat)
             R = R.T
             angles = rs.utils.angle_between(
-                (R@hh.T).T,
-                qh,
+                (R@rlp.T).T, qhat
             )
             loss = angles.sum()
+
             if return_cell_R_B:
                 return loss, cell, R, B
             return loss
 
-        from scipy.optimize import minimize
         guess = [b, c, alpha, beta, gamma]
         loss_fn(guess)
         result = minimize(loss_fn, guess)
         #assert result.success
         _, self.cell, self.R, self.B = loss_fn(result.x, True)
+
+    def reject_outliers(self, nstd=10.0):
+        """update the list of inliers"""
+        from sklearn.covariance import MinCovDet
+
+        assigned = self.assigned
+        qpred = self.wav[assigned, None] * (self.RB @ self.H[assigned].T).T
+        qobs = self.qobs[assigned] 
+
+        X = np.concatenate((qobs, qpred), axis=-1)
+        #X = qobs - qpred
+        dist = MinCovDet().fit(X).dist_
+        H = self.H[assigned]
+        H[dist > nstd**2.0] = 0.
+        self.H[assigned] = H
 
 class LauePredictor(LaueBase):
     """
