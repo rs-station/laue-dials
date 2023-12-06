@@ -62,11 +62,12 @@ phil_scope = libtbx.phil.parse(
 
 working_phil = phil_scope.fetch(sources=[phil_scope])
 
+
 @show_mail_handle_errors()
 def run(args=None, *, phil=working_phil):
     # Parse arguments
     usage = "laue.compute_rmsds [options] filename.expt filename.refl"
-    
+
     parser = ArgumentParser(
         usage=usage,
         phil=working_phil,
@@ -75,60 +76,60 @@ def run(args=None, *, phil=working_phil):
         check_format=False,
         epilog=help_message,
     )
-    
+
     params, options = parser.parse_args(args=args, show_diff_phil=False)
-    
-    # Configure logging                                             
-    console = logging.StreamHandler(sys.stdout)                     
+
+    # Configure logging
+    console = logging.StreamHandler(sys.stdout)
     fh = logging.FileHandler(params.log, mode="w", encoding="utf-8")
-    loglevel = logging.INFO                                         
-                                                                    
-    logger.addHandler(fh)                                           
-    logger.addHandler(console)                                      
-    logging.captureWarnings(True)                                   
-    warning_logger = logging.getLogger("py.warnings")               
-    warning_logger.addHandler(fh)                                   
-    warning_logger.addHandler(console)                              
-    dials_logger = logging.getLogger("dials")                       
-    dials_logger.addHandler(fh)                                     
-    dials_logger.addHandler(console)                                
-    dxtbx_logger = logging.getLogger("dxtbx")                       
-    dxtbx_logger.addHandler(fh)                                     
-    dxtbx_logger.addHandler(console)                                
-    xfel_logger = logging.getLogger("xfel")                         
-    xfel_logger.addHandler(fh)                                      
-    xfel_logger.addHandler(console)                                 
-                                                                    
-    logger.setLevel(loglevel)                                       
-    dials_logger.setLevel(loglevel)                                 
-    dxtbx_logger.setLevel(loglevel)                                 
-    xfel_logger.setLevel(loglevel)                                  
-    fh.setLevel(loglevel)                                           
+    loglevel = logging.INFO
+
+    logger.addHandler(fh)
+    logger.addHandler(console)
+    logging.captureWarnings(True)
+    warning_logger = logging.getLogger("py.warnings")
+    warning_logger.addHandler(fh)
+    warning_logger.addHandler(console)
+    dials_logger = logging.getLogger("dials")
+    dials_logger.addHandler(fh)
+    dials_logger.addHandler(console)
+    dxtbx_logger = logging.getLogger("dxtbx")
+    dxtbx_logger.addHandler(fh)
+    dxtbx_logger.addHandler(console)
+    xfel_logger = logging.getLogger("xfel")
+    xfel_logger.addHandler(fh)
+    xfel_logger.addHandler(console)
+
+    logger.setLevel(loglevel)
+    dials_logger.setLevel(loglevel)
+    dxtbx_logger.setLevel(loglevel)
+    xfel_logger.setLevel(loglevel)
+    fh.setLevel(loglevel)
 
     # Print help if no input
     if not params.input.experiments or not params.input.reflections:
         parser.print_help()
         exit()
 
-    # Log diff phil                                                  
-    diff_phil = parser.diff_phil.as_str()                            
-    if diff_phil != "":                                              
+    # Log diff phil
+    diff_phil = parser.diff_phil.as_str()
+    if diff_phil != "":
         logger.info("The following parameters have been modified:\n")
-        logger.info(diff_phil)                                       
+        logger.info(diff_phil)
 
     # Load data
     refls, expts = reflections_and_experiments_from_files(
         params.input.reflections, params.input.experiments
     )
     refls = refls[0]
-    
+
     if params.refined_only:
         refls = refls.select(refls.get_flags(refls.flags.used_in_refinement))
 
-    if len(refls) == 0:                                         
-        logger.info("No reflections in table after filtering.") 
-        return                                                  
- 
+    if len(refls) == 0:
+        logger.info("No reflections in table after filtering.")
+        return
+
     # Get data from reflection table
     hkl = refls["miller_index"].as_vec3_double()
     cell = np.zeros(6)
@@ -138,7 +139,7 @@ def run(args=None, *, phil=working_phil):
     sginfo = expts.crystals()[0].get_space_group().info()
     symbol = sgtbx.space_group_symbols(sginfo.symbol_and_number().split("(")[0])
     spacegroup = gemmi.SpaceGroup(symbol.universal_hermann_mauguin())
-    
+
     # Generate rs.DataSet to write to MTZ
     data = rs.DataSet(
         {
@@ -154,13 +155,13 @@ def run(args=None, *, phil=working_phil):
         cell=cell,
         spacegroup=spacegroup,
     ).infer_mtz_dtypes()
-    
-    logger.info(f'Total Number of Spots: {len(data)}.')
-    
+
+    logger.info(f"Total Number of Spots: {len(data)}.")
+
     # Calculate image residuals
-    images = np.unique(data['image'])
-    x_resids = data['xcal'] - data['xobs']
-    y_resids = data['ycal'] - data['yobs']
+    images = np.unique(data["image"])
+    x_resids = data["xcal"] - data["xobs"]
+    y_resids = data["ycal"] - data["yobs"]
     sqr_resids = x_resids**2 + y_resids**2
     mean_resids = np.zeros(len(images))
     for i, img_num in enumerate(images):
@@ -168,25 +169,26 @@ def run(args=None, *, phil=working_phil):
         mean_resids[i] = np.mean(sqr_resids[sel])
     rmsds = np.sqrt(mean_resids)
 
-    resid_data = pd.DataFrame({'Image' : images, 'RMSD (px)' : rmsds})
-    
-    logger.info(f'RMSDs per image: \n{resid_data}')
-    
+    resid_data = pd.DataFrame({"Image": images, "RMSD (px)": rmsds})
+
+    logger.info(f"RMSDs per image: \n{resid_data}")
+
     # Get pixel size (assume square)
-    # Not sure if this will be needed but I never remember 
+    # Not sure if this will be needed but I never remember
     # this incantation so leaving it here
-    px_size = expts.detectors()[0].to_dict()['panels'][0]['pixel_size'][0]
-    
+    expts.detectors()[0].to_dict()["panels"][0]["pixel_size"][0]
+
     # Plot residuals
-    fig = plt.figure()                  
+    fig = plt.figure()
     plt.scatter(images, rmsds)
     plt.title("Image RMSDs")
     plt.xlabel("Image #")
-    plt.ylabel("RMSD (px)") 
-    if params.save:                     
-        fig.savefig(params.output, format='png')
-    if params.show:                     
-        plt.show()                      
+    plt.ylabel("RMSD (px)")
+    if params.save:
+        fig.savefig(params.output, format="png")
+    if params.show:
+        plt.show()
+
 
 if __name__ == "__main__":
-    run()                 
+    run()
