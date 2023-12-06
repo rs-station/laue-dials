@@ -9,7 +9,7 @@
     <link rel="stylesheet" type="text/css" href="../../../_static/alabaster.css?v=233b9934" />
     <script src="../../../_static/jquery.js?v=5d32c60e"></script>
     <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-    <script src="../../../_static/documentation_options.js?v=7e90a4ed"></script>
+    <script src="../../../_static/documentation_options.js?v=6e9f85e0"></script>
     <script src="../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="icon" href="../../../_static/rs-favicon_32x32.png"/>
@@ -215,7 +215,6 @@
 <a class="viewcode-back" href="../../../api/laue_dials.algorithms.html#laue_dials.algorithms.integration.Profile.integrate">[docs]</a>
     <span class="k">def</span> <span class="nf">integrate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">bg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">background</span>
-        <span class="n">bg</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">counts</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">I</span> <span class="o">=</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">counts</span> <span class="o">-</span> <span class="n">bg</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">fg_mask</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">SigI</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(((</span><span class="bp">self</span><span class="o">.</span><span class="n">counts</span> <span class="o">+</span> <span class="n">bg</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">fg_mask</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span></div>
