@@ -6,17 +6,17 @@ This script computes and plots RMSDs for a pair of DIALS experiment/reflection f
 import logging
 import sys
 
-import gemmi
 import libtbx.phil
+from dials.util import show_mail_handle_errors
+from dials.util.options import (ArgumentParser,
+                                reflections_and_experiments_from_files)
+import gemmi
 import numpy as np
 import pandas as pd
 import reciprocalspaceship as rs
 from matplotlib import pyplot as plt
 
 from cctbx import sgtbx
-from dials.util import show_mail_handle_errors
-from dials.util.options import (ArgumentParser,
-                                reflections_and_experiments_from_files)
 
 from laue_dials.utils.version import laue_version
 
@@ -31,7 +31,7 @@ This program computes the RMSDs between observed and predicted centroids in a re
 
 Examples::
 
-    laue.compute_spots [options] filename.expt filename.refl
+    laue.compute_rmsds [options] filename.expt filename.refl
 """
 
 # Set the phil scope
@@ -150,7 +150,6 @@ def run(args=None, *, phil=working_phil):
             "yobs": refls["xyzobs.px.value"].as_numpy_array()[:, 1],
             "xcal": refls["xyzcal.px"].as_numpy_array()[:, 0],
             "ycal": refls["xyzcal.px"].as_numpy_array()[:, 1],
-            "wavelength": refls["wavelength"].as_numpy_array(),
         },
         cell=cell,
         spacegroup=spacegroup,
