@@ -138,7 +138,9 @@ def index_image(params, refls, expts):
             cell = gemmi.UnitCell(*cell_params)
             # Check compatibility with spacegroup
             if not cell.is_compatible_with_spacegroup(spacegroup):
-                logger.warning(f"WARNING: User-provided unit cell is incompatible with crystal space group on image {i}. Using crystal unit cell instead.")
+                logger.warning(
+                    f"WARNING: User-provided unit cell is incompatible with crystal space group on image {i}. Using crystal unit cell instead."
+                )
                 cell_params = cryst.get_unit_cell().parameters()
                 cell = gemmi.UnitCell(*cell_params)
         else:
