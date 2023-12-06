@@ -163,9 +163,9 @@ def run(args=None, *, phil=working_phil):
     y_resids = data['ycal'] - data['yobs']
     sqr_resids = x_resids**2 + y_resids**2
     mean_resids = np.zeros(len(images))
-    for img_num in images:
+    for i, img_num in enumerate(images):
         sel = data['image'] == img_num
-        mean_resids[img_num-1] = np.mean(sqr_resids[sel])
+        mean_resids[i] = np.mean(sqr_resids[sel])
     rmsds = np.sqrt(mean_resids)
 
     resid_data = pd.DataFrame({'Image' : images, 'RMSD (px)' : rmsds})
