@@ -6,17 +6,16 @@ This script computes and plots RMSDs for a pair of DIALS experiment/reflection f
 import logging
 import sys
 
-import libtbx.phil
-from dials.util import show_mail_handle_errors
-from dials.util.options import (ArgumentParser,
-                                reflections_and_experiments_from_files)
 import gemmi
+import libtbx.phil
 import numpy as np
 import pandas as pd
 import reciprocalspaceship as rs
-from matplotlib import pyplot as plt
-
 from cctbx import sgtbx
+from dials.util import show_mail_handle_errors
+from dials.util.options import (ArgumentParser,
+                                reflections_and_experiments_from_files)
+from matplotlib import pyplot as plt
 
 from laue_dials.utils.version import laue_version
 
@@ -165,7 +164,7 @@ def run(args=None, *, phil=working_phil):
     sqr_resids = x_resids**2 + y_resids**2
     mean_resids = np.zeros(len(images))
     for i, img_num in enumerate(images):
-        sel = data['image'] == img_num
+        sel = data["image"] == img_num
         mean_resids[i] = np.mean(sqr_resids[sel])
     rmsds = np.sqrt(mean_resids)
 

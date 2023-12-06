@@ -220,7 +220,7 @@ def index_image(params, refls, expts):
     # Remove unindexed reflections
     if not params.keep_unindexed:
         all_wavelengths = refls["wavelength"].as_numpy_array()
-        keep = all_wavelengths > 0 # Unindexed reflections assigned wavelength of 0
+        keep = all_wavelengths > 0  # Unindexed reflections assigned wavelength of 0
         refls = refls.select(flex.bool(keep))
 
     # Return reindexed expts, refls
