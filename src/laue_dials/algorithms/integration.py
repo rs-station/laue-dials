@@ -159,7 +159,6 @@ class Profile:
 
     def integrate(self):
         bg = self.background
-        bg + self.counts
 
         self.I = ((self.counts - bg) * self.fg_mask).sum()
         self.SigI = np.sqrt(((self.counts + bg) * self.fg_mask).sum())
