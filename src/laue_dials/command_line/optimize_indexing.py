@@ -67,31 +67,35 @@ geometry {
     .help = "Target unit cell for indexing."
 }
 
+filter_spectrum = True
+  .type = bool
+  .help = Whether to remove reflections outside of the provided wavelength limits.
+
 keep_unindexed = False
   .type = bool
-  .help = Whether to keep unindexed reflections
+  .help = Whether to keep unindexed reflections.
 
 nproc = 1
   .type = int
-  .help = Number of parallel processes to run
+  .help = Number of parallel processes to run.
 
 n_macrocycles = 3
   .type = int(value_min=1)
-  .help = "Number of macrocycles of index optimization to perform"
+  .help = "Number of macrocycles of index optimization to perform."
 
 wavelengths {
   lam_min = None
     .type = float(value_min=0.1)
-    .help = "Minimum wavelength for beam spectrum"
+    .help = "Minimum wavelength for beam spectrum."
   lam_max = None
     .type = float(value_min=0.2)
-    .help = "Maximum wavelength for beam spectrum"
+    .help = "Maximum wavelength for beam spectrum."
   }
 
 reciprocal_grid {
   d_min = None
     .type = float(value_min=0.1)
-    .help = "Minimum d-spacing for reflecting planes"
+    .help = "Minimum d-spacing for reflecting planes."
   }
 
 """,
@@ -184,10 +188,8 @@ def index_image(params, refls, expts):
         cryst.set_space_group(space_group(la.spacegroup.hall))
         cryst.set_unit_cell(unit_cell(la.cell.parameters))
 
-        # Filter out wavelengths beyond limits
+        # Get wavelengths
         spot_wavelengths = np.asarray(la._wav.tolist())
-        spot_wavelengths[spot_wavelengths < params.wavelengths.lam_min] = 0
-        spot_wavelengths[spot_wavelengths > params.wavelengths.lam_max] = 0
 
         # Write data to reflections
         refls["s1"].set_selected(idx, flex.vec3_double(s1))
@@ -205,12 +207,18 @@ def index_image(params, refls, expts):
         )
 
     # Remove unindexed reflections
-    if not params.keep_unindexed:
+    if params.filter_spectrum:
         all_wavelengths = refls["wavelength"].as_numpy_array()
         keep = np.logical_and(
             all_wavelengths >= params.wavelengths.lam_min,
             all_wavelengths <= params.wavelengths.lam_max,
         )
+        refls = refls.select(flex.bool(keep))
+
+    # Remove unindexed reflections
+    if not params.keep_unindexed:
+        all_wavelengths = refls["wavelength"].as_numpy_array()
+        keep = all_wavelengths > 0 # Unindexed reflections assigned wavelength of 0
         refls = refls.select(flex.bool(keep))
 
     # Return reindexed expts, refls
