@@ -14,5 +14,6 @@
    predict
    integrate
    plot_wavelengths
+   compute_rmsds
 
 ```
