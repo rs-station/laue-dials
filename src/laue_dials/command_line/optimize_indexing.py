@@ -61,6 +61,12 @@ output {
     .help = "The log filename."
   }
 
+geometry {
+  unit_cell = None
+    .type = floats(size=6)
+    .help = "Target unit cell for indexing."
+}
+
 keep_unindexed = False
   .type = bool
   .help = Whether to keep unindexed reflections
@@ -127,8 +133,17 @@ def index_image(params, refls, expts):
         subrefls = refls.select(idx)
 
         # Get unit cell params
-        cell_params = cryst.get_unit_cell().parameters()
-        cell = gemmi.UnitCell(*cell_params)
+        if params.geometry.unit_cell is not None:
+            cell_params = params.geometry.unit_cell
+            cell = gemmi.UnitCell(*cell_params)
+            # Check compatibility with spacegroup
+            if not cell.is_compatible_with_spacegroup(spacegroup):
+                logger.warning(f"WARNING: User-provided unit cell is incompatible with crystal space group on image {i}. Using crystal unit cell instead.")
+                cell_params = cryst.get_unit_cell().parameters()
+                cell = gemmi.UnitCell(*cell_params)
+        else:
+            cell_params = cryst.get_unit_cell().parameters()
+            cell = gemmi.UnitCell(*cell_params)
 
         # Generate s vectors
         s1 = subrefls["s1"].as_numpy_array()
