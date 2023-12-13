@@ -19,6 +19,7 @@ laue_version()
 logger = logging.getLogger("laue-dials.command_line.find_spots")
 
 help_message = """
+Perform spotfinding on an imported experiment.
 
 This program takes a DIALS imported experiment list (generated with
 dials.import) and generates a reflection table of strong spots
@@ -65,6 +66,16 @@ working_phil = main_phil.fetch(sources=[output_phil, spotfinder_phil])
 
 @show_mail_handle_errors()
 def run(args=None, *, phil=working_phil):
+    """
+    Run the spotfinding script with the specified command-line arguments.
+
+    Args:
+        args (list): Command-line arguments.
+        phil: The phil scope for the program.
+
+    Returns:
+        None
+    """
     # Parse arguments
     usage = "laue.find_spots [options] imported.expt"
 

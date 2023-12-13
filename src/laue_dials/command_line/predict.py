@@ -29,6 +29,7 @@ laue_version()
 logger = logging.getLogger("laue-dials.command_line.predict")
 
 help_message = """
+This script predicts reflections for integration using a refined geometry experiment and reflection file.
 
 This program takes a refined geometry experiment and reflection file, builds a
 DIALS experiment list and reflection table, and predicts the feasible set of
@@ -87,7 +88,17 @@ working_phil = phil_scope.fetch(sources=[phil_scope])
 
 def predict_spots(lam_min, lam_max, d_min, refls, expts):
     """
-    A function for predicting spots given a geometry
+    Predict spots given a geometry.
+
+    Args:
+        lam_min (float): Minimum wavelength for the beam spectrum.
+        lam_max (float): Maximum wavelength for the beam spectrum.
+        d_min (float): Minimum d-spacing for reflecting planes.
+        refls (dials.array_family.flex.reflection_table): The reflection table.
+        expts (dxtbx.model.experiment_list.ExperimentList): The experiment list.
+
+    Returns:
+        final_preds (dials.array_family.flex.reflection_table): Predicted reflection table.
     """
     from laue_dials.algorithms.laue import LauePredictor
 
@@ -194,6 +205,13 @@ def predict_spots(lam_min, lam_max, d_min, refls, expts):
 
 @show_mail_handle_errors()
 def run(args=None, *, phil=working_phil):
+    """
+    Run the prediction script.
+
+    Args:
+        args (list): Command-line arguments.
+        phil: Working phil scope.
+    """
     # Parse arguments
     usage = "laue.predict [options] poly_refined.expt poly_refined.refl"
 

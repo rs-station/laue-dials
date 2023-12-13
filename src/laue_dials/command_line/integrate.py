@@ -29,14 +29,14 @@ laue_version()
 logger = logging.getLogger("laue-dials.command_line.integrate")
 
 help_message = """
+This script generates integrated MTZ files from refined data with predictions.
 
-This program takes a refined geometry experiment file along with a predicted
+The program takes a refined geometry experiment file along with a predicted
 reflection table, and uses those to integrate intensities in the data set.
-
-The output is a MTZ file containing integrated intensities suitable for
+The output is an MTZ file containing integrated intensities suitable for
 merging and scaling.
 
-Examples::
+Examples:
 
     laue.integrate [options] poly_refined.expt predicted.refl
 """
@@ -70,14 +70,29 @@ working_phil = phil_scope.fetch(sources=[phil_scope])
 
 def get_refls_image(refls, img_id):
     """
-    A function for getting the set of reflections lying on a particular image
+    Get the set of reflections lying on a particular image.
+
+    Args:
+        refls (dials.array_family.flex.reflection_table): Reflection table.
+        img_id (int): Image ID.
+
+    Returns:
+        refls (dials.array_family.flex.reflection_table): Reflection table for the specified image.
     """
     return refls.select(refls["id"] == img_id)
 
 
 def integrate_image(img_set, refls, isigi_cutoff):
     """
-    A function for integrating predicted spots on an image
+    Integrate predicted spots on an image.
+
+    Args:
+        img_set (dxtbx_imageset_ext.Imageset): Image set.
+        refls (dials.array_family.flex.reflection_table): Reflection table.
+        isigi_cutoff (float): I/SIGI threshold.
+
+    Returns:
+        flex.reflection_table: Updated reflection table.
     """
     img_num = refls["id"][0]
     logger.info(f"Integrating image {img_num}.")
@@ -118,6 +133,16 @@ def integrate_image(img_set, refls, isigi_cutoff):
 
 @show_mail_handle_errors()
 def run(args=None, *, phil=working_phil):
+    """
+    Run the integration script with the specified command-line arguments.
+
+    Args:
+        args (list): Command-line arguments.
+        phil: The phil scope for the program.
+
+    Returns:
+        None
+    """
     # Parse arguments
     usage = "laue.integrate [options] poly_refined.expt predicted.refl"
 

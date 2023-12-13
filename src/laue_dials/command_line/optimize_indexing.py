@@ -26,11 +26,12 @@ laue_version()
 logger = logging.getLogger("laue-dials.command_line.optimize_indexing")
 
 help_message = """
+This script optimizes Miller indices and wavelengths jointly.
 
 This program takes initial monochromatic estimates of the geometry in a
 DIALS experiment list and reflection table, and optimizes the indexed
 solution by allowing the wavelength to vary. Only Miller indices, s1
-vectors and wavelengths for scattered reflections are overwritten by
+vectors, and wavelengths for scattered reflections are overwritten by
 this program - all other geometry variables remain constant here.
 
 The outputs are a pair of files (optimized.expt, optimized.refl), which
@@ -38,7 +39,7 @@ mimic the input files but with updated Miller indices, s1 vectors, and
 wavelengths in the reflection table. Note that the experiment list is
 unchanged entirely.
 
-Examples::
+Examples:
 
     laue.optimize_indexing [options] monochromatic.expt monochromatic.refl
 """
@@ -106,6 +107,18 @@ working_phil = phil_scope.fetch(sources=[phil_scope])
 
 
 def index_image(params, refls, expts):
+    """
+    Reindex the given image reflections and update the experiment geometry.
+
+    Args:
+        params (libtbx.phil.scope_extract): Program parameters.
+        refls (dials.array_family.flex.reflection_table): Reflection table for a single image.
+        expts (dxtbx.model.ExperimentList): List of experiment objects.
+
+    Returns:
+        expts (dxtbx.model.experiment_list.ExperimentList): The optimized experiment list with updated crystal rotations.
+        refls (dials.array_family.flex.reflection_table): The optimized reflection table with updated wavelengths.
+    """
     import gemmi
     from cctbx.sgtbx import space_group
     from cctbx.uctbx import unit_cell
@@ -229,6 +242,16 @@ def index_image(params, refls, expts):
 
 @show_mail_handle_errors()
 def run(args=None, *, phil=working_phil):
+    """
+    Run the script to optimize Miller indices and wavelengths jointly.
+
+    Args:
+        args (list): Command-line arguments.
+        phil: The phil scope for the program.
+
+    Returns:
+        None
+    """
     # Parse arguments
     usage = "laue.optimize_indexing [options] monochromatic.expt monochromatic.refl"
 

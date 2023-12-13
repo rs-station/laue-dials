@@ -21,6 +21,7 @@ laue_version()
 logger = logging.getLogger("laue-dials.command_line.index")
 
 help_message = """
+Perform monochromatic indexing and optional scan-varying refinement.
 
 This program takes a DIALS imported experiment list (generated with
 dials.import) and a strong reflection table and generates an initial
@@ -165,6 +166,16 @@ working_phil = main_phil.fetch(sources=[indexer_phil, refiner_phil])
 
 @show_mail_handle_errors()
 def run(args=None, *, phil=working_phil):
+    """
+    Run the indexing script with the specified command-line arguments.
+
+    Args:
+        args (list): Command-line arguments.
+        phil: The phil scope for the program.
+
+    Returns:
+        None
+    """
     # Parse arguments
     usage = "laue.index [options] imported.expt strong.refl"
 

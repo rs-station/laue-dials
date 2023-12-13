@@ -29,6 +29,7 @@ laue_version()
 logger = logging.getLogger("laue-dials.command_line.refine")
 
 help_message = """
+This script handles polychromatic geometry refinement.
 
 This program takes an indexed DIALS experiment list and reflection table
 (with wavelengths) and refines the experiment geometry. The outputs are a pair of
@@ -115,6 +116,18 @@ working_phil = main_phil.fetch(sources=[refiner_phil])
 
 
 def refine_image(params, expts, refls):
+    """
+    Refine image given parameters, experiments, and reflections.
+
+    Args:
+        params (libtbx.phil.scope_extract): Refinement parameters.
+        expts (dxtbx.model.ExperimentList): Experiment list.
+        refls (flex.reflection_table): Reflection table.
+
+    Returns:
+        refined_expts (dxtbx.model.experiment_list.ExperimentList): The refined experiment list with updated geometry.
+        refined_refls (dials.array_family.flex.reflection_table): The refined reflection table with updated wavelength and centroid data.
+    """
     img_num = refls["id"][0]
     original_ids = refls["id"]
     refls["id"] = flex.int([0] * len(refls))
@@ -147,6 +160,13 @@ def refine_image(params, expts, refls):
 
 @show_mail_handle_errors()
 def run(args=None, *, phil=working_phil):
+    """
+    Run the refinement script.
+
+    Args:
+        args (list): Command-line arguments.
+        phil: Working phil scope.
+    """
     # Parse arguments
     usage = "laue.refine [options] optimized.expt optimized.refl"
 

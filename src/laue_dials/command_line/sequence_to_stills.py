@@ -60,6 +60,23 @@ max_scan_points = None
 
 
 def sequence_to_stills(experiments, reflections, params):
+    """
+    Split a sequence into a set of stills.
+
+    This function takes a sequence of experiments and corresponding reflections and splits it into a set of stills.
+    Each still is associated with a specific scan point within the original sequence. The resulting experiments
+    and reflection tables for the stills are returned.
+
+    Args:
+        experiments (List[dxtbx.model.experiment_list]): The list of experiments representing the sequence.
+        reflections (List[dials.array_family.flex.reflection_table]): The list of reflection tables corresponding to the experiments.
+        params (libtbx.phil.scope_extract): Program parameters.
+
+    Returns:
+        Tuple[List[dxtbx.model.experiment_list.Experiment], List[dials.array_family.flex.reflection_table]]: A tuple containing the following:
+        - A list of Experiment objects representing the split stills.
+        - A list of reflection_table objects containing the split reflections for each still.
+    """
     assert len(reflections) == 1
     reflections = reflections[0]
 
@@ -157,13 +174,15 @@ def sequence_to_stills(experiments, reflections, params):
 @show_mail_handle_errors()
 def run(args=None, phil=phil_scope):
     """
-    Validate the arguments and load experiments/reflections for sequence_to_stills
+    Validate the arguments and load experiments/reflections for sequence_to_stills.
 
-    Arguments:
-        args: The command line arguments to use. Defaults to sys.argv[1:]
-        phil: The phil_scope. Defaults to the master phil_scope for this program
-    """
-    # The script usage
+    Args:
+        args (list): Command-line arguments.
+        phil: Working phil scope.
+
+    Returns:
+        None
+    """    # The script usage
     usage = "usage: laue.sequence_to_stills [options] [param.phil] models.expt reflections.refl"
 
     # Create the parser

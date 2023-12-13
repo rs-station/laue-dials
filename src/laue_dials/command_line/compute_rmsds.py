@@ -25,8 +25,7 @@ laue_version()
 logger = logging.getLogger("laue-dials.command_line.compute_rmsds")
 
 help_message = """
-
-This program computes the RMSDs between observed and predicted centroids in a reflection table.
+This program computes and plots the RMSDs between observed and predicted centroids in a reflection table.
 
 Examples::
 
@@ -64,6 +63,16 @@ working_phil = phil_scope.fetch(sources=[phil_scope])
 
 @show_mail_handle_errors()
 def run(args=None, *, phil=working_phil):
+    """
+    Compute and plot RMSDs for a pair of DIALS experiment/reflection files.
+
+    Args:
+        args (list): Command-line arguments.
+        phil: The phil scope for the program.
+
+    Returns:
+        None
+    """
     # Parse arguments
     usage = "laue.compute_rmsds [options] filename.expt filename.refl"
 

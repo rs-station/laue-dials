@@ -20,6 +20,7 @@ laue_version()
 logger = logging.getLogger("laue-dials.command_line.plot_wavelengths")
 
 help_message = """
+This script generates a histogram of the wavelengths present in a DIALS reflection table.
 
 This program takes a DIALS reflection table that contains a wavelength
 column and produces a histogram of the wavelengths present in the
@@ -75,6 +76,16 @@ working_phil = phil_scope.fetch(sources=[phil_scope])
 
 @show_mail_handle_errors()
 def run(args=None, *, phil=working_phil):
+    """
+    Run the script to histogram the wavelengths present in a reflection table.
+
+    Args:
+        args (list): Command-line arguments.
+        phil: The phil scope for the program.
+
+    Returns:
+        None
+    """
     # Parse arguments
     usage = "laue.plot_wavelengths [options] FILENAME.refl"
 
