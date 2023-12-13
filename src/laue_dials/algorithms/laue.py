@@ -14,18 +14,14 @@ from laue_dials.algorithms.diffgeo import hkl2ray
 
 def store_wavelengths(expts, refls):
     """
-    A function for storing wavelength data in beam objects in the reflection table
-        Parameters
-        ----------
-        expts : ExperimentList
-            ExperimentList to retrieve wavelengths from
-        refls : reflection_table
-            A reflection_table to store wavelengths in
+    A function for storing wavelength data in beam objects in the reflection table.
 
-        Returns
-        -------
-        new_refls : reflection_table
-            A reflection_table with updated wavelengths
+    Parameters:
+        expts (dxtbx.model.ExperimentList): ExperimentList to retrieve wavelengths from.
+        refls (dials.array_family.flex.reflection_table): A reflection_table to store wavelengths in.
+
+    Returns:
+        new_refls (dials.array_family.flex.reflection_table): A reflection_table with updated wavelengths.
     """
     # Make new reflection_table
     new_refls = refls.copy()
@@ -47,19 +43,14 @@ def store_wavelengths(expts, refls):
 
 def remove_beam_models(expts, new_id):
     """
-    A function for removing beam models no longer needed after refinement
-        Parameters
-        ----------
-        expts : ExperimentList
-            ExperimentList to remove beams from
+    A function for removing beam models no longer needed after refinement.
 
-        new_id : Int
-            ID to assign to final experiment
+    Parameters:
+        expts (dxtbx.model.ExperimentList): ExperimentList to remove beams from.
+        new_id (int): ID to assign to the final experiment.
 
-        Returns
-        -------
-        new_expts : ExperimentList
-            An ExperimentList with an experiment per image all sharing a beam
+    Returns:
+        new_expts (dxtbx.model.ExperimentList): An ExperimentList with an experiment per image, all sharing a beam.
     """
     # Instantiate new ExperimentList/reflection_table
     new_expts = ExperimentList()
@@ -82,20 +73,15 @@ def remove_beam_models(expts, new_id):
 
 def gen_beam_models(expts, refls):
     """
-    A function for generating beam models according to wavelengths in a reflection table
-        Parameters
-        ----------
-        expts : ExperimentList
-            ExperimentList to insert beams into
-        refls : reflection_table
-            A reflection_table containing wavelengths for beam models
+    A function for generating beam models according to wavelengths in a reflection table.
 
-        Returns
-        -------
-        new_expts : ExperimentList
-            ExperimentList with additional beam models and adjusted identifiers
-        refls : reflection_table
-            A reflection_table with updated identifiers
+    Parameters:
+        expts (ExperimentList): ExperimentList to insert beams into.
+        refls (dials.array_family.flex.reflection_table): A reflection_table containing wavelengths for beam models.
+
+    Returns:
+        new_expts (dxtbx.model.ExperimentList): ExperimentList with additional beam models and adjusted identifiers.
+        refls (dials.array_family.flex.reflection_table): A reflection table with updated identifiers.
     """
     # Imports
     from copy import deepcopy
@@ -140,23 +126,14 @@ class LaueBase:
 
     def __init__(self, s0, cell, R, lam_min, lam_max, dmin, spacegroup="1"):
         """
-        Parameters
-        ----------
-        s0 : array
-            a 3 vector indicating the direction of the incoming beam wavevector.
-            This can be any length, it will be unit normalized in the constructor.
-        cell : iterable or gemmi.UnitCell
-            A tuple or list of unit cell params (a, b, c, alpha, beta, gamma) or a gemmi.UnitCell object
-        R : array
-            A 3x3 rotation matrix corresponding to the crystal orientation for the frame.
-        lam_min : float
-            The lower end of the wavelength range of the beam.
-        lam_max : float
-            The upper end of the wavelength range of the beam.
-        dmin : float
-            The maximum resolution of the model
-        spacegroup : gemmi.SpaceGroup (optional)
-            Anything that the gemmi.SpaceGroup constructor understands.
+        Parameters:
+            s0 (np.ndarray): A 3-vector indicating the direction of the incoming beam wavevector.
+            cell (Union[Tuple, gemmi.UnitCell]): A tuple or list of unit cell params (a, b, c, alpha, beta, gamma) or a gemmi.UnitCell object.
+            R (np.ndarray): A 3x3 rotation matrix corresponding to the crystal orientation for the frame.
+            lam_min (float): The lower end of the wavelength range of the beam.
+            lam_max (float): The upper end of the wavelength range of the beam.
+            dmin (float): The maximum resolution of the model.
+            spacegroup (str): Anything that the gemmi.SpaceGroup constructor understands.
         """
         if not isinstance(cell, gemmi.UnitCell):
             cell = gemmi.UnitCell(*cell)
@@ -195,6 +172,12 @@ class LaueBase:
 
     @property
     def RB(self):
+        """
+        Calculates the product RB.
+    
+        Returns:
+            np.ndarray: The product of the rotation matrix (R) and the fractionalization matrix (B).
+        """
         return self.R @ self.B
 
 
@@ -205,11 +188,8 @@ class LaueAssigner(LaueBase):
 
     def __init__(self, s0, s1, cell, R, lam_min, lam_max, dmin, spacegroup="1"):
         """
-        Parameters
-        ----------
-        s1 : array
-            n x 3 array indicating the direction of the scatterd beam wavevector.
-            This can be any length, it will be unit normalized in the constructor.
+        Parameters:
+            s1 (np.ndarray): n x 3 array indicating the direction of the scattered beam wavevector.
         """
         super().__init__(s0, cell, R, lam_min, lam_max, dmin, spacegroup)
 
@@ -223,53 +203,113 @@ class LaueAssigner(LaueBase):
 
     @property
     def s1(self):
+        """
+        np.ndarray: The normalized direction of the scattered beam wavevector for inlying reflections.
+        """
         return self._s1[self._inliers]
 
     @property
     def qobs(self):
+        """
+        np.ndarray: The observed q vectors for inlying reflections.
+        """
         return self._qobs[self._inliers]
 
     @property
     def qpred(self):
+        """
+        np.ndarray: The predicted q vectors for inlying reflections.
+        """
         return self._qpred[self._inliers]
 
     @property
     def H(self):
+        """
+        np.ndarray: The Miller indices for inlying reflections.
+        """
         return self._H[self._inliers]
 
     @property
     def wav(self):
+        """
+        np.ndarray: The wavelengths associated with inlying reflections.
+        """
         return self._wav[self._inliers]
 
     @property
     def harmonics(self):
+        """
+        np.ndarray: Boolean array indicating whether inlying reflections correspond to harmonic reflections.
+        """
         return self._harmonics[self._inliers]
 
     # <-- setters that operate on the currently inlying set
     def set_qpred(self, qpred):
+        """
+        Set the predicted q vectors for inlying reflections.
+
+        Parameters:
+            qpred (np.ndarray): Predicted q vectors.
+        """
         self._qpred[self._inliers] = qpred
 
     def set_H(self, H):
+        """
+        Set the Miller indices for inlying reflections.
+
+        Parameters:
+            H (np.ndarray): Miller indices.
+        """
         self._H[self._inliers] = H
         self._H[~self._inliers] = 0.0
 
     def set_wav(self, wav):
+        """
+        Set the wavelengths for inlying reflections.
+
+        Parameters:
+            wav (np.ndarray): Wavelengths.
+        """
         self._wav[self._inliers] = wav
         self._wav[~self._inliers] = 0.0
 
     def set_inliers(self, inliers):
+        """
+        Set the inliers for the current set of reflections.
+
+        Parameters:
+            inliers (np.ndarray): Boolean array indicating inliers.
+        """
         self._inliers[self._inliers] = inliers
 
     def set_harmonics(self, harmonics):
+        """
+        Set whether inlying reflections correspond to harmonics.
+
+        Parameters:
+            harmonics (np.ndarray): Boolean array indicating harmonics.
+        """
         self._harmonics[self._inliers] = harmonics
 
     # --> setters that operate on the currently inlying set
 
     def reset_inliers(self):
+        """Reset all reflections as inliers."""
         self._inliers = np.ones(len(self._inliers), dtype=bool)
 
     def reject_outliers(self, nstd=10.0):
-        """update the list of inliers"""
+        """
+        Update the list of inliers based on robust statistical measures.
+
+        Parameters:
+            nstd (float): Number of standard deviations from the median to consider as inliers.
+
+        This method uses Minimum Covariance Determinant (MCD) to robustly estimate the covariance matrix
+        of the concatenated observed and predicted q vectors. It then considers inliers as the points
+        within a specified number of standard deviations from the median Mahalanobis distance.
+
+        The list of inliers is updated accordingly.
+        """
         from sklearn.covariance import MinCovDet
 
         X = np.concatenate((self.qobs, self.qpred * self.wav[:, None]), axis=-1)
@@ -278,11 +318,22 @@ class LaueAssigner(LaueBase):
 
     def assign(self):
         """
-        Assign miller indices to the inlier reflections
-        This method will update:
-            self.H     -- miller indices
-            self.wav   -- wavelengths
-            self.qpred -- predicted scattering vector
+        Assign miller indices to the inlier reflections.
+
+        This method updates the following attributes:
+        - self.H: Miller indices associated with the assigned reflections.
+        - self.wav: Wavelengths associated with the assigned reflections.
+        - self.qpred: Predicted scattering vectors associated with the assigned reflections.
+        - self.harmonics: Boolean array indicating whether the assigned reflections are harmonics.
+
+        The assignment is performed by solving the linear sum assignment problem using scipy.optimize.linear_sum_assignment.
+        The cost matrix is computed based on the angular distance between observed and predicted scattering vectors.
+
+        The feasible set of reflections is determined from the reciprocal lattice points within the specified geometry.
+        Reflections with duplicated scattering vectors are removed, and then the assignment is performed.
+
+        This method is essential for updating the information of assigned reflections, allowing subsequent steps in
+        Laue indexing procedures to utilize the assigned miller indices and associated parameters.
         """
         # Generate the feasible set of reflections from the current geometry
         Hall = self.Hall
@@ -329,7 +380,7 @@ class LaueAssigner(LaueBase):
         self.set_wav(wav_obs)
 
     def update_rotation(self):
-        """Update the rotation matrix (self.R) based on the inlying refls"""
+        """Update the rotation matrix (self.R) based on the inlying reflections."""
         from scipy.linalg import orthogonal_procrustes
 
         misset, _ = orthogonal_procrustes(
@@ -352,13 +403,30 @@ class LauePredictor(LaueBase):
 
     def predict_s1(self, delete_harmonics=False):
         """
-        Predicts all s1 vectors for all feasible spots given some resolution-dependent bandwidth
-        This method provides:
+        Predicts scattering vectors and associated parameters for feasible Laue spots.
+
+        Args:
+            delete_harmonics (Optional[bool]): If True, removes harmonic reflections from the prediction.
+
+        Returns:
+            s1_pred (np.ndarray): Predicted feasible scattering vectors.
+            lams (np.ndarray): Wavelengths associated with the predicted scattering vectors.
+            qall (np.ndarray): Q vectors associated with the predicted scattering vectors.
+            Hall (np.ndarray): Miller indices associated with the predicted scattering vectors.
+
+        This method predicts scattering vectors for feasible spots given the current Laue experiment's geometry.
+        The feasible set of reflections is determined within the specified geometry, and the scattering vectors are predicted.
+        
+        If `delete_harmonics` is True, harmonic reflections are removed from the prediction.
+        Harmonics are identified based on duplicated scattering vectors in the reciprocal lattice.
+
+        The returned arrays provide essential information about the predicted scattering vectors and associated parameters,
+        allowing further analysis and utilization in Laue indexing procedures.
+        """
             s1_pred -- predicted feasible s1 vectors
             lams -- the wavelengths (in Angstroms) associated with these s1 vectors
             qall -- the q vectors associated with these s1 vectors
             Hall -- the miller indices associated with s1 vectors
-        """
         # Generate the feasible set of reflections from the current geometry
         Hall = self.Hall
         qall = (self.RB @ Hall.T).T

@@ -9,19 +9,14 @@ import reciprocalspaceship as rs
 def get_UB_matrices(A):
     """
     Convert the reciprocal space indexing matrix, A into the product of
-    an orthogonal matrix U and a lower triangular matrix B
+    an orthogonal matrix U and a lower triangular matrix B.
 
-    Parameters
-    ----------
-    A : np.array
-        A 3x3 indexing matrix such that the scattering vector `S1-S0=Q=A@h`
+    Parameters:
+        A (np.array): A 3x3 indexing matrix such that the scattering vector `S1-S0=Q=A@h`.
 
-    Returns
-    -------
-    U : np.array
-        An orthogonal 3x3 matrix
-    B : np.array
-        A 3x3 lower triangular matrix
+    Returns:
+        U (np.array): An orthogonal 3x3 matrix with the crystal U matrix.
+        B (np.array): A 3x3 lower triangular matrix for the crystal B matrix.
     """
     from scipy.linalg import rq
 
@@ -34,17 +29,13 @@ def get_UB_matrices(A):
 
 def normalize(A):
     """
-    Normalize the last dimension of an array by dividing by its L2 norm
+    Normalize the last dimension of an array by dividing by its L2 norm.
 
-    Parameters
-    ----------
-    A : np.array
-        A non-normal matrix
+    Parameters:
+        A (np.array): A non-normal matrix.
 
-    Returns
-    -------
-    A : np.array
-        A normalized matrix
+    Returns:
+        A (np.array): A normalized matrix.
     """
     normalized_A = A / np.linalg.norm(A, axis=-1)[..., None]
 
@@ -58,19 +49,13 @@ def hkl2ray(hkl, wavelength=None):
     Convert a miller index to the shortest member of its central ray.
     Optionally, adjust its wavelength accordingly.
 
-    Parameters
-    ----------
-    hkl : array
-        `n x 3` array of miller indices. the dtype must be interpretable as an integer
-    wavelength : array (optional)
-        length `n` array of wavelengths corresponding to each miller index
+    Parameters:
+        hkl (np.array): `n x 3` array of miller indices. The dtype must be interpretable as an integer.
+        wavelength (Optional[np.array]): Length `n` array of wavelengths corresponding to each miller index.
 
-    Returns
-    -------
-    reduced_hkl : array
-        The miller index of the shortest vector on the same central ray as hkl
-    reduced_wavelength : array (optional)
-        The wavelengths corresponding to reduced_hkl
+    Returns:
+        reduced_hkl (np.array): The miller index of the shortest vector on the same central ray as the original hkl.
+        reduced_wavelength (Optional[np.array]): The wavelengths corresponding to reduced_hkl.
     """
     gcd = np.gcd.reduce(hkl.astype(int), axis=-1)
     if wavelength is not None:
@@ -81,19 +66,15 @@ def hkl2ray(hkl, wavelength=None):
 
 def is_ray_equivalent(hkl1, hkl2):
     """
-    Test for equivalency between two miller indices in a Laue experiment. Returns a boolean array for each of the `n` hkls in `hkl{1,2}`.
+    Test for equivalency between two miller indices in a Laue experiment.
+    Returns a boolean array for each of the `n` hkls in `hkl{1,2}`.
 
-    Parameters
-    ----------
-    hkl1 : array
-        `n x 3` array of miller indices. the dtype must be interpretable as an integer
-    hkl2 : array
-        `n x 3` array of miller indices. the dtype must be interpretable as an integer
+    Parameters:
+        hkl1 (np.array): `n x 3` array of miller indices. The dtype must be interpretable as an integer.
+        hkl2 (np.array): `n x 3` array of miller indices. The dtype must be interpretable as an integer.
 
-    Returns
-    -------
-    equal_hkl : array
-        Boolean array for hkl equivalency by index from original arrays
+    Returns:
+        equal_hkl (np.array): Boolean array for hkl equivalency by index from original arrays.
     """
     return np.all(np.isclose(hkl2ray(hkl1), hkl2ray(hkl2)), axis=1)
 
@@ -102,21 +83,14 @@ def align_hkls(reference, target, spacegroup, anomalous=True):
     """
     Use the point group operators in `spacegroup` to align target hkls to reference.
 
-    Parameters
-    ----------
-    reference : array
-        n x 3 array of miller indices
-    target : array
-        n x 3 array of miller indices
-    spacegroup : gemmi.Spacegroup
-        The space group of reference/target.
-    anomalous : bool(optional)
-        If true, test Friedel symmetries too.
+    Parameters:
+        reference (np.array): n x 3 array of miller indices.
+        target (np.array): n x 3 array of miller indices.
+        spacegroup (gemmi.Spacegroup): The space group of reference/target.
+        anomalous (bool, optional): If true, test Friedel symmetries too.
 
-    Returns
-    -------
-    aligned : array
-        n x 3 array of miller indices equivalent to target
+    Returns:
+        aligned (np.array): n x 3 array of miller indices equivalent to target.
     """
     aligned = target
     cc = -1.0
@@ -140,19 +114,14 @@ def align_hkls(reference, target, spacegroup, anomalous=True):
 
 def orthogonalization(a, b, c, alpha, beta, gamma):
     """
-    Compute the orthogonalization matrix from cell params
+    Compute the orthogonalization matrix from cell params.
 
-    Parameters
-    ----------
-    a,b,c : floats
-        Floats representing the magnitudes of the three unit cell axes
-    alpha, beta, gamma : floats
-        Floats representing the three unit cell angles
+    Parameters:
+        a, b, c (float): Floats representing the magnitudes of the three unit cell axes.
+        alpha, beta, gamma (float): Floats representing the three unit cell angles.
 
-    Returns
-    -------
-    orthogonalization_matrix : array
-        3 x 3 orthogonalization matrix for unit cell
+    Returns:
+        orthogonalization_matrix (np.array): 3 x 3 orthogonalization matrix for unit cell.
     """
     alpha, beta, gamma = (
         np.pi * alpha / 180.0,
@@ -182,17 +151,16 @@ def orthogonalization(a, b, c, alpha, beta, gamma):
 
 def mat_to_rot_xyz(R, deg=True):
     """
-    Decompose a rotation matrix into euler angles
+    Decompose a rotation matrix into euler angles.
 
-    Parameters
-    ----------
-    R : array
-        3 x 3 rotation matrix
+    Parameters:
+        R (np.array): 3 x 3 rotation matrix.
+        deg (Optional[bool]): If True, angles are returned in degrees.
 
-    Returns
-    -------
-    rot_x, rot_y, rot_z : floats
-        Euler angles to generate rotation matrix
+    Returns:
+        rot_x (float): Euler angle around x-axis to generate rotation matrix.
+        rot_y (float): Euler angle around y-axis to generate rotation matrix.
+        rot_z (float): Euler angle around z-axis to generate rotation matrix.
     """
     if R[2, 0] < 1:
         if R[2, 0] > -1:
@@ -216,17 +184,16 @@ def mat_to_rot_xyz(R, deg=True):
 
 def rot_xyz_to_mat(rot_x, rot_y, rot_z, deg=True):
     """
-    Convert euler angles into a rotation matrix
+    Convert euler angles into a rotation matrix.
 
-    Parameters
-    ----------
-    rot_x, rot_y, rot_z : floats
-        Euler angles to generate rotation matrix
+    Parameters:
+        rot_x (float): Euler angle around x-axis to generate rotation matrix.
+        rot_y (float): Euler angle around y-axis to generate rotation matrix.
+        rot_z (float): Euler angle around z-axis to generate rotation matrix.
+        deg (Optional[bool]): If True, input angles are assumed to be in degrees.
 
-    Returns
-    -------
-    R : array
-        3 x 3 rotation matrix
+    Returns:
+        R (np.array): 3 x 3 rotation matrix.
     """
     if deg:
         rot_x = np.deg2rad(rot_x)

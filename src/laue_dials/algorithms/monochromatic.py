@@ -5,17 +5,14 @@ This file contains functions for monochromatic processing
 
 def find_spots(params, expts):
     """
-    Find strong reflections on images given a set of experiments
+    Find strong reflections on images given a set of experiments.
 
-    Parameters
-    ----------
-    phil : libtbx.phil.scope_extract
-        A phil scope extract containing the parameters for the DIALS spotfinding code
+    Args:
+        params (libtbx.phil.scope_extract): A phil scope extract containing the parameters for the DIALS spotfinding code.
+        expts (dxtbx.model.ExperimentList): A list of experiment objects.
 
-    Returns
-    -------
-    refls : reflection_table
-        A reflection table containing the found strong reflections
+    Returns:
+        refls (dials.array_family.flex.reflection_table): A reflection table containing the found strong reflections.
     """
     from dials.command_line.find_spots import do_spotfinding
 
@@ -25,19 +22,16 @@ def find_spots(params, expts):
 
 def initial_index(params, expts, refls):
     """
-    Indexes a dataset at a single wavelength using FFT3D
+    Indexes a dataset at a single wavelength using FFT3D.
 
-    Parameters
-    ----------
-    phil : libtbx.phil.scope_extract
-        A phil scope extract containing the parameters for the DIALS indexing code
+    Args:
+        params (libtbx.phil.scope_extract): A phil scope extract containing the parameters for the DIALS indexing code.
+        expts (dxtbx.model.ExperimentList): A list of imported experiment objects.
+        refls (dials.array_family.flex.reflection_table): A reflection table containing strong reflections.
 
-    Returns
-    -------
-    expts_indexed : ExperimentList
-        An ExperimentList containing the indexing solution geometry
-    refls_indexed : reflection_table
-        A reflection table containing reflections with indexing data
+    Returns:
+        expts_indexed (dxtbx.model.ExperimentList): An ExperimentList containing the indexing solution geometry.
+        refls_indexed (dials.array_family.flex.reflection_table): A reflection table containing reflections with indexed data.
     """
     from dials.command_line.index import index
 
@@ -47,40 +41,18 @@ def initial_index(params, expts, refls):
 
 def scan_varying_refine(params, expts, refls):
     """
-    Performs scan-varying geometric refinement over a sequence of images
+    Performs scan-varying geometric refinement over a sequence of images.
 
-    Parameters
-    ----------
-    params : phil
-        A phil scope containing the needed input for dials.refine
+    Args:
+        params (phil): A phil scope containing the needed input for dials.refine.
+        expts (dxtbx.model.ExperimentList): A list of experiment objects.
+        refls (dials.array_family.flex.reflection_table): A reflection table containing strong reflections.
 
-    Returns
-    -------
-    expts_refined : ExperimentList
-        An ExperimentList containing the refined geometric solution
-    refls_refined : reflection_table
-        A reflection table containing reflections with refined data
+    Returns:
+        expts_refined (dxtbx.model.ExperimentList): An ExperimentList containing the refined geometric solution.
+        refls_refined (dials.array_family.flex.reflection_table): A reflection table containing reflections with refined data.
     """
     from dials.command_line.refine import run_dials_refine
 
     expts_refined, refls_refined, _, _ = run_dials_refine(expts, refls, params)
     return expts_refined, refls_refined
-
-
-def split_sequence(params, expts, refls):
-    """
-    Splits a sequence of images into stills
-
-    Parameters
-    ----------
-    params : phil
-        A phil scope containing the needed input for dials.sequence_to_stills
-
-    Returns
-    -------
-    expts_stills : ExperimentList
-        An ExperimentList containing stills of the input dataset
-    refls_stills : reflection_table
-        A reflection table containing stills of the input dataset
-    """
-    return expts_stills, refls_stills
