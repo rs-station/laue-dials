@@ -9,7 +9,7 @@
     <link rel="stylesheet" type="text/css" href="../../../_static/alabaster.css?v=233b9934" />
     <script src="../../../_static/jquery.js?v=5d32c60e"></script>
     <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-    <script src="../../../_static/documentation_options.js?v=c6c103cc"></script>
+    <script src="../../../_static/documentation_options.js?v=1bbdb0b3"></script>
     <script src="../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="icon" href="../../../_static/rs-favicon_32x32.png"/>
@@ -48,8 +48,7 @@
 <span class="kn">from</span> <span class="nn">dials.array_family</span> <span class="kn">import</span> <span class="n">flex</span>
 <span class="kn">from</span> <span class="nn">dials.array_family.flex</span> <span class="kn">import</span> <span class="n">reflection_table</span>
 <span class="kn">from</span> <span class="nn">dials.util</span> <span class="kn">import</span> <span class="n">show_mail_handle_errors</span>
-<span class="kn">from</span> <span class="nn">dials.util.options</span> <span class="kn">import</span> <span class="p">(</span><span class="n">ArgumentParser</span><span class="p">,</span>
-                                <span class="n">reflections_and_experiments_from_files</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">dials.util.options</span> <span class="kn">import</span> <span class="n">ArgumentParser</span><span class="p">,</span> <span class="n">reflections_and_experiments_from_files</span>
 <span class="kn">from</span> <span class="nn">dxtbx.model</span> <span class="kn">import</span> <span class="n">MosaicCrystalSauter2014</span>
 <span class="kn">from</span> <span class="nn">dxtbx.model.experiment_list</span> <span class="kn">import</span> <span class="n">Experiment</span><span class="p">,</span> <span class="n">ExperimentList</span>
 <span class="kn">from</span> <span class="nn">libtbx.phil</span> <span class="kn">import</span> <span class="n">parse</span>
@@ -96,6 +95,23 @@
 <div class="viewcode-block" id="sequence_to_stills">
 <a class="viewcode-back" href="../../../api/laue_dials.command_line.html#laue_dials.command_line.sequence_to_stills.sequence_to_stills">[docs]</a>
 <span class="k">def</span> <span class="nf">sequence_to_stills</span><span class="p">(</span><span class="n">experiments</span><span class="p">,</span> <span class="n">reflections</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Split a sequence into a set of stills.</span>
+
+<span class="sd">    This function takes a sequence of experiments and corresponding reflections and splits it into a set of stills.</span>
+<span class="sd">    Each still is associated with a specific scan point within the original sequence. The resulting experiments</span>
+<span class="sd">    and reflection tables for the stills are returned.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        experiments (List[dxtbx.model.experiment_list]): The list of experiments representing the sequence.</span>
+<span class="sd">        reflections (List[dials.array_family.flex.reflection_table]): The list of reflection tables corresponding to the experiments.</span>
+<span class="sd">        params (libtbx.phil.scope_extract): Program parameters.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Tuple[List[dxtbx.model.experiment_list.Experiment], List[dials.array_family.flex.reflection_table]]: A tuple containing the following:</span>
+<span class="sd">        - A list of Experiment objects representing the split stills.</span>
+<span class="sd">        - A list of reflection_table objects containing the split reflections for each still.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">reflections</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
     <span class="n">reflections</span> <span class="o">=</span> <span class="n">reflections</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
@@ -196,13 +212,15 @@
 <span class="nd">@show_mail_handle_errors</span><span class="p">()</span>
 <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="n">args</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">phil</span><span class="o">=</span><span class="n">phil_scope</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Validate the arguments and load experiments/reflections for sequence_to_stills</span>
+<span class="sd">    Validate the arguments and load experiments/reflections for sequence_to_stills.</span>
 
-<span class="sd">    Arguments:</span>
-<span class="sd">        args: The command line arguments to use. Defaults to sys.argv[1:]</span>
-<span class="sd">        phil: The phil_scope. Defaults to the master phil_scope for this program</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># The script usage</span>
+<span class="sd">    Args:</span>
+<span class="sd">        args (list): Command-line arguments.</span>
+<span class="sd">        phil: Working phil scope.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        None</span>
+<span class="sd">    &quot;&quot;&quot;</span>  <span class="c1"># The script usage</span>
     <span class="n">usage</span> <span class="o">=</span> <span class="s2">&quot;usage: laue.sequence_to_stills [options] [param.phil] models.expt reflections.refl&quot;</span>
 
     <span class="c1"># Create the parser</span>
