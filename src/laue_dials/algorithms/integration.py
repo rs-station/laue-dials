@@ -11,6 +11,18 @@ from scipy.spatial import KDTree
 
 class Profile:
     def __init__(
+        self,
+        x,
+        y,
+        counts,
+        cen_x=None,
+        cen_y=None,
+        fg_cutoff=1.0,
+        bg_cutoff=3.0,
+        minfrac=0.10,
+        eps=1e-5,
+        frac_step_size=0.50,
+    ):
         """
         Initialize a Profile instance.
 
@@ -26,18 +38,6 @@ class Profile:
             eps (float): Small positive epsilon value to remove negative intensities.
             frac_step_size (float): Fractional step size for fitting iterations.
         """
-        self,
-        x,
-        y,
-        counts,
-        cen_x=None,
-        cen_y=None,
-        fg_cutoff=1.0,
-        bg_cutoff=3.0,
-        minfrac=0.10,
-        eps=1e-5,
-        frac_step_size=0.50,
-    ):
         self.frac_step_size = frac_step_size
         self.eps = eps
         self.minfrac = minfrac

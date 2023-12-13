@@ -2,12 +2,13 @@
 import os
 from importlib.metadata import version
 
+
 def laue_version():
     """
     Print the versions of DIALS and laue-dials packages.
 
     This function retrieves the versions of the DIALS and laue-dials packages and prints
-    them to the terminal. 
+    them to the terminal.
 
     Args:
         None

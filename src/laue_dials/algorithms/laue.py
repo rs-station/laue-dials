@@ -86,8 +86,9 @@ def gen_beam_models(expts, refls):
     # Imports
     from copy import deepcopy
 
-    from dials.algorithms.refinement.prediction.managed_predictors import \
-        ExperimentsPredictorFactory
+    from dials.algorithms.refinement.prediction.managed_predictors import (
+        ExperimentsPredictorFactory,
+    )
 
     # Instantiate new ExperimentList/reflection_table
     new_expts = ExperimentList()
@@ -174,7 +175,7 @@ class LaueBase:
     def RB(self):
         """
         Calculates the product RB.
-    
+
         Returns:
             np.ndarray: The product of the rotation matrix (R) and the fractionalization matrix (B).
         """
@@ -416,17 +417,13 @@ class LauePredictor(LaueBase):
 
         This method predicts scattering vectors for feasible spots given the current Laue experiment's geometry.
         The feasible set of reflections is determined within the specified geometry, and the scattering vectors are predicted.
-        
+
         If `delete_harmonics` is True, harmonic reflections are removed from the prediction.
         Harmonics are identified based on duplicated scattering vectors in the reciprocal lattice.
 
         The returned arrays provide essential information about the predicted scattering vectors and associated parameters,
         allowing further analysis and utilization in Laue indexing procedures.
         """
-            s1_pred -- predicted feasible s1 vectors
-            lams -- the wavelengths (in Angstroms) associated with these s1 vectors
-            qall -- the q vectors associated with these s1 vectors
-            Hall -- the miller indices associated with s1 vectors
         # Generate the feasible set of reflections from the current geometry
         Hall = self.Hall
         qall = (self.RB @ Hall.T).T

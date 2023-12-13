@@ -13,8 +13,7 @@ import pandas as pd
 import reciprocalspaceship as rs
 from cctbx import sgtbx
 from dials.util import show_mail_handle_errors
-from dials.util.options import (ArgumentParser,
-                                reflections_and_experiments_from_files)
+from dials.util.options import ArgumentParser, reflections_and_experiments_from_files
 from matplotlib import pyplot as plt
 
 from laue_dials.utils.version import laue_version
@@ -38,19 +37,19 @@ phil_scope = libtbx.phil.parse(
   show = True
     .type = bool
     .help = "Show the plot of centroid RMSDs per image."
-  
+
   save = False
     .type = bool
     .help = "Save the plot of centroid RMSDs per image to a PNG file."
-  
+
   output = "residuals.png"
     .type = str
     .help = "The filename for the generated plot."
-  
+
   refined_only = False
     .type = bool
     .help = "Only compute refined spot RMSDs."
-  
+
   log = 'laue.compute_rmsds.log'
     .type = str
     .help = "The log filename."

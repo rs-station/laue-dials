@@ -11,28 +11,28 @@ on:
 
 jobs:
   build:
-    runs-on: [ubuntu-latest]                       
-    steps:                                         
-    - uses: actions/checkout@v3                    
+    runs-on: [ubuntu-latest]
+    steps:
+    - uses: actions/checkout@v3
 
-    - name: Install Miniconda                      
-      uses: conda-incubator/setup-miniconda@v2     
-      with:                                        
-        miniconda-version: "latest"                
-        channels: conda-forge, defaults            
-        auto-activate-base: true                   
-        activate-environment: ""                   
-                                                   
-    - name: Source Miniconda                       
-      run: |                                       
-        source $CONDA/etc/profile.d/conda.sh       
-        conda activate                             
-        which python                               
-        python --version                           
-        echo $CONDA                                
+    - name: Install Miniconda
+      uses: conda-incubator/setup-miniconda@v2
+      with:
+        miniconda-version: "latest"
+        channels: conda-forge, defaults
+        auto-activate-base: true
+        activate-environment: ""
+
+    - name: Source Miniconda
+      run: |
+        source $CONDA/etc/profile.d/conda.sh
+        conda activate
+        which python
+        python --version
+        echo $CONDA
         conda install -n base conda-libmamba-solver
-        conda config --set solver libmamba         
-        python -m pip install --upgrade pip        
+        conda config --set solver libmamba
+        python -m pip install --upgrade pip
 
     - name: Build with tox
       run: |
