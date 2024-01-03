@@ -66,7 +66,7 @@ def remove_beam_models(expts, new_id):
                 break
             i = i + 1
         expt = expts[i]
-        expt.identifier = str(new_id)  # Reset identifier to match image
+        expt.identifier = str(new_id + img_num)  # Reset identifier to match image
         new_expts.append(expt)
     return new_expts
 
@@ -86,8 +86,9 @@ def gen_beam_models(expts, refls):
     # Imports
     from copy import deepcopy
 
-    from dials.algorithms.refinement.prediction.managed_predictors import \
-        ExperimentsPredictorFactory
+    from dials.algorithms.refinement.prediction.managed_predictors import (
+        ExperimentsPredictorFactory,
+    )
 
     # Instantiate new ExperimentList/reflection_table
     new_expts = ExperimentList()
