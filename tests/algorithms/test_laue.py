@@ -1,15 +1,11 @@
 import numpy as np
 import pytest
-from dxtbx.model import ExperimentList
 from dials.array_family.flex import reflection_table
-from laue_dials.algorithms.laue import (
-    store_wavelengths,
-    remove_beam_models,
-    gen_beam_models,
-    LaueBase,
-    LaueAssigner,
-    LauePredictor,
-)
+from dxtbx.model import ExperimentList
+
+from laue_dials.algorithms.laue import (LaueAssigner, LaueBase, LauePredictor,
+                                        gen_beam_models, remove_beam_models,
+                                        store_wavelengths)
 
 
 @pytest.fixture
