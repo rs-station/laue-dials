@@ -1,4 +1,5 @@
 import pytest
+
 from laue_dials.algorithms.monochromatic import (
     find_spots,
     initial_index,

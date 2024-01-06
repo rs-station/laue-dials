@@ -1,9 +1,6 @@
-import pytest
 import numpy as np
-import pandas as pd
-from scipy.spatial import KDTree
-from dxtbx.model import ExperimentList
-from dials.array_family.flex import reflection_table
+import pytest
+
 from laue_dials.algorithms.integration import Profile, SegmentedImage
 
 
