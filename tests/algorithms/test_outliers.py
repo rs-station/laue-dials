@@ -1,4 +1,5 @@
 from os.path import dirname
+
 import pytest
 from dials.array_family import flex
 from dxtbx.model import ExperimentList
