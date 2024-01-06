@@ -35,7 +35,7 @@ jobs:
         source $CONDA/etc/profile.d/conda.sh
         conda activate
         conda install -n base -c conda-forge -y dials
-        pip install -e ".[docs]"
+        $CONDA/bin/pip install -e ".[docs]"
         cd docs
         export SPHINXBUILD="$CONDA/bin/sphinx-build"
         make clean
