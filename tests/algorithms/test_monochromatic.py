@@ -1,9 +1,7 @@
 import pytest
-from laue_dials.algorithms.monochromatic import (
-    find_spots,
-    initial_index,
-    scan_varying_refine,
-)
+
+from laue_dials.algorithms.monochromatic import (find_spots, initial_index,
+                                                 scan_varying_refine)
 
 
 @pytest.fixture

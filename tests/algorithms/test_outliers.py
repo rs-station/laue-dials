@@ -1,7 +1,8 @@
 import pytest
-from laue_dials.algorithms.outliers import gen_kde
-from dxtbx.model import ExperimentList
 from dials.array_family import flex
+from dxtbx.model import ExperimentList
+
+from laue_dials.algorithms.outliers import gen_kde
 
 
 @pytest.fixture
