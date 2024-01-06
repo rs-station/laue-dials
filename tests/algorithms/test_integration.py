@@ -4,14 +4,14 @@ import pandas as pd
 from scipy.spatial import KDTree
 from dxtbx.model import ExperimentList
 from dials.array_family.flex import reflection_table
-from laue_dials.algorithms.integrate import Profile, SegmentedImage
+from laue_dials.algorithms.integration import Profile, SegmentedImage
 
 
 @pytest.fixture
 def example_profile_data():
     x = np.linspace(1, 1000, num=1000)
     y = np.linspace(1, 1000, num=1000)
-    counts = np.array([100.0, 750.0, 60.0])
+    counts = np.random.randint(100, 1000, size=len(x))
     return x, y, counts
 
 
