@@ -1,7 +1,6 @@
 import pytest
 
 
-
 @pytest.fixture
 def example_params_experiments_reflections():
     params = None
