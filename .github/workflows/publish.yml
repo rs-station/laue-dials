@@ -47,8 +47,7 @@ jobs:
         source $CONDA/etc/profile.d/conda.sh
         conda activate
         pip list
-        tox -e build
-        tox -e docs
+        python -m build -n -w
 
     - name: Publish to PyPI
       uses: pypa/gh-action-pypi-publish@release/v1
