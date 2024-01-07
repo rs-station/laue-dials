@@ -40,7 +40,7 @@ jobs:
         export SPHINXBUILD="$CONDA/bin/sphinx-build"
         make clean
         make html
-        pip install -U setuptools setuptools_scm wheel packaging twine typing-extensions tox tox-conda myst-parser docutils
+        pip install -U setuptools setuptools_scm wheel packaging twine typing-extensions tox tox-conda myst-parser docutils build
 
     - name: Build the Python package
       run: |
