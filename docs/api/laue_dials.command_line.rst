@@ -6,6 +6,14 @@ laue\_dials.command\_line namespace
 Submodules
 ----------
 
+laue\_dials.command\_line.compute\_rmsds module
+-----------------------------------------------
+
+.. automodule:: laue_dials.command_line.compute_rmsds
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 laue\_dials.command\_line.find\_spots module
 --------------------------------------------
 
