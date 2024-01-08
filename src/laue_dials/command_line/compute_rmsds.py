@@ -13,8 +13,7 @@ import pandas as pd
 import reciprocalspaceship as rs
 from cctbx import sgtbx
 from dials.util import show_mail_handle_errors
-from dials.util.options import (ArgumentParser,
-                                reflections_and_experiments_from_files)
+from dials.util.options import ArgumentParser, reflections_and_experiments_from_files
 from matplotlib import pyplot as plt
 
 from laue_dials.utils.version import laue_version
@@ -179,6 +178,7 @@ def run(args=None, *, phil=working_phil):
 
     resid_data = pd.DataFrame({"Image": images, "RMSD (px)": rmsds})
 
+    pd.set_option("display.max_rows", None)
     logger.info(f"RMSDs per image: \n{resid_data}")
 
     # Get pixel size (assume square)
