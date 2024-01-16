@@ -179,6 +179,7 @@ def run(args=None, *, phil=working_phil):
 
     resid_data = pd.DataFrame({"Image": images, "RMSD (px)": rmsds})
 
+    pd.set_option("display.max_rows", None)
     logger.info(f"RMSDs per image: \n{resid_data}")
 
     # Get pixel size (assume square)
