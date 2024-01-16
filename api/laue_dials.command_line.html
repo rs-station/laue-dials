@@ -10,7 +10,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=89af775e" />
     <script src="../_static/jquery.js?v=5d32c60e"></script>
     <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-    <script src="../_static/documentation_options.js?v=a8b37f74"></script>
+    <script src="../_static/documentation_options.js?v=ddacddf1"></script>
     <script src="../_static/doctools.js?v=888ff710"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="icon" href="../_static/rs-favicon_32x32.png"/>
@@ -274,6 +274,27 @@ refls (dials.array_family.flex.reflection_table): The optimized reflection table
 <span id="laue-dials-command-line-refine-module"></span><h2>laue_dials.command_line.refine module<a class="headerlink" href="#module-laue_dials.command_line.refine" title="Link to this heading"></a></h2>
 <p>This script handles polychromatic geometry refinement.</p>
 <dl class="py function">
+<dt class="sig sig-object py" id="laue_dials.command_line.refine.correct_identifiers">
+<span class="sig-prename descclassname"><span class="pre">laue_dials.command_line.refine.</span></span><span class="sig-name descname"><span class="pre">correct_identifiers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">refls</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/command_line/refine.html#correct_identifiers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.command_line.refine.correct_identifiers" title="Link to this definition"></a></dt>
+<dd><p>Correct identifiers in case of skipped images.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>expts</strong> (<em>dxtbx.model.ExperimentList</em>) – Experiment list.</p></li>
+<li><p><strong>refls</strong> (<em>flex.reflection_table</em>) – Reflection table.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The corrected experiment list with corrected identifiers.
+corrected_refls (dials.array_family.flex.reflection_table): The corrected reflection table with updated identifiers.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>corrected_expts (dxtbx.model.experiment_list.ExperimentList)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="laue_dials.command_line.refine.refine_image">
 <span class="sig-prename descclassname"><span class="pre">laue_dials.command_line.refine.</span></span><span class="sig-name descname"><span class="pre">refine_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">refls</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/command_line/refine.html#refine_image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.command_line.refine.refine_image" title="Link to this definition"></a></dt>
 <dd><p>Refine image given parameters, experiments, and reflections.</p>
@@ -430,7 +451,7 @@ and reflection tables for the stills are returned.</p>
       
       |
       Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.2.6</a>
-      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.15</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
       
       |
       <a href="../_sources/api/laue_dials.command_line.rst.txt"

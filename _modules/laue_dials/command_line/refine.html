@@ -9,7 +9,7 @@
     <link rel="stylesheet" type="text/css" href="../../../_static/alabaster.css?v=89af775e" />
     <script src="../../../_static/jquery.js?v=5d32c60e"></script>
     <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-    <script src="../../../_static/documentation_options.js?v=a8b37f74"></script>
+    <script src="../../../_static/documentation_options.js?v=ddacddf1"></script>
     <script src="../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="icon" href="../../../_static/rs-favicon_32x32.png"/>
@@ -151,6 +151,44 @@
 <span class="p">)</span>
 
 <span class="n">working_phil</span> <span class="o">=</span> <span class="n">main_phil</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="n">sources</span><span class="o">=</span><span class="p">[</span><span class="n">refiner_phil</span><span class="p">])</span>
+
+
+<div class="viewcode-block" id="correct_identifiers">
+<a class="viewcode-back" href="../../../api/laue_dials.command_line.html#laue_dials.command_line.refine.correct_identifiers">[docs]</a>
+<span class="k">def</span> <span class="nf">correct_identifiers</span><span class="p">(</span><span class="n">expts</span><span class="p">,</span> <span class="n">refls</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Correct identifiers in case of skipped images.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        expts (dxtbx.model.ExperimentList): Experiment list.</span>
+<span class="sd">        refls (flex.reflection_table): Reflection table.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        corrected_expts (dxtbx.model.experiment_list.ExperimentList): The corrected experiment list with corrected identifiers.</span>
+<span class="sd">        corrected_refls (dials.array_family.flex.reflection_table): The corrected reflection table with updated identifiers.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Initialize arrays</span>
+    <span class="n">corrected_expts</span> <span class="o">=</span> <span class="n">ExperimentList</span><span class="p">()</span>
+    <span class="n">corrected_refls</span> <span class="o">=</span> <span class="n">reflection_table</span><span class="p">()</span>
+
+    <span class="c1"># Fix identifiers</span>
+    <span class="n">skipped_expts</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">expt</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">expts</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="nb">int</span><span class="p">(</span><span class="n">expt</span><span class="o">.</span><span class="n">identifier</span><span class="p">)</span> <span class="o">-</span> <span class="n">skipped_expts</span><span class="p">:</span>  <span class="c1"># Found skipped image</span>
+            <span class="n">skipped_expts</span> <span class="o">=</span> <span class="n">skipped_expts</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">img_refls</span> <span class="o">=</span> <span class="n">refls</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">refls</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">i</span> <span class="o">+</span> <span class="n">skipped_expts</span><span class="p">)</span>
+
+        <span class="c1"># Correct ids</span>
+        <span class="n">expt</span><span class="o">.</span><span class="n">identifier</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="n">ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">img_refls</span><span class="p">),</span> <span class="n">i</span><span class="p">)</span>
+        <span class="n">img_refls</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">flex</span><span class="o">.</span><span class="n">int</span><span class="p">(</span><span class="n">ids</span><span class="p">)</span>
+
+        <span class="c1"># Add data to array</span>
+        <span class="n">corrected_expts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">expt</span><span class="p">)</span>
+        <span class="n">corrected_refls</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">img_refls</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">corrected_expts</span><span class="p">,</span> <span class="n">corrected_refls</span></div>
+
 
 
 <div class="viewcode-block" id="refine_image">
@@ -296,11 +334,17 @@
         <span class="n">total_refined_expts</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">output</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
         <span class="n">total_refined_refls</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">output</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
 
+    <span class="c1"># Correct any mismatching identifiers</span>
+    <span class="n">final_expts</span><span class="p">,</span> <span class="n">final_refls</span> <span class="o">=</span> <span class="n">correct_identifiers</span><span class="p">(</span>
+        <span class="n">total_refined_expts</span><span class="p">,</span> <span class="n">total_refined_refls</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Save data</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Saving refined experiments to </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">params</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">experiments</span><span class="p">)</span>
-    <span class="n">total_refined_expts</span><span class="o">.</span><span class="n">as_file</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">experiments</span><span class="p">)</span>
+    <span class="n">final_expts</span><span class="o">.</span><span class="n">as_file</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">experiments</span><span class="p">)</span>
 
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Saving refined reflections to </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">params</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">reflections</span><span class="p">)</span>
-    <span class="n">total_refined_refls</span><span class="o">.</span><span class="n">as_file</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">params</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">reflections</span><span class="p">)</span>
+    <span class="n">final_refls</span><span class="o">.</span><span class="n">as_file</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">params</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">reflections</span><span class="p">)</span>
 
     <span class="c1"># Final logs</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
@@ -373,7 +417,7 @@
       
       |
       Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.2.6</a>
-      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.15</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
       
     </div>
 
