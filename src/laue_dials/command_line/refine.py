@@ -19,8 +19,11 @@ from dials.util.options import ArgumentParser
 from dxtbx.model import ExperimentList
 from dxtbx.model.experiment_list import ExperimentListFactory
 
-from laue_dials.algorithms.laue import (gen_beam_models, remove_beam_models,
-                                        store_wavelengths)
+from laue_dials.algorithms.laue import (
+    gen_beam_models,
+    remove_beam_models,
+    store_wavelengths,
+)
 from laue_dials.utils.version import laue_version
 
 # Print laue-dials + DIALS versions
@@ -113,6 +116,41 @@ output {
 )
 
 working_phil = main_phil.fetch(sources=[refiner_phil])
+
+
+def correct_identifiers(expts, refls):
+    """
+    Correct identifiers in case of skipped images.
+
+    Args:
+        expts (dxtbx.model.ExperimentList): Experiment list.
+        refls (flex.reflection_table): Reflection table.
+
+    Returns:
+        corrected_expts (dxtbx.model.experiment_list.ExperimentList): The corrected experiment list with corrected identifiers.
+        corrected_refls (dials.array_family.flex.reflection_table): The corrected reflection table with updated identifiers.
+    """
+
+    # Initialize arrays
+    corrected_expts = ExperimentList()
+    corrected_refls = reflection_table()
+
+    # Fix identifiers
+    skipped_expts = 0
+    for i, expt in enumerate(expts):
+        if i != int(expt.identifier) - skipped_expts:  # Found skipped image
+            skipped_expts = skipped_expts + 1
+        img_refls = refls.select(refls["id"] == i + skipped_expts)
+
+        # Correct ids
+        expt.identifier = str(i)
+        ids = np.full(len(img_refls), i)
+        img_refls["id"] = flex.int(ids)
+
+        # Add data to array
+        corrected_expts.append(expt)
+        corrected_refls.extend(img_refls)
+    return corrected_expts, corrected_refls
 
 
 def refine_image(params, expts, refls):
@@ -253,11 +291,17 @@ def run(args=None, *, phil=working_phil):
         total_refined_expts.extend(output[i][0])
         total_refined_refls.extend(output[i][1])
 
+    # Correct any mismatching identifiers
+    final_expts, final_refls = correct_identifiers(
+        total_refined_expts, total_refined_refls
+    )
+
+    # Save data
     logger.info("Saving refined experiments to %s", params.output.experiments)
-    total_refined_expts.as_file(params.output.experiments)
+    final_expts.as_file(params.output.experiments)
 
     logger.info("Saving refined reflections to %s", params.output.reflections)
-    total_refined_refls.as_file(filename=params.output.reflections)
+    final_refls.as_file(filename=params.output.reflections)
 
     # Final logs
     logger.info("")
