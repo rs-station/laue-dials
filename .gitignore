@@ -1,4 +1,9 @@
 # Temporary and binary files
+*.expt
+*.refl
+examples/*.html
+*.mask
+*.npy
 *~
 *.py[cod]
 *.so
