@@ -42,6 +42,10 @@ phil_scope = libtbx.phil.parse(
     .type = bool
     .help = "Save the plot of centroid RMSDs per image to a PNG file."
 
+  csv = None
+    .type = str
+    .help = "Save a CSV of the RMSDs per image with this filename."
+
   output = "residuals.png"
     .type = str
     .help = "The filename for the generated plot."
@@ -188,6 +192,8 @@ def run(args=None, *, phil=working_phil):
 
     pd.set_option("display.max_rows", None)
     logger.info(f"RMSDs per image: \n{resid_data}")
+    if params.csv is not None:
+        resid_data.to_csv(params.csv, index=False)
 
     # Get pixel size (assume square)
     # Not sure if this will be needed but I never remember
