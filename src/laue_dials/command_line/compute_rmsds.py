@@ -13,8 +13,7 @@ import pandas as pd
 import reciprocalspaceship as rs
 from cctbx import sgtbx
 from dials.util import show_mail_handle_errors
-from dials.util.options import (ArgumentParser,
-                                reflections_and_experiments_from_files)
+from dials.util.options import ArgumentParser, reflections_and_experiments_from_files
 from matplotlib import pyplot as plt
 
 from laue_dials.utils.version import laue_version
@@ -54,6 +53,14 @@ phil_scope = libtbx.phil.parse(
   log = 'laue.compute_rmsds.log'
     .type = str
     .help = "The log filename."
+
+  ymax = None
+    .type = int
+    .help = "Desired ymax for plot. Defaults to maximum of data."
+
+  dotsize = None
+    .type = int
+    .help = "Desired dot size for plot in points**2. Defaults to 16."
 """,
     process_includes=True,
 )
@@ -148,7 +155,7 @@ def run(args=None, *, phil=working_phil):
     symbol = sgtbx.space_group_symbols(sginfo.symbol_and_number().split("(")[0])
     spacegroup = gemmi.SpaceGroup(symbol.universal_hermann_mauguin())
 
-    # Generate rs.DataSet to write to MTZ
+    # Generate rs.DataSet
     data = rs.DataSet(
         {
             "H": hkl.as_numpy_array()[:, 0].astype(np.int32),
@@ -189,7 +196,11 @@ def run(args=None, *, phil=working_phil):
 
     # Plot residuals
     fig = plt.figure()
-    plt.scatter(images, rmsds)
+    plt.scatter(images, rmsds, color="k", s=params.dotsize)
+    if params.ymax == None:
+        plt.ylim(bottom=0)
+    else:
+        plt.ylim(bottom=0, top=params.ymax)
     plt.title("Image RMSDs")
     plt.xlabel("Image #")
     plt.ylabel("RMSD (px)")
