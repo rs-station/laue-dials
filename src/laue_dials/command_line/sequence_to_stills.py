@@ -14,7 +14,8 @@ import numpy as np
 from dials.array_family import flex
 from dials.array_family.flex import reflection_table
 from dials.util import show_mail_handle_errors
-from dials.util.options import ArgumentParser, reflections_and_experiments_from_files
+from dials.util.options import (ArgumentParser,
+                                reflections_and_experiments_from_files)
 from dxtbx.model import MosaicCrystalSauter2014
 from dxtbx.model.experiment_list import Experiment, ExperimentList
 from libtbx.phil import parse

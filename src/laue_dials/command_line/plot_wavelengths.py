@@ -8,7 +8,8 @@ import sys
 
 import libtbx.phil
 from dials.util import show_mail_handle_errors
-from dials.util.options import ArgumentParser, reflections_and_experiments_from_files
+from dials.util.options import (ArgumentParser,
+                                reflections_and_experiments_from_files)
 from matplotlib import pyplot as plt
 
 from laue_dials.utils.version import laue_version
