@@ -20,3 +20,4 @@ gemmi
 matplotlib
 scipy
 jupyter
+pandoc

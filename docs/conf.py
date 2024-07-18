@@ -77,7 +77,11 @@ extensions = [
     "sphinx_rtd_theme",
     "libtbx.sphinx.phil",
     "libtbx.sphinx.python_string",
+    "nbsphinx",
 ]
+
+# Set nbsphinx parameters
+nbsphinx_execute = "never"
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]

@@ -13,6 +13,7 @@ Contents
    Changelog <changelog>
    Command-Line Reference <cli/functions>
    Full API Reference <api/modules>
+   Jupyter Tutorials <notebooks/tutorials>
 
 
 Indices and tables
