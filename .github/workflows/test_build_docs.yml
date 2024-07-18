@@ -22,7 +22,6 @@ jobs:
         miniconda-version: "latest"
         channels: conda-forge, defaults
         auto-activate-base: true
-        activate-environment: true
         python-version: "3.11"
 
     - name: Source Miniconda
