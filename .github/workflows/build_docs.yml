@@ -22,12 +22,12 @@ jobs:
         miniconda-version: "latest"
         channels: conda-forge, defaults
         auto-activate-base: true
-        python-version: "3.10"
+        activate-environment: ""
 
     - name: Source Miniconda
       run: |
         source $CONDA/etc/profile.d/conda.sh
-        conda activate test
+        conda activate
         which python
         python --version
         echo $CONDA
@@ -38,7 +38,7 @@ jobs:
     - name: Install DIALS environment and more
       run: |
         source $CONDA/etc/profile.d/conda.sh
-        conda activate test
+        conda activate
         conda install -n base -c conda-forge -y dials
         conda info
         conda list
