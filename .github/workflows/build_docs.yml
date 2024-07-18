@@ -27,7 +27,7 @@ jobs:
     - name: Source Miniconda
       run: |
         source $CONDA/etc/profile.d/conda.sh
-        conda activate
+        conda activate test
         which python
         python --version
         echo $CONDA
@@ -38,7 +38,7 @@ jobs:
     - name: Install DIALS environment and more
       run: |
         source $CONDA/etc/profile.d/conda.sh
-        conda activate
+        conda activate test
         conda install -n base -c conda-forge -y dials
         conda info
         conda list
