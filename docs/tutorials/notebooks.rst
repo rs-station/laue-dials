@@ -1,19 +1,13 @@
-
-.. include:: ../README.rst
-
 Contents
 ========
 
-.. toctree::
-   :maxdepth: 3
+.. include:: tutorial_README.rst
 
-   Contributions & Help <contributing>
-   License <license>
-   Authors <authors>
-   Changelog <changelog>
-   Tutorials <tutorials/notebooks>
-   Command-Line Reference <cli/functions>
-   Full API Reference <api/modules>
+.. toctree::
+   :maxdepth: 2
+
+   Time-Resolved EFX Data with PDZ2 <pdz2/tutorial_combine_passes.rst>
+   Anomalous Scattering with HEWL <hewl/HEWL_anom_laue_dials_processing_final.rst>
 
 
 Indices and tables
