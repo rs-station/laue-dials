@@ -10,9 +10,10 @@
     <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=89af775e" />
     <script src="../_static/jquery.js?v=5d32c60e"></script>
     <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-    <script src="../_static/documentation_options.js?v=f6a5593d"></script>
-    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/documentation_options.js?v=bdfe6c1d"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <link rel="icon" href="../_static/rs-favicon_32x32.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -53,7 +54,7 @@
 <li><p><strong>reference</strong> (<em>np.array</em>) – n x 3 array of miller indices.</p></li>
 <li><p><strong>target</strong> (<em>np.array</em>) – n x 3 array of miller indices.</p></li>
 <li><p><strong>spacegroup</strong> (<em>gemmi.Spacegroup</em>) – The space group of reference/target.</p></li>
-<li><p><strong>anomalous</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a><em>, </em><em>optional</em>) – If true, test Friedel symmetries too.</p></li>
+<li><p><strong>anomalous</strong> (<a class="reference external" href="https://docs.python.org/3.12/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a><em>, </em><em>optional</em>) – If true, test Friedel symmetries too.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -135,7 +136,7 @@ Returns a boolean array for each of the <cite>n</cite> hkls in <cite>hkl{1,2}</c
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>R</strong> (<em>np.array</em>) – 3 x 3 rotation matrix.</p></li>
-<li><p><strong>deg</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3.11/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a><em>]</em>) – If True, angles are returned in degrees.</p></li>
+<li><p><strong>deg</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a><em>]</em>) – If True, angles are returned in degrees.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -144,7 +145,7 @@ rot_y (float): Euler angle around y-axis to generate rotation matrix.
 rot_z (float): Euler angle around z-axis to generate rotation matrix.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>rot_x (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)">float</a>)</p>
+<dd class="field-odd"><p>rot_x (<a class="reference external" href="https://docs.python.org/3.12/library/functions.html#float" title="(in Python v3.12)">float</a>)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -173,12 +174,12 @@ rot_z (float): Euler angle around z-axis to generate rotation matrix.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>a</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – Floats representing the magnitudes of the three unit cell axes.</p></li>
-<li><p><strong>b</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – Floats representing the magnitudes of the three unit cell axes.</p></li>
-<li><p><strong>c</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – Floats representing the magnitudes of the three unit cell axes.</p></li>
-<li><p><strong>alpha</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – Floats representing the three unit cell angles.</p></li>
-<li><p><strong>beta</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – Floats representing the three unit cell angles.</p></li>
-<li><p><strong>gamma</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – Floats representing the three unit cell angles.</p></li>
+<li><p><strong>a</strong> (<a class="reference external" href="https://docs.python.org/3.12/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>) – Floats representing the magnitudes of the three unit cell axes.</p></li>
+<li><p><strong>b</strong> (<a class="reference external" href="https://docs.python.org/3.12/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>) – Floats representing the magnitudes of the three unit cell axes.</p></li>
+<li><p><strong>c</strong> (<a class="reference external" href="https://docs.python.org/3.12/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>) – Floats representing the magnitudes of the three unit cell axes.</p></li>
+<li><p><strong>alpha</strong> (<a class="reference external" href="https://docs.python.org/3.12/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>) – Floats representing the three unit cell angles.</p></li>
+<li><p><strong>beta</strong> (<a class="reference external" href="https://docs.python.org/3.12/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>) – Floats representing the three unit cell angles.</p></li>
+<li><p><strong>gamma</strong> (<a class="reference external" href="https://docs.python.org/3.12/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>) – Floats representing the three unit cell angles.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -197,10 +198,10 @@ rot_z (float): Euler angle around z-axis to generate rotation matrix.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>rot_x</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – Euler angle around x-axis to generate rotation matrix.</p></li>
-<li><p><strong>rot_y</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – Euler angle around y-axis to generate rotation matrix.</p></li>
-<li><p><strong>rot_z</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – Euler angle around z-axis to generate rotation matrix.</p></li>
-<li><p><strong>deg</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3.11/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a><em>]</em>) – If True, input angles are assumed to be in degrees.</p></li>
+<li><p><strong>rot_x</strong> (<a class="reference external" href="https://docs.python.org/3.12/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>) – Euler angle around x-axis to generate rotation matrix.</p></li>
+<li><p><strong>rot_y</strong> (<a class="reference external" href="https://docs.python.org/3.12/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>) – Euler angle around y-axis to generate rotation matrix.</p></li>
+<li><p><strong>rot_z</strong> (<a class="reference external" href="https://docs.python.org/3.12/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>) – Euler angle around z-axis to generate rotation matrix.</p></li>
+<li><p><strong>deg</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a><em>]</em>) – If True, input angles are assumed to be in degrees.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -219,7 +220,7 @@ rot_z (float): Euler angle around z-axis to generate rotation matrix.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="laue_dials.algorithms.integration.Profile">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">laue_dials.algorithms.integration.</span></span><span class="sig-name descname"><span class="pre">Profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">counts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cen_x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cen_y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fg_cutoff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bg_cutoff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minfrac</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frac_step_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/algorithms/integration.html#Profile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.algorithms.integration.Profile" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.11/library/functions.html#object" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.12/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <dl class="py property">
 <dt class="sig sig-object py" id="laue_dials.algorithms.integration.Profile.background">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">background</span></span><a class="headerlink" href="#laue_dials.algorithms.integration.Profile.background" title="Link to this definition"></a></dt>
@@ -254,7 +255,7 @@ rot_z (float): Euler angle around z-axis to generate rotation matrix.</p>
 <dd><p>Fit the profile.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>nsteps</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – Number of fitting steps.</p>
+<dd class="field-odd"><p><strong>nsteps</strong> (<a class="reference external" href="https://docs.python.org/3.12/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – Number of fitting steps.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -267,9 +268,9 @@ rot_z (float): Euler angle around z-axis to generate rotation matrix.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>df</strong> (<em>pd.DataFrame</em>) – Input DataFrame.</p></li>
-<li><p><strong>x_key</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – x-coordinate column name.</p></li>
-<li><p><strong>y_key</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – y-coordinate column name.</p></li>
-<li><p><strong>count_key</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – Counts column name.</p></li>
+<li><p><strong>x_key</strong> (<a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – x-coordinate column name.</p></li>
+<li><p><strong>y_key</strong> (<a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – y-coordinate column name.</p></li>
+<li><p><strong>count_key</strong> (<a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – Counts column name.</p></li>
 <li><p><strong>kwargs</strong> – Additional keyword arguments.</p></li>
 </ul>
 </dd>
@@ -297,7 +298,7 @@ rot_z (float): Euler angle around z-axis to generate rotation matrix.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>scale</strong> (<em>np.array</em>) – Scaling factor.</p></li>
 <li><p><strong>slope</strong> (<em>np.array</em>) – Slope of the profile.</p></li>
-<li><p><strong>intercept</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – Intercept value.</p></li>
+<li><p><strong>intercept</strong> (<a class="reference external" href="https://docs.python.org/3.12/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>) – Intercept value.</p></li>
 <li><p><strong>cen_x</strong> (<em>np.array</em>) – Center x-coordinate.</p></li>
 <li><p><strong>cen_y</strong> (<em>np.array</em>) – Center y-coordinate.</p></li>
 </ul>
@@ -317,7 +318,7 @@ rot_z (float): Euler angle around z-axis to generate rotation matrix.</p>
 <dd><p>Update the background plane.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>alpha</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – Alpha value for updating slope and intercept.</p>
+<dd class="field-odd"><p><strong>alpha</strong> (<a class="reference external" href="https://docs.python.org/3.12/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>) – Alpha value for updating slope and intercept.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -329,8 +330,8 @@ rot_z (float): Euler angle around z-axis to generate rotation matrix.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>fg_cutoff</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a><em>]</em>) – Foreground cutoff value.</p></li>
-<li><p><strong>bg_cutoff</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a><em>]</em>) – Background cutoff value.</p></li>
+<li><p><strong>fg_cutoff</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a><em>]</em>) – Foreground cutoff value.</p></li>
+<li><p><strong>bg_cutoff</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a><em>]</em>) – Background cutoff value.</p></li>
 </ul>
 </dd>
 </dl>
@@ -342,7 +343,7 @@ rot_z (float): Euler angle around z-axis to generate rotation matrix.</p>
 <dd><p>Update the profile.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>alpha</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – Alpha value for updating scale factor and profile centroid.</p>
+<dd class="field-odd"><p><strong>alpha</strong> (<a class="reference external" href="https://docs.python.org/3.12/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>) – Alpha value for updating scale factor and profile centroid.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -352,7 +353,7 @@ rot_z (float): Euler angle around z-axis to generate rotation matrix.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="laue_dials.algorithms.integration.SegmentedImage">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">laue_dials.algorithms.integration.</span></span><span class="sig-name descname"><span class="pre">SegmentedImage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pixels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">centroids</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/algorithms/integration.html#SegmentedImage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.algorithms.integration.SegmentedImage" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.11/library/functions.html#object" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.12/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="laue_dials.algorithms.integration.SegmentedImage.integrate">
 <span class="sig-name descname"><span class="pre">integrate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">isigi_cutoff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">knn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/algorithms/integration.html#SegmentedImage.integrate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.algorithms.integration.SegmentedImage.integrate" title="Link to this definition"></a></dt>
@@ -360,8 +361,8 @@ rot_z (float): Euler angle around z-axis to generate rotation matrix.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>isigi_cutoff</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – I/SIGI cutoff value.</p></li>
-<li><p><strong>knn</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – Number of nearest neighbors.</p></li>
+<li><p><strong>isigi_cutoff</strong> (<a class="reference external" href="https://docs.python.org/3.12/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>) – I/SIGI cutoff value.</p></li>
+<li><p><strong>knn</strong> (<a class="reference external" href="https://docs.python.org/3.12/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – Number of nearest neighbors.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -451,7 +452,7 @@ Laue indexing procedures to utilize the assigned miller indices and associated p
 <dd><p>Update the list of inliers based on robust statistical measures.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>nstd</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – Number of standard deviations from the median to consider as inliers.</p>
+<dd class="field-odd"><p><strong>nstd</strong> (<a class="reference external" href="https://docs.python.org/3.12/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>) – Number of standard deviations from the median to consider as inliers.</p>
 </dd>
 </dl>
 <p>This method uses Minimum Covariance Determinant (MCD) to robustly estimate the covariance matrix
@@ -554,7 +555,7 @@ within a specified number of standard deviations from the median Mahalanobis dis
 <dl class="py class">
 <dt class="sig sig-object py" id="laue_dials.algorithms.laue.LaueBase">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">laue_dials.algorithms.laue.</span></span><span class="sig-name descname"><span class="pre">LaueBase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lam_min</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lam_max</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dmin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spacegroup</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/algorithms/laue.html#LaueBase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.algorithms.laue.LaueBase" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.11/library/functions.html#object" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.12/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>A base class to be extended for Laue procedures</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="laue_dials.algorithms.laue.LaueBase.RB">
@@ -583,7 +584,7 @@ within a specified number of standard deviations from the median Mahalanobis dis
 <dd><p>Predicts scattering vectors and associated parameters for feasible Laue spots.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>delete_harmonics</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3.11/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a><em>]</em>) – If True, removes harmonic reflections from the prediction.</p>
+<dd class="field-odd"><p><strong>delete_harmonics</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a><em>]</em>) – If True, removes harmonic reflections from the prediction.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Predicted feasible scattering vectors.
@@ -634,7 +635,7 @@ refls (dials.array_family.flex.reflection_table): A reflection table with update
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>expts</strong> (<em>dxtbx.model.ExperimentList</em>) – ExperimentList to remove beams from.</p></li>
-<li><p><strong>new_id</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – ID to assign to the final experiment.</p></li>
+<li><p><strong>new_id</strong> (<a class="reference external" href="https://docs.python.org/3.12/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – ID to assign to the final experiment.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -772,7 +773,7 @@ kde (scipy.stats.gaussian_kde): The trained Gaussian KDE model.</p>
           
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
 <h1 class="logo"><a href="../index.html">laue_dials</a></h1>
 
@@ -789,11 +790,18 @@ kde (scipy.stats.gaussian_kde): The trained Gaussian KDE model.</p>
 <li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../authors.html">Authors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/notebooks.html">Contents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/notebooks.html#indices-and-tables">Indices and tables</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cli/functions.html">Command-Line Reference</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="modules.html">Full API Reference</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="laue_dials.html">laue_dials package</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="laue_dials.html">laue_dials package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="laue_dials.html#subpackages">Subpackages</a></li>
+<li class="toctree-l3"><a class="reference internal" href="laue_dials.html#module-laue_dials">Module contents</a></li>
 </ul>
 </li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/tutorials.html">Jupyter Tutorials</a></li>
 </ul>
 
 <div class="relations">
@@ -809,7 +817,7 @@ kde (scipy.stats.gaussian_kde): The trained Gaussian KDE model.</p>
   </ul></li>
 </ul>
 </div>
-<div id="searchbox" style="display: none" role="search">
+<search id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
@@ -817,7 +825,7 @@ kde (scipy.stats.gaussian_kde): The trained Gaussian KDE model.</p>
       <input type="submit" value="Go" />
     </form>
     </div>
-</div>
+</search>
 <script>document.getElementById('searchbox').style.display = "block"</script>
 
 
@@ -832,10 +840,10 @@ kde (scipy.stats.gaussian_kde): The trained Gaussian KDE model.</p>
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &#169;2023, PrinceWalnut.
+      &#169;2024, Rick Hewitt.
       
       |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.2.6</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.4.7</a>
       &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
       
       |
