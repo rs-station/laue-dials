@@ -44,6 +44,11 @@ and use Python's built-in web server for a preview in your web browser
 
     python3 -m http.server --directory 'docs/_build/html'
 
+If you wish to ``make html`` directly, be sure to install ``pandoc`` via
+
+    ``conda install pandoc``
+
+first.
 
 Code Contributions
 ==================
