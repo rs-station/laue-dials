@@ -6,8 +6,8 @@ Contents
 .. toctree::
    :maxdepth: 2
 
-   Time-Resolved EFX Data with PDZ2 <pdz2/tutorial_combine_passes.rst>
-   Anomalous Scattering with HEWL <hewl/HEWL_anom_laue_dials_processing_final.rst>
+   Time-Resolved EFX Data with PDZ2 <pdz2/tutorial_combine_passes.ipynb>
+   Anomalous Scattering with HEWL <hewl/HEWL_anom_laue_dials_processing_final.ipynb>
 
 
 Indices and tables
