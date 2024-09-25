@@ -39,7 +39,7 @@ jobs:
       run: |
         source $CONDA/etc/profile.d/conda.sh
         conda activate
-        conda install -n base -c conda-forge -y dials
+        conda install -n base -c conda-forge -y dials pandoc
         conda info
         conda list
         pip install -e ".[docs]"
