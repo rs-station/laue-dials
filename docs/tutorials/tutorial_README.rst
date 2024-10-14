@@ -19,8 +19,8 @@ these tutorials are stored on SBGrid, and can be downloaded using the following 
    cd 1117 ; shasum -c files.sha
 
 These tutorials are tested most recently with version 3.17.0 of DIALS.
-To reproduce a python environment for analyzing these data, you can 
-install DIALS (see `DIALS`_) and use the YAML file specified 
+To reproduce a python environment for analyzing these data, you can
+install DIALS (see `DIALS`_) and use the YAML file specified
 :download:`here <manuscript_env.yaml>`.
 
 All referenced scripts can be downloaded :download:`here for PDZ2 <pdz2/pdz2_scripts.tar.gz>` and :download:`here for HEWL <hewl/hewl_scripts.tar.gz>`.
