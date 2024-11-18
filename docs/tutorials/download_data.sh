@@ -1,7 +1,7 @@
-# This script can be used to download all data sets used for 
-# this manuscript. The first few variables here can be toggled 
-# to determine which data sets to download. Note that the 
-# simulated DHFR data is NOT available publicly for download 
+# This script can be used to download all data sets used for
+# this manuscript. The first few variables here can be toggled
+# to determine which data sets to download. Note that the
+# simulated DHFR data is NOT available publicly for download
 # and must be requested from the authors.
 
 HEWL_DATA=true # 84 GB on SBGrid
