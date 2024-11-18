@@ -261,8 +261,8 @@ def run(args=None, *, phil=working_phil):
     input_refls = input_refls.select(
         input_refls["wavelength"] != 0
     )  # Remove unindexed reflections
-    params.input.experiments = None # Remove duplicate experiment data
-    params.input.reflections = None # Remove duplicate reflection data
+    params.input.experiments = None  # Remove duplicate experiment data
+    params.input.reflections = None  # Remove duplicate reflection data
 
     # Get initial time for process
     start_time = time.time()
