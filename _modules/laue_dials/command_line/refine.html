@@ -10,7 +10,7 @@
     <link rel="stylesheet" type="text/css" href="../../../_static/alabaster.css?v=0ca6144b" />
     <script src="../../../_static/jquery.js?v=5d32c60e"></script>
     <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-    <script src="../../../_static/documentation_options.js?v=b0527f3f"></script>
+    <script src="../../../_static/documentation_options.js?v=c30b9b25"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -306,6 +306,8 @@
     <span class="n">input_refls</span> <span class="o">=</span> <span class="n">input_refls</span><span class="o">.</span><span class="n">select</span><span class="p">(</span>
         <span class="n">input_refls</span><span class="p">[</span><span class="s2">&quot;wavelength&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span>
     <span class="p">)</span>  <span class="c1"># Remove unindexed reflections</span>
+    <span class="n">params</span><span class="o">.</span><span class="n">input</span><span class="o">.</span><span class="n">experiments</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># Remove duplicate experiment data</span>
+    <span class="n">params</span><span class="o">.</span><span class="n">input</span><span class="o">.</span><span class="n">reflections</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># Remove duplicate reflection data</span>
 
     <span class="c1"># Get initial time for process</span>
     <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
