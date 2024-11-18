@@ -8,8 +8,8 @@ import sys
 import time
 from itertools import repeat
 from multiprocessing import Pool
-import gemmi
 
+import gemmi
 import libtbx.phil
 import numpy as np
 from dials.array_family import flex
@@ -107,7 +107,17 @@ reciprocal_grid {
 working_phil = phil_scope.fetch(sources=[phil_scope])
 
 
-def index_image(lam_min, lam_max, d_min, refls, expts, cell=None, n_macrocycles=5, filter_spectrum=True, keep_unindexed=False):
+def index_image(
+    lam_min,
+    lam_max,
+    d_min,
+    refls,
+    expts,
+    cell=None,
+    n_macrocycles=5,
+    filter_spectrum=True,
+    keep_unindexed=False,
+):
     """
     Reindex the given image reflections and update the experiment geometry.
 
@@ -352,15 +362,19 @@ def run(args=None, *, phil=working_phil):
     for i in ids:  # Split DIALS objects into lists
         expts_arr.append(ExperimentList([experiments[i]]))
         refls_arr.append(reflections.select(reflections["id"] == i))
-    inputs = list(zip(repeat(params.wavelengths.lam_min),
-                      repeat(params.wavelengths.lam_max),
-                      repeat(params.reciprocal_grid.d_min),
-                      refls_arr, 
-                      expts_arr,
-                      repeat(cell),
-                      repeat(params.n_macrocycles),
-                      repeat(params.filter_spectrum),
-                      repeat(params.keep_unindexed)))
+    inputs = list(
+        zip(
+            repeat(params.wavelengths.lam_min),
+            repeat(params.wavelengths.lam_max),
+            repeat(params.reciprocal_grid.d_min),
+            refls_arr,
+            expts_arr,
+            repeat(cell),
+            repeat(params.n_macrocycles),
+            repeat(params.filter_spectrum),
+            repeat(params.keep_unindexed),
+        )
+    )
 
     # Reindex data
     num_processes = params.nproc
