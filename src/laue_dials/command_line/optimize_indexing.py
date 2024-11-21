@@ -327,6 +327,10 @@ def run(args=None, *, phil=working_phil):
         logger.info("Minimum wavelength cannot be greater than maximum wavelength.")
         return
 
+    # Remove duplicate expt + refl data
+    params.input.experiments = None
+    params.input.reflections = None
+
     # Get initial time for process
     start_time = time.time()
 
