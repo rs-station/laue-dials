@@ -47,7 +47,6 @@ laue.optimize_indexing stills.* \
     wavelengths.lam_min=0.95 \
     wavelengths.lam_max=1.15 \
     reciprocal_grid.d_min=1.4 \
-    geometry.unit_cell=34.297,45.552,99.035,90,90,90 \
     nproc=$NPROC
 
 laue.refine optimized.* \

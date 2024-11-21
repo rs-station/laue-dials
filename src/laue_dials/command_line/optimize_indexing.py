@@ -9,7 +9,6 @@ import time
 from itertools import repeat
 from multiprocessing import Pool
 
-import gemmi
 import libtbx.phil
 import numpy as np
 from dials.array_family import flex
@@ -107,35 +106,20 @@ reciprocal_grid {
 working_phil = phil_scope.fetch(sources=[phil_scope])
 
 
-def index_image(
-    lam_min,
-    lam_max,
-    d_min,
-    refls,
-    expts,
-    cell=None,
-    n_macrocycles=5,
-    filter_spectrum=True,
-    keep_unindexed=False,
-):
+def index_image(params, refls, expts):
     """
     Reindex the given image reflections and update the experiment geometry.
 
     Args:
-        lam_min (float): Minimum wavelength of beam spectrum.
-        lam_max (float): Maximum wavelength of beam spectrum.
-        d_min (float): Minimum d-spacing to find reflections for.
+        params (libtbx.phil.scope_extract): Program parameters.
         refls (dials.array_family.flex.reflection_table): Reflection table for a single image.
         expts (dxtbx.model.ExperimentList): List of experiment objects.
-        cell (gemmi.UnitCell): User-provided unit cell. Default: None.
-        n_macrocycles (int): Number of macrocycles of assignment to run. Default: 5.
-        filter_spectrum (bool): Whether to filter out reflections that optimize out of the wavelength range. Default: True.
-        keep_unindexed (bool): Whether to keep reflections which fail to index. Default: False.
 
     Returns:
         expts (dxtbx.model.experiment_list.ExperimentList): The optimized experiment list with updated crystal rotations.
         refls (dials.array_family.flex.reflection_table): The optimized reflection table with updated wavelengths.
     """
+    import gemmi
     from cctbx.sgtbx import space_group
     from cctbx.uctbx import unit_cell
     from dials.array_family import flex
@@ -166,7 +150,9 @@ def index_image(
         subrefls = refls.select(idx)
 
         # Get unit cell params
-        if cell is not None:
+        if params.geometry.unit_cell is not None:
+            cell_params = params.geometry.unit_cell
+            cell = gemmi.UnitCell(*cell_params)
             # Check compatibility with spacegroup
             if not cell.is_compatible_with_spacegroup(spacegroup):
                 logger.warning(
@@ -191,15 +177,15 @@ def index_image(
             s1,
             cell,
             U,
-            lam_min,
-            lam_max,
-            d_min,
+            params.wavelengths.lam_min,
+            params.wavelengths.lam_max,
+            params.reciprocal_grid.d_min,
             spacegroup,
         )
 
         # Optimize Miller indices
         la.assign()
-        for j in range(n_macrocycles):
+        for j in range(params.n_macrocycles):
             la.reset_inliers()
             la.update_rotation()
             la.assign()
@@ -236,16 +222,16 @@ def index_image(
         )
 
     # Remove unindexed reflections
-    if filter_spectrum:
+    if params.filter_spectrum:
         all_wavelengths = refls["wavelength"].as_numpy_array()
         keep = np.logical_and(
-            all_wavelengths >= lam_min,
-            all_wavelengths <= lam_max,
+            all_wavelengths >= params.wavelengths.lam_min,
+            all_wavelengths <= params.wavelengths.lam_max,
         )
         refls = refls.select(flex.bool(keep))
 
     # Remove unindexed reflections
-    if not keep_unindexed:
+    if not params.keep_unindexed:
         all_wavelengths = refls["wavelength"].as_numpy_array()
         keep = all_wavelengths > 0  # Unindexed reflections assigned wavelength of 0
         refls = refls.select(flex.bool(keep))
@@ -348,13 +334,6 @@ def run(args=None, *, phil=working_phil):
     reflections.centroid_px_to_mm(experiments)
     reflections.map_centroids_to_reciprocal_space(experiments)
 
-    # Create gemmi unit cell
-    cell = None
-    cell_params = None
-    if params.geometry.unit_cell is not None:
-        cell_params = params.geometry.unit_cell
-        cell = gemmi.UnitCell(*cell_params)
-
     # Prepare parallel input
     ids = list(np.unique(reflections["id"]).astype(np.int32))
     expts_arr = []
@@ -362,19 +341,7 @@ def run(args=None, *, phil=working_phil):
     for i in ids:  # Split DIALS objects into lists
         expts_arr.append(ExperimentList([experiments[i]]))
         refls_arr.append(reflections.select(reflections["id"] == i))
-    inputs = list(
-        zip(
-            repeat(params.wavelengths.lam_min),
-            repeat(params.wavelengths.lam_max),
-            repeat(params.reciprocal_grid.d_min),
-            refls_arr,
-            expts_arr,
-            repeat(cell),
-            repeat(params.n_macrocycles),
-            repeat(params.filter_spectrum),
-            repeat(params.keep_unindexed),
-        )
-    )
+    inputs = list(zip(repeat(params), refls_arr, expts_arr))
 
     # Reindex data
     num_processes = params.nproc
