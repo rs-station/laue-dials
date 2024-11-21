@@ -81,8 +81,8 @@ nproc = 1
   .help = Number of parallel processes to run.
 
 n_macrocycles = 3
-  .type = int(value_min=1)
-  .help = "Number of macrocycles of index optimization to perform."
+  .type = int(value_min=0)
+  .help = "Number of macrocycles of index optimization to perform. A value of 0 performs one round of assignment without outlier rejection or crystal rotation."
 
 wavelengths {
   lam_min = None
