@@ -57,10 +57,6 @@ refiner_phil = libtbx.phil.parse(
     """
 
 refinement {
-  refinery {
-    engine = SparseLevMar
-  }
-
   reflections {
     weighting_strategy {
       override = constant
