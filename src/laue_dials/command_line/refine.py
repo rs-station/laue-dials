@@ -63,7 +63,7 @@ refinement {
 
   reflections {
     weighting_strategy {
-      override = stills
+      override = constant
     }
 
     outlier {
@@ -168,7 +168,7 @@ def refine_image(params, expts, refls):
     refls["id"] = flex.int([0] * len(refls))
     refls["imageset_id"] = flex.int([0] * len(refls))
     # Generate beam models
-    multi_expts, multi_refls = gen_beam_models(expts, refls)
+    multi_expts, multi_refls = expts, refls #gen_beam_models(expts, refls)
 
     # Perform refinement
     try:
@@ -182,11 +182,11 @@ def refine_image(params, expts, refls):
         return ExperimentList(), reflection_table()  # Return empty
 
     # Write wavelengths and centroid data
-    refined_refls = store_wavelengths(refined_expts, refined_refls)
+    #refined_refls = store_wavelengths(refined_expts, refined_refls)
     refined_refls.map_centroids_to_reciprocal_space(refined_expts)
 
     # Strip beam objects and reset reflection IDs
-    refined_expts = remove_beam_models(refined_expts, original_ids[0])
+    #refined_expts = remove_beam_models(refined_expts, original_ids[0])
     refined_refls["id"] = original_ids
 
     # Return refined data
@@ -276,8 +276,11 @@ def run(args=None, *, phil=working_phil):
 
     # Refine data
     num_processes = params.nproc
-    with Pool(processes=num_processes) as pool:
-        output = pool.starmap(refine_image, inputs)
+    if num_processes==1:
+        output = [refine_image(*i) for i in inputs]
+    else:
+        with Pool(processes=num_processes) as pool:
+            output = pool.starmap(refine_image, inputs)
 
     # Initialize arrays for final results
     total_refined_expts = ExperimentList()
@@ -288,10 +291,11 @@ def run(args=None, *, phil=working_phil):
         total_refined_expts.extend(output[i][0])
         total_refined_refls.extend(output[i][1])
 
-    # Correct any mismatching identifiers
-    final_expts, final_refls = correct_identifiers(
-        total_refined_expts, total_refined_refls
-    )
+    ## Correct any mismatching identifiers
+    #final_expts, final_refls = correct_identifiers(
+    #    total_refined_expts, total_refined_refls
+    #)
+    final_expts, final_refls = total_refined_expts, total_refined_refls
 
     # Save data
     logger.info("Saving refined experiments to %s", params.output.experiments)
