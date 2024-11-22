@@ -11,14 +11,20 @@ from multiprocessing import Pool
 
 import libtbx.phil
 import numpy as np
+import gemmi
 from dials.array_family import flex
 from dials.array_family.flex import reflection_table
+from dials.algorithms.refinement.prediction.managed_predictors import LaueExperimentsPredictor
 from dials.util import show_mail_handle_errors
 from dials.util.options import (ArgumentParser,
                                 reflections_and_experiments_from_files)
-from dxtbx.model import ExperimentList
+from dxtbx.model import ExperimentList, PolychromaticBeam, BeamFactory, Goniometer
+from cctbx.sgtbx import space_group
+from cctbx.uctbx import unit_cell
 
+from laue_dials.algorithms.laue import LaueAssigner
 from laue_dials.utils.version import laue_version
+
 
 # Print laue-dials + DIALS versions
 laue_version()
@@ -82,7 +88,7 @@ nproc = 1
 
 n_macrocycles = 3
   .type = int(value_min=0)
-  .help = "Number of macrocycles of index optimization to perform. A value of 0 performs one round of assignment without outlier rejection or crystal rotation."
+  .help = "Number of macrocycles of index optimization to perform."
 
 wavelengths {
   lam_min = None
@@ -119,14 +125,6 @@ def index_image(params, refls, expts):
         expts (dxtbx.model.experiment_list.ExperimentList): The optimized experiment list with updated crystal rotations.
         refls (dials.array_family.flex.reflection_table): The optimized reflection table with updated wavelengths.
     """
-    import gemmi
-    from cctbx.sgtbx import space_group
-    from cctbx.uctbx import unit_cell
-    from dials.array_family import flex
-    from dxtbx.model import ExperimentList
-
-    from laue_dials.algorithms.laue import LaueAssigner
-
     if type(expts) != ExperimentList:
         expts = ExperimentList([expts])
 
@@ -137,53 +135,49 @@ def index_image(params, refls, expts):
     refls["miller_index"] = flex.miller_index(len(refls))
     refls["harmonics"] = flex.bool([False] * len(refls))
 
-    for i in range(len(expts.imagesets())):
-        # Get experiment data from experiment objects
-        experiment = expts[i]
-        cryst = experiment.crystal
-        spacegroup = gemmi.SpaceGroup(
-            cryst.get_space_group().type().universal_hermann_mauguin_symbol()
-        )
+    # Get experiment data from experiment objects
+    experiment = expts[0]
+    cryst = experiment.crystal
+    spacegroup = gemmi.SpaceGroup(
+        cryst.get_space_group().type().universal_hermann_mauguin_symbol()
+    )
 
-        # Get reflections on this image
-        idx = refls["id"] == int(experiment.identifier)
-        subrefls = refls.select(idx)
-
-        # Get unit cell params
-        if params.geometry.unit_cell is not None:
-            cell_params = params.geometry.unit_cell
-            cell = gemmi.UnitCell(*cell_params)
-            # Check compatibility with spacegroup
-            if not cell.is_compatible_with_spacegroup(spacegroup):
-                logger.warning(
-                    f"WARNING: User-provided unit cell is incompatible with crystal space group on image {i}. Using crystal unit cell instead."
-                )
-                cell_params = cryst.get_unit_cell().parameters()
-                cell = gemmi.UnitCell(*cell_params)
-        else:
+    # Get unit cell params
+    if params.geometry.unit_cell is not None:
+        cell_params = params.geometry.unit_cell
+        cell = gemmi.UnitCell(*cell_params)
+        # Check compatibility with spacegroup
+        if not cell.is_compatible_with_spacegroup(spacegroup):
+            logger.warning(
+                f"WARNING: User-provided unit cell is incompatible with crystal space group on image {i}. Using crystal unit cell instead."
+            )
             cell_params = cryst.get_unit_cell().parameters()
             cell = gemmi.UnitCell(*cell_params)
+    else:
+        cell_params = cryst.get_unit_cell().parameters()
+        cell = gemmi.UnitCell(*cell_params)
 
-        # Generate s vectors
-        s1 = subrefls["s1"].as_numpy_array()
+    # Generate s vectors
+    s1 = refls["s1"].as_numpy_array()
 
-        # Get U matrix
-        U = np.asarray(cryst.get_U()).reshape(3, 3)
+    # Get U matrix
+    U = np.asarray(cryst.get_U()).reshape(3, 3)
 
-        # Generate assigner object
-        logger.info(f"Reindexing image {experiment.identifier}.")
-        la = LaueAssigner(
-            s0,
-            s1,
-            cell,
-            U,
-            params.wavelengths.lam_min,
-            params.wavelengths.lam_max,
-            params.reciprocal_grid.d_min,
-            spacegroup,
-        )
+    # Generate assigner object
+    logger.info(f"Reindexing image {refls[0]['image_id']}.")
+    la = LaueAssigner(
+        s0,
+        s1,
+        cell,
+        U,
+        params.wavelengths.lam_min,
+        params.wavelengths.lam_max,
+        params.reciprocal_grid.d_min,
+        spacegroup,
+    )
 
-        # Optimize Miller indices
+    # Optimize Miller indices
+    try:
         la.assign()
         for j in range(params.n_macrocycles):
             la.reset_inliers()
@@ -192,34 +186,40 @@ def index_image(params, refls, expts):
             la.reject_outliers()
             la.update_rotation()
             la.assign()
+    except:
+        logger.info(f"Image {refls[0]['image_id']} failed to optimize. Skipping image.")
+        return ExperimentList(), reflection_table()
 
-        # Update s1 based on new wavelengths
-        s1[la._inliers] = la.s1 / la.wav[:, None]
+    # Update s1 based on new wavelengths
+    s1[la._inliers] = la.s1 / la.wav[:, None]
 
-        # Reset crystal parameters based on new geometry
-        cryst.set_U(la.R.flatten())
-        cryst.set_A(la.RB.flatten())
-        cryst.set_B(la.B.flatten())
-        cryst.set_space_group(space_group(la.spacegroup.hall))
-        cryst.set_unit_cell(unit_cell(la.cell.parameters))
+    # Reset crystal parameters based on new geometry
+    #cryst.set_U(la.R.flatten())
+    cryst.set_A(la.RB.flatten())
+    #cryst.set_B(la.B.flatten())
+    cryst.set_space_group(space_group(la.spacegroup.hall))
+    cryst.set_unit_cell(unit_cell(la.cell.parameters))
 
-        # Get wavelengths
-        spot_wavelengths = np.asarray(la._wav.tolist())
+    # Get wavelengths
+    spot_wavelengths = np.asarray(la._wav.tolist())
 
-        # Write data to reflections
-        refls["s1"].set_selected(idx, flex.vec3_double(s1))
-        refls["miller_index"].set_selected(
-            idx,
-            flex.miller_index(la._H.astype("int").tolist()),
-        )
-        refls["harmonics"].set_selected(
-            idx,
-            flex.bool(la._harmonics.tolist()),
-        )
-        refls["wavelength"].set_selected(
-            idx,
-            flex.double(spot_wavelengths),
-        )
+    # Get new experiment ID for previously unindexed reflections
+    exp_id = np.unique(refls["id"])
+    if len(exp_id) == 2:
+        if len(np.argwhere(exp_id == -1)) == 1:
+            exp_id = np.delete(exp_id, np.argwhere(exp_id == -1))
+            refls["id"] = flex.int(np.full(len(refls), exp_id[0]))
+        else:
+            logger.warning(f"Image {refls[0]['image_id']} has multiple experiments. Newly indexed reflections cannot be assigned. Not indexing any new reflections.")
+    elif len(exp_id) > 2:
+        logger.warning(f"Image {refls[0]['image_id']} has multiple experiments. Newly indexed reflections cannot be assigned. Not indexing any new reflections.")
+
+    # Write data to reflections
+    sel = [True]*len(refls)
+    refls["s1"] = flex.vec3_double(s1)
+    refls["miller_index"] = flex.miller_index(la._H.astype("int").tolist())
+    refls["harmonics"] = flex.bool(la._harmonics.tolist())
+    refls["wavelength"] = flex.double(spot_wavelengths)
 
     # Remove unindexed reflections
     if params.filter_spectrum:
@@ -230,11 +230,31 @@ def index_image(params, refls, expts):
         )
         refls = refls.select(flex.bool(keep))
 
+    # Generate PolychromaticBeam object
+    for expt in expts:
+        mono_beam = expt.beam
+        expt.beam = BeamFactory.make_polychromatic_beam(mono_beam.get_sample_to_source_direction(), mono_beam.get_divergence(), mono_beam.get_sigma_divergence(), mono_beam.get_polarization_normal(), mono_beam.get_polarization_fraction(), mono_beam.get_flux(), mono_beam.get_transmission(), mono_beam.get_probe(), 0.0, True, (1.0, 1.2))
+        expt.goniometer = Goniometer()
+
+    # Repredict centroids
+    refls["s0"] = flex.vec3_double(len(refls), (0,0,-1))
+    orig_ids = refls["id"]
+    refls["id"] = flex.int([0]*len(refls))
+    ref_predictor = LaueExperimentsPredictor(expts)
+    refls = ref_predictor(refls)
+    refls["id"] = orig_ids
+
     # Remove unindexed reflections
     if not params.keep_unindexed:
         all_wavelengths = refls["wavelength"].as_numpy_array()
         keep = all_wavelengths > 0  # Unindexed reflections assigned wavelength of 0
         refls = refls.select(flex.bool(keep))
+    else:
+        all_wavelengths = refls["wavelength"].as_numpy_array()
+        all_refls = flex.bool([True]*len(refls))
+        indexed_refls = flex.bool(all_wavelengths > 0)  # Unindexed reflections assigned wavelength of 0
+        refls.unset_flags(all_refls, refls.flags.indexed)
+        refls.set_flags(indexed_refls, refls.flags.indexed)
 
     # Return reindexed expts, refls
     return expts, refls
@@ -327,9 +347,9 @@ def run(args=None, *, phil=working_phil):
         logger.info("Minimum wavelength cannot be greater than maximum wavelength.")
         return
 
-    # Remove duplicate expt + refl data
-    params.input.experiments = None
+    # Remove extraneous data from params
     params.input.reflections = None
+    params.input.experiments = None
 
     # Get initial time for process
     start_time = time.time()
@@ -340,24 +360,32 @@ def run(args=None, *, phil=working_phil):
 
     # Prepare parallel input
     ids = list(np.unique(reflections["id"]).astype(np.int32))
+    if -1 in ids:
+        ids.remove(-1)
     expts_arr = []
     refls_arr = []
     for i in ids:  # Split DIALS objects into lists
         expts_arr.append(ExperimentList([experiments[i]]))
-        refls_arr.append(reflections.select(reflections["id"] == i))
+        img_num = reflections.select(reflections["id"] == i)["image_id"][0]
+        refls_arr.append(reflections.select(reflections["image_id"] == img_num))
     inputs = list(zip(repeat(params), refls_arr, expts_arr))
 
     # Reindex data
     num_processes = params.nproc
     logger.info("Reindexing images.")
-    with Pool(processes=num_processes) as pool:
-        output = pool.starmap(index_image, inputs, chunksize=1)
+    if num_processes==1:
+        output = [index_image(*i) for i in inputs]
+    else:
+        with Pool(processes=num_processes) as pool:
+            output = pool.starmap(index_image, inputs) #repeat(params, len(refls_arr)), refls_arr, expts_arr)
     logger.info(f"All images reindexed.")
 
     # Convert reindexed data to DIALS objects
     total_experiments = ExperimentList()
     total_reflections = reflection_table()
     for i in ids:
+        if len(output[i][0]) == 0: # Empty experiment list
+            continue
         total_experiments.extend(output[i][0])
         total_reflections.extend(output[i][1])
 
