@@ -11,6 +11,7 @@
 #SBATCH --time=1:00:00
 
 FILE_INPUT_TEMPLATE="PATH/TO/DATA/e080_###.mccd"
+MASK_FILE="PATH/TO/pixels.mask"
 NPROC=8
 
 # Import data
@@ -19,7 +20,7 @@ dials.import geometry.scan.oscillation=0,1 \
     geometry.goniometer.axes=0,1,0 \
     geometry.beam.wavelength=1.04 \
     geometry.detector.panel.pixel=0.08854,0.08854 \
-    lookup.mask="pixels.mask" \
+    lookup.mask=$MASK_FILE \
     input.template=$FILE_INPUT_TEMPLATE
 
 # Get a monochromatic geometry model
@@ -27,7 +28,7 @@ laue.find_spots imported.expt \
     spotfinder.mp.nproc=$NPROC \
     spotfinder.threshold.dispersion.gain=0.35 \
     spotfinder.filter.max_separation=10 \
-    lookup.mask="pixels.mask"
+    lookup.mask=$MASK_FILE
 
 # Get a monochromatic geometry model
 laue.index imported.expt strong.refl \
