@@ -145,10 +145,6 @@ def index_image(params, refls, expts):
             cryst.get_space_group().type().universal_hermann_mauguin_symbol()
         )
 
-        # Get reflections on this image
-        idx = refls["id"] == int(experiment.identifier)
-        subrefls = refls.select(idx)
-
         # Get unit cell params
         if params.geometry.unit_cell is not None:
             cell_params = params.geometry.unit_cell
@@ -165,13 +161,13 @@ def index_image(params, refls, expts):
             cell = gemmi.UnitCell(*cell_params)
 
         # Generate s vectors
-        s1 = subrefls["s1"].as_numpy_array()
+        s1 = refls["s1"].as_numpy_array()
 
         # Get U matrix
         U = np.asarray(cryst.get_U()).reshape(3, 3)
 
         # Generate assigner object
-        logger.info(f"Reindexing image {experiment.identifier}.")
+        logger.info(f"Reindexing image {refls[0]['image_id']}.")
         la = LaueAssigner(
             s0,
             s1,
@@ -207,19 +203,10 @@ def index_image(params, refls, expts):
         spot_wavelengths = np.asarray(la._wav.tolist())
 
         # Write data to reflections
-        refls["s1"].set_selected(idx, flex.vec3_double(s1))
-        refls["miller_index"].set_selected(
-            idx,
-            flex.miller_index(la._H.astype("int").tolist()),
-        )
-        refls["harmonics"].set_selected(
-            idx,
-            flex.bool(la._harmonics.tolist()),
-        )
-        refls["wavelength"].set_selected(
-            idx,
-            flex.double(spot_wavelengths),
-        )
+        refls["s1"] = flex.vec3_double(s1)
+        refls["miller_index"] = flex.miller_index(la._H.astype("int").tolist())
+        refls["harmonics"] = flex.bool(la._harmonics.tolist())
+        refls["wavelength"] = flex.double(spot_wavelengths)
 
     # Remove unindexed reflections
     if params.filter_spectrum:
@@ -340,18 +327,23 @@ def run(args=None, *, phil=working_phil):
 
     # Prepare parallel input
     ids = list(np.unique(reflections["id"]).astype(np.int32))
+    if -1 in ids:
+        ids.remove(-1)
     expts_arr = []
     refls_arr = []
     for i in ids:  # Split DIALS objects into lists
         expts_arr.append(ExperimentList([experiments[i]]))
-        refls_arr.append(reflections.select(reflections["id"] == i))
+        refls_arr.append(reflections.select(reflections["image_id"] == i))
     inputs = list(zip(repeat(params), refls_arr, expts_arr))
 
     # Reindex data
     num_processes = params.nproc
     logger.info("Reindexing images.")
-    with Pool(processes=num_processes) as pool:
-        output = pool.starmap(index_image, inputs, chunksize=1)
+    if num_processes==1:
+        output = [index_image(*i) for i in inputs]
+    else:
+        with Pool(processes=num_processes) as pool:
+            output = pool.starmap(index_image, inputs)
     logger.info(f"All images reindexed.")
 
     # Convert reindexed data to DIALS objects
