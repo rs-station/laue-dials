@@ -11,6 +11,7 @@
 #SBATCH --time=1:00:00
 
 FILE_INPUT_TEMPLATE="PATH/TO/DATA/e080_###.mccd"
+NPROC=8
 
 # Import data
 # You may need to change some of these values to match your data set
@@ -23,7 +24,7 @@ dials.import geometry.scan.oscillation=0,1 \
 
 # Get a monochromatic geometry model
 laue.find_spots imported.expt \
-    spotfinder.mp.nproc=8 \
+    spotfinder.mp.nproc=$NPROC \
     spotfinder.threshold.dispersion.gain=0.35 \
     spotfinder.filter.max_separation=10 \
     lookup.mask="pixels.mask"
@@ -39,7 +40,6 @@ laue.index imported.expt strong.refl \
 laue.sequence_to_stills monochromatic.*
 
 # Polychromatic pipeline
-N=12 # Max multiprocessing
 laue.optimize_indexing stills.* \
     output.experiments="optimized.expt" \
     output.reflections="optimized.refl" \
@@ -47,14 +47,14 @@ laue.optimize_indexing stills.* \
     wavelengths.lam_min=0.95 \
     wavelengths.lam_max=1.15 \
     reciprocal_grid.d_min=1.4 \
-    nproc=$N
+    geometry.unit_cell=34.297,45.552,99.035,90,90,90 \
+    nproc=$NPROC
 
-N=8 # Max multiprocessing
 laue.refine optimized.* \
     output.experiments="poly_refined.expt" \
     output.reflections="poly_refined.refl" \
     output.log="laue.poly_refined.log" \
-    nproc=$N
+    nproc=$NPROC
 
 laue.predict poly_refined.* \
     output.reflections="predicted.refl" \
@@ -62,11 +62,11 @@ laue.predict poly_refined.* \
     wavelengths.lam_min=0.95 \
     wavelengths.lam_max=1.15 \
     reciprocal_grid.d_min=1.4 \
-    nproc=$N
+    nproc=$NPROC
 
 laue.integrate poly_refined.expt predicted.refl \
     output.filename="integrated.mtz" \
     output.log="laue.integrate.log" \
-    nproc=$N
+    nproc=$NPROC
 
 # This is where laue_dials ends. The output file integrated.mtz can be merged in careless and refined in phenix to get a model
