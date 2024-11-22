@@ -10,10 +10,15 @@ import libtbx.phil
 from dials.util import show_mail_handle_errors
 from dials.util.options import (ArgumentParser,
                                 reflections_and_experiments_from_files)
+from dials.array_family import flex
+from dials.algorithms.refinement.prediction.managed_predictors import ExperimentsPredictorFactory, LaueExperimentsPredictor
+from dxtbx.model import ExperimentList, BeamFactory, Goniometer
 
 from laue_dials.algorithms.monochromatic import (initial_index,
                                                  scan_varying_refine)
 from laue_dials.utils.version import laue_version
+
+import numpy as np
 
 # Print laue-dials + DIALS versions
 laue_version()
@@ -234,6 +239,14 @@ def run(args=None, *, phil=working_phil):
         params.input.reflections, params.input.experiments
     )
 
+    # Remove extraneous data from params
+    params.input.reflections = None
+    params.input.experiments = None
+
+    # Add image_id
+    ids = np.asarray(strong_refls[0]['id']).astype(int)
+    strong_refls[0]['image_id'] = flex.int(ids)
+
     # Get initial time for process
     start_time = time.time()
 
@@ -295,6 +308,13 @@ def run(args=None, *, phil=working_phil):
 
         logger.info("")
         logger.info("Time Taken Refining = %f seconds", time.time() - refine_time)
+
+    # Final round of reprediction for centroids
+    orig_ids = final_refls["id"]
+    final_refls["id"] = flex.int([0]*len(final_refls))
+    #ref_predictor = ExperimentsPredictorFactory.from_experiments(final_expts, force_stills=final_expts.all_stills())
+    ref_predictor = ExperimentsPredictorFactory.from_experiments(final_expts)
+    final_refls["id"] = orig_ids
 
     # Final logs
     logger.info(
