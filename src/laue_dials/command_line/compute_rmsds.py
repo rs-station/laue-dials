@@ -51,6 +51,10 @@ phil_scope = libtbx.phil.parse(
     .type = str
     .help = "The filename for the generated plot."
 
+  indexed_only = False
+    .type = bool
+    .help = "Only compute indexed spot RMSDs."
+
   refined_only = False
     .type = bool
     .help = "Only compute refined spot RMSDs."
@@ -66,6 +70,15 @@ phil_scope = libtbx.phil.parse(
   dotsize = None
     .type = int
     .help = "Desired dot size for plot in points**2. Defaults to 16."
+
+  bins = 10
+    .type = int
+    .help = "Number of bins to use for histogram. Defaults to 10."
+
+  image = None
+    .type = int
+    .help = "Which image to look at residual histograms for. Only shows if not none."
+
 """,
     process_includes=True,
 )
@@ -143,6 +156,9 @@ def run(args=None, *, phil=working_phil):
     )
     refls = refls[0]
 
+    if params.indexed_only:
+        refls = refls.select(refls.get_flags(refls.flags.indexed))
+
     if params.refined_only:
         refls = refls.select(refls.get_flags(refls.flags.used_in_refinement))
 
@@ -215,6 +231,19 @@ def run(args=None, *, phil=working_phil):
         fig.savefig(params.output, format="png")
     if params.show:
         plt.show()
+
+    if params.image is not None:
+        sel = data["image"] == params.image
+        fig = plt.figure()
+        plt.hist2d(x_resids[sel], y_resids[sel], bins=params.bins)
+        plt.xlabel("X Residual (px)")
+        plt.ylabel("Y Residual (px)")
+        plt.title(f"Residuals for Image {params.image}")
+        plt.colorbar()
+        if params.save:
+            fig.savefig(f"image{params.image}_" + params.output, format="png")
+        if params.show:
+            plt.show()
 
 
 if __name__ == "__main__":
