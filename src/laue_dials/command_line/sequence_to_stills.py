@@ -166,6 +166,7 @@ def sequence_to_stills(experiments, reflections, params):
                 x, y, flex.double(len(new_refls), 0)
             )
             new_refls["id"] = flex.int(len(new_refls), id_counter)
+            new_refls["image_id"] = flex.int(len(new_refls), id_counter)
             id_counter = id_counter + 1
             new_reflections.append(new_refls)
     return (new_experiments, new_reflections)
