@@ -1,7 +1,7 @@
 .. _version:
 
 laue_dials.version
-=====================
+==================
 
 Introduction
 ------------
