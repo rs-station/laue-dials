@@ -23,7 +23,11 @@ def laue_version():
     dials_version = version("dials")
     laue_dials_version = version("laue-dials")
 
-    print("-" * width)
-    print(f"DIALS version " + dials_version + ".")
-    print(f"laue-dials version " + laue_dials_version + ".")
-    print("-" * width)
+    line1 = "-" * width + "\n"
+    line2 = f"DIALS version " + dials_version + ".\n"
+    line3 = f"laue-dials version " + laue_dials_version + ".\n"
+    line4 = "-" * width + "\n"
+
+    version_str = line1 + line2 + line3 + line4
+
+    return version_str
