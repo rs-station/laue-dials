@@ -172,6 +172,7 @@ def index_image(params, refls, expts):
             U,
             params.wavelengths.lam_min,
             params.wavelengths.lam_max,
+            experiment.beam.get_wavelength(),
             params.reciprocal_grid.d_min,
             spacegroup,
         )
