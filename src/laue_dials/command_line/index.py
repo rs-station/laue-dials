@@ -241,10 +241,6 @@ def run(args=None, *, phil=working_phil):
     params.input.reflections = None
     params.input.experiments = None
 
-    # Add image_id
-    ids = np.asarray(strong_refls[0]['id']).astype(int)
-    strong_refls[0]['image_id'] = flex.int(ids)
-
     # Get initial time for process
     start_time = time.time()
 

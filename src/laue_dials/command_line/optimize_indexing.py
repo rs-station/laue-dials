@@ -18,6 +18,7 @@ from dials.util.options import (ArgumentParser,
                                 reflections_and_experiments_from_files)
 from dxtbx.model import ExperimentList
 
+from laue_dials.utils.matching import split_stills_by_image
 from laue_dials.utils.version import laue_version
 
 # Print laue-dials + DIALS versions
@@ -137,7 +138,7 @@ def index_image(params, refls, expts):
     refls["miller_index"] = flex.miller_index(len(refls))
     refls["harmonics"] = flex.bool([False] * len(refls))
 
-    for i in range(len(expts.imagesets())):
+    for i in range(len(expts)):
         # Get experiment data from experiment objects
         experiment = expts[i]
         cryst = experiment.crystal
@@ -167,7 +168,10 @@ def index_image(params, refls, expts):
         U = np.asarray(cryst.get_U()).reshape(3, 3)
 
         # Generate assigner object
-        logger.info(f"Reindexing image {refls[0]['image_id']}.")
+        img_ids = np.unique(refls["id"])
+        img_id = img_ids[img_ids != -1][0]
+        logger.info(f"Reindexing experiment {img_id}.")
+            
         la = LaueAssigner(
             s0,
             s1,
@@ -222,6 +226,15 @@ def index_image(params, refls, expts):
         all_wavelengths = refls["wavelength"].as_numpy_array()
         keep = all_wavelengths > 0  # Unindexed reflections assigned wavelength of 0
         refls = refls.select(flex.bool(keep))
+        exp_ids = np.unique(refls["id"].as_numpy_array())
+        image_id = exp_ids[exp_ids != -1][0] # Should only be a single identifier
+        refls["id"] = flex.int(np.full(len(refls), image_id))
+    else:
+        all_wavelengths = refls["wavelength"].as_numpy_array()
+        indexed = all_wavelengths > 0
+        exp_ids = np.unique(refls["id"])
+        image_id = exp_ids[exp_ids != -1][0] # Should only be a single identifier
+        refls["id"].set_selected(indexed, flex.int(np.full(len(refls), image_id)))
 
     # Return reindexed expts, refls
     return expts, refls
@@ -322,18 +335,16 @@ def run(args=None, *, phil=working_phil):
     start_time = time.time()
 
     # This will populate ['s1'] & ['rlp'] columns
-    reflections.centroid_px_to_mm(experiments)
-    reflections.map_centroids_to_reciprocal_space(experiments)
+    if reflections["s1"][0] == None or reflections["rlp"] == None:
+        reflections.centroid_px_to_mm(experiments)
+        reflections.map_centroids_to_reciprocal_space(experiments)
 
     # Prepare parallel input
     ids = list(np.unique(reflections["id"]).astype(np.int32))
     if -1 in ids:
         ids.remove(-1)
-    expts_arr = []
-    refls_arr = []
-    for i in ids:  # Split DIALS objects into lists
-        expts_arr.append(ExperimentList([experiments[i]]))
-        refls_arr.append(reflections.select(reflections["image_id"] == i))
+
+    expts_arr, refls_arr = split_stills_by_image(experiments, reflections)
     inputs = list(zip(repeat(params), refls_arr, expts_arr))
 
     # Reindex data
