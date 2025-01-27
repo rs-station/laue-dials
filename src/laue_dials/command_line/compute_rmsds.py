@@ -184,12 +184,14 @@ def run(args=None, *, phil=working_phil):
     y_resids = data["ycal"] - data["yobs"]
     sqr_resids = x_resids**2 + y_resids**2
     mean_resids = np.zeros(len(images))
+    n_refls = np.zeros(len(images))
     for i, img_num in enumerate(images):
         sel = data["image"] == img_num
         mean_resids[i] = np.mean(sqr_resids[sel])
+        n_refls[i] = sum(sel)
     rmsds = np.sqrt(mean_resids)
 
-    resid_data = pd.DataFrame({"Image": images, "RMSD (px)": rmsds})
+    resid_data = pd.DataFrame({"Image": images, "RMSD (px)": rmsds, "N Spots": n_refls})
 
     pd.set_option("display.max_rows", None)
     logger.info(f"RMSDs per image: \n{resid_data}")
