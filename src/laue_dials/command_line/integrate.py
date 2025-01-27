@@ -208,6 +208,10 @@ def run(args=None, *, phil=working_phil):
     )
     preds = reflections[0]  # Get predictions
 
+    # Remove duplicate expt + refl data
+    params.input.experiments = None
+    params.input.reflections = None
+
     # Sanity checks
     if len(expts) == 0:
         parser.print_help()
@@ -226,8 +230,11 @@ def run(args=None, *, phil=working_phil):
     # Multiprocess integration
     num_processes = params.nproc
     logger.info("Starting integration.")
-    with Pool(processes=num_processes) as pool:
-        refls_arr = pool.starmap(integrate_image, inputs, chunksize=1)
+    if num_processes==1:
+        refls_arr = [integrate_image(*i) for i in inputs]
+    else:
+        with Pool(processes=num_processes) as pool:
+            refls_arr = pool.starmap(integrate_image, inputs, chunksize=1)
     logger.info("Integration finished.")
 
     # Construct an integrated reflection table
