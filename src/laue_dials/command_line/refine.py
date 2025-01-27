@@ -23,9 +23,6 @@ from laue_dials.algorithms.laue import (gen_beam_models, remove_beam_models,
                                         store_wavelengths)
 from laue_dials.utils.version import laue_version
 
-# Print laue-dials + DIALS versions
-laue_version()
-
 logger = logging.getLogger("laue-dials.command_line.refine")
 
 help_message = """
@@ -179,7 +176,7 @@ def refine_image(params, expts, refls):
         logger.warning(
             f"WARNING: Experiment {img_num} could not be refined. Skipping image."
         )
-        return ExperimentList(), reflection_table()  # Return empty
+        return ExperimentList(), reflection_table(), False  # Return empty
 
     # Write wavelengths and centroid data
     refined_refls = store_wavelengths(refined_expts, refined_refls)
@@ -190,7 +187,7 @@ def refine_image(params, expts, refls):
     refined_refls["id"] = original_ids
 
     # Return refined data
-    return refined_expts, refined_refls
+    return refined_expts, refined_refls, True
 
 
 @show_mail_handle_errors()
@@ -242,6 +239,9 @@ def run(args=None, *, phil=working_phil):
     xfel_logger.setLevel(loglevel)
     fh.setLevel(loglevel)
 
+    # Print version information
+    logger.info(laue_version())
+
     # Log diff phil
     diff_phil = parser.diff_phil.as_str()
     if diff_phil != "":
@@ -286,16 +286,22 @@ def run(args=None, *, phil=working_phil):
     # Initialize arrays for final results
     total_refined_expts = ExperimentList()
     total_refined_refls = reflection_table()
+    successes = np.zeros(len(ids), dtype=bool)
 
     # Convert refined data to DIALS objects
     for i in ids:
         total_refined_expts.extend(output[i][0])
         total_refined_refls.extend(output[i][1])
+        successes[i] = output[i][2]
 
     # Correct any mismatching identifiers
     final_expts, final_refls = correct_identifiers(
         total_refined_expts, total_refined_refls
     )
+
+    logger.info(f"{np.sum(successes)}/{len(successes)} experiments successfully refined.")
+    if np.sum(successes) < len(successes):
+        logger.info(f"The following experiments failed to refine: {np.where(successes == False)[0]}.")
 
     # Save data
     logger.info("Saving refined experiments to %s", params.output.experiments)

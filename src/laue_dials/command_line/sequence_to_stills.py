@@ -24,9 +24,6 @@ from tqdm import trange
 
 from laue_dials.utils.version import laue_version
 
-# Print laue-dials + DIALS versions
-laue_version()
-
 logger = logging.getLogger("laue.command_line.sequence_to_stills")
 
 # The phil scope
@@ -166,6 +163,7 @@ def sequence_to_stills(experiments, reflections, params):
                 x, y, flex.double(len(new_refls), 0)
             )
             new_refls["id"] = flex.int(len(new_refls), id_counter)
+            new_refls["image_id"] = flex.int(len(new_refls), id_counter)
             id_counter = id_counter + 1
             new_reflections.append(new_refls)
     return (new_experiments, new_reflections)
@@ -222,6 +220,9 @@ def run(args=None, phil=phil_scope):
     dxtbx_logger.setLevel(loglevel)
     xfel_logger.setLevel(loglevel)
     fh.setLevel(loglevel)
+
+    # Print version information
+    logger.info(laue_version())
 
     # Try to load the models and data
     if not params.input.experiments or not params.input.reflections:

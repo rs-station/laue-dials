@@ -77,3 +77,11 @@ laue\_dials.command\_line.sequence\_to\_stills module
    :members:
    :undoc-members:
    :show-inheritance:
+
+laue\_dials.command\_line.version module
+----------------------------------------
+
+.. automodule:: laue_dials.command_line.version
+   :members:
+   :undoc-members:
+   :show-inheritance:

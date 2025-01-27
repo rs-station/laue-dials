@@ -23,9 +23,6 @@ from dxtbx.model import ExperimentList
 from laue_dials.algorithms.outliers import gen_kde
 from laue_dials.utils.version import laue_version
 
-# Print laue-dials + DIALS versions
-laue_version()
-
 logger = logging.getLogger("laue-dials.command_line.predict")
 
 help_message = """
@@ -252,6 +249,9 @@ def run(args=None, *, phil=working_phil):
     dxtbx_logger.setLevel(loglevel)
     xfel_logger.setLevel(loglevel)
     fh.setLevel(loglevel)
+
+    # Print version information
+    logger.info(laue_version())
 
     # Log diff phil
     diff_phil = parser.diff_phil.as_str()

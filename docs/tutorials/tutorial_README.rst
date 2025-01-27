@@ -1,11 +1,12 @@
-==========
+==========================
 Jupyter Notebook Tutorials
-==========
+==========================
 
 These tutorials can help guide you through analyzing a data set with Laue-DIALS. The data for
 these tutorials are stored on SBGrid, and can be downloaded using the following in any bash terminal:
 
 .. code:: bash
+
    # HEWL
    rsync -av rsync://data.sbgrid.org/10.15785/SBGRID/1118 .
    cd 1118 ; shasum -c files.sha
