@@ -336,9 +336,8 @@ def run(args=None, *, phil=working_phil):
     start_time = time.time()
 
     # This will populate ['s1'] & ['rlp'] columns
-    if reflections["s1"][0] == None or reflections["rlp"] == None:
-        reflections.centroid_px_to_mm(experiments)
-        reflections.map_centroids_to_reciprocal_space(experiments)
+    reflections.centroid_px_to_mm(experiments)
+    reflections.map_centroids_to_reciprocal_space(experiments)
 
     # Prepare parallel input
     ids = list(np.unique(reflections["id"]).astype(np.int32))
