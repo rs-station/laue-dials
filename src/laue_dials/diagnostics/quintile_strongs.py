@@ -1,22 +1,15 @@
-from diffgeolib import *
-from tqdm import trange, tqdm
-from matplotlib import pyplot as plt
-from scitbx import matrix
-from IPython import embed
 from glob import glob
-from dials.array_family import flex
+
 import numpy as np
 import reciprocalspaceship as rs
-import gemmi
-import pandas as pd
+from matplotlib import pyplot as plt
+from tqdm import tqdm, trange
 
 plt.style.use("tableau-colorblind10")
 
 
 def parse_ii_inp_file_pairs(ii_filenames, inp_filenames, spacegroup=None, log=None):
     data = None
-    sg_number = None
-    p = []
     cell = np.zeros(6)
     for file_number, (iiFN, inpFN) in enumerate(
         tqdm(list(zip(ii_filenames, inp_filenames)))
@@ -29,10 +22,10 @@ def parse_ii_inp_file_pairs(ii_filenames, inp_filenames, spacegroup=None, log=No
                         ii_filenames
                     )
                     if spacegroup is None:
-                        sg_number = int(line.split()[7])
+                        int(line.split()[7])
                 if "Pixel" in line:
-                    pixel_x = float(line.split()[1])
-                    pixel_y = float(line.split()[2])
+                    float(line.split()[1])
+                    float(line.split()[2])
 
         # If log is given, use it to determine the image number
         if log is None:

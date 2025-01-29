@@ -1,13 +1,13 @@
-from scipy.spatial import KDTree
 import pickle
-from matplotlib.colors import colorConverter
+
 import matplotlib as mpl
-from matplotlib import pyplot as plt
-import pandas as pd
-from dials.array_family import flex
-import reciprocalspaceship as rs
 import numpy as np
-from IPython import embed
+import pandas as pd
+import reciprocalspaceship as rs
+from dials.array_family import flex
+from matplotlib import pyplot as plt
+from matplotlib.colors import colorConverter
+from scipy.spatial import KDTree
 
 # Define input files
 refl_file = "predicted.refl"

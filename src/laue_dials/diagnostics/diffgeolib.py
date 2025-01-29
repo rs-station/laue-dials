@@ -1,7 +1,6 @@
+import gemmi
 import numpy as np
 import reciprocalspaceship as rs
-import gemmi
-
 
 """
 This is just a place to stash useful functions and classes for diffraction geometry calculations

@@ -8,13 +8,12 @@ import time
 
 import libtbx.phil
 from dials.util import show_mail_handle_errors
-from dials.util.options import ArgumentParser, reflections_and_experiments_from_files
-from dials.array_family import flex
+from dials.util.options import (ArgumentParser,
+                                reflections_and_experiments_from_files)
 
-from laue_dials.algorithms.monochromatic import initial_index, scan_varying_refine
+from laue_dials.algorithms.monochromatic import (initial_index,
+                                                 scan_varying_refine)
 from laue_dials.utils.version import laue_version
-
-import numpy as np
 
 logger = logging.getLogger("laue-dials.command_line.index")
 

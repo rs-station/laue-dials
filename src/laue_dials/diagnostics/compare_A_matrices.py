@@ -7,16 +7,15 @@
 # In reciprocal space if not noted otherwise
 
 
-from cctbx import crystal_orientation
-from scitbx.matrix import sqr
-from dxtbx.model import experiment_list
-from dxtbx.model import crystal
-import numpy as np
-from gemmi import UnitCell, Fractional
-import math
 import glob
+import math
+
+import numpy as np
+from cctbx import crystal_orientation
+from dxtbx.model import crystal, experiment_list
+from gemmi import Fractional, UnitCell
 from matplotlib import pyplot as plt
-from matplotlib.ticker import MaxNLocator
+from scitbx.matrix import sqr
 
 
 def align_mats(crystal1, crystal2):  # Unfinished
