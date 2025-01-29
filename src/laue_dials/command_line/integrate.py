@@ -17,8 +17,7 @@ import reciprocalspaceship as rs
 from cctbx import sgtbx
 from dials.array_family import flex
 from dials.util import show_mail_handle_errors
-from dials.util.options import (ArgumentParser,
-                                reflections_and_experiments_from_files)
+from dials.util.options import ArgumentParser, reflections_and_experiments_from_files
 
 from laue_dials.algorithms.integration import SegmentedImage
 from laue_dials.utils.version import laue_version
@@ -230,7 +229,7 @@ def run(args=None, *, phil=working_phil):
     # Multiprocess integration
     num_processes = params.nproc
     logger.info("Starting integration.")
-    if num_processes==1:
+    if num_processes == 1:
         refls_arr = [integrate_image(*i) for i in inputs]
     else:
         with Pool(processes=num_processes) as pool:

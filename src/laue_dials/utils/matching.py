@@ -26,7 +26,11 @@ def split_stills_by_image(expts, refls):
     for i in range(len(expts)):
         image_expts = expts[i]
         image_refls = refls.select(refls["id"] == i)
-        image_refls.extend(unindexed_refls.select(unindexed_refls["imageset_id"] == image_refls["imageset_id"][0]))
+        image_refls.extend(
+            unindexed_refls.select(
+                unindexed_refls["imageset_id"] == image_refls["imageset_id"][0]
+            )
+        )
 
         new_expts.append(image_expts)
         new_refls.append(image_refls)

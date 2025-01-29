@@ -13,8 +13,7 @@ import pandas as pd
 import reciprocalspaceship as rs
 from cctbx import sgtbx
 from dials.util import show_mail_handle_errors
-from dials.util.options import (ArgumentParser,
-                                reflections_and_experiments_from_files)
+from dials.util.options import ArgumentParser, reflections_and_experiments_from_files
 from matplotlib import pyplot as plt
 
 from laue_dials.utils.version import laue_version
@@ -195,9 +194,9 @@ def run(args=None, *, phil=working_phil):
         n_refls[i] = sum(sel)
         if params.image == img_num:
             plt.hist(np.sqrt(sqr_resids[sel]))
-            plt.xlabel('Residuals (px)')
-            plt.xlabel('# Reflections')
-            plt.title(f'Residuals for Image {img_num}')
+            plt.xlabel("Residuals (px)")
+            plt.xlabel("# Reflections")
+            plt.title(f"Residuals for Image {img_num}")
 
     rmsds = np.sqrt(mean_resids)
 

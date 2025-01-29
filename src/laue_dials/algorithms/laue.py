@@ -86,8 +86,9 @@ def gen_beam_models(expts, refls):
     # Imports
     from copy import deepcopy
 
-    from dials.algorithms.refinement.prediction.managed_predictors import \
-        ExperimentsPredictorFactory
+    from dials.algorithms.refinement.prediction.managed_predictors import (
+        ExperimentsPredictorFactory,
+    )
 
     # Instantiate new ExperimentList/reflection_table
     new_expts = ExperimentList()
@@ -186,7 +187,9 @@ class LaueAssigner(LaueBase):
     An object to assign miller indices to a laue still
     """
 
-    def __init__(self, s0, s1, cell, R, lam_min, lam_max, lam_peak, dmin, spacegroup="1"):
+    def __init__(
+        self, s0, s1, cell, R, lam_min, lam_max, lam_peak, dmin, spacegroup="1"
+    ):
         """
         Parameters:
             s1 (np.ndarray): n x 3 array indicating the direction of the scattered beam wavevector.
@@ -358,12 +361,14 @@ class LaueAssigner(LaueBase):
         to_keep = np.ones(len(Hall), dtype=bool)
         for i, ray in enumerate(unique_rays[harmonic_rays]):
             idh = np.where((Raypred == ray).all(axis=1))[0]
-            if len(idh) == 1: # Not a harmonic
+            if len(idh) == 1:  # Not a harmonic
                 to_keep[idh] = True
             else:
                 harmonics[idh] = True
                 qharm = qall[idh]
-                harmonic_wavelengths = -2.*(self.s0 * qharm).sum(-1) / (qharm*qharm).sum(-1)
+                harmonic_wavelengths = (
+                    -2.0 * (self.s0 * qharm).sum(-1) / (qharm * qharm).sum(-1)
+                )
                 kept_harmonic = np.argmin(np.abs(harmonic_wavelengths - self.lam_peak))
                 to_keep[idh] = False
                 to_keep[idh[kept_harmonic]] = True

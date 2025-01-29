@@ -13,6 +13,7 @@ Examples:
     laue.version
 """
 
+
 def run():
     """
     Print version information to the terminal and logfile.
@@ -25,6 +26,7 @@ def run():
     """
     # Print version information
     print(laue_version())
+
 
 if __name__ == "__main__":
     run()

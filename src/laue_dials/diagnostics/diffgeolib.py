@@ -7,9 +7,10 @@ import gemmi
 This is just a place to stash useful functions and classes for diffraction geometry calculations
 """
 
+
 def indexing_rotation_tril(A):
     """
-    Convert the reciprocal space indexing matrix, A into the product of 
+    Convert the reciprocal space indexing matrix, A into the product of
     an orthogonal matrix U and a lower triangular matrix B
 
     Parameters
@@ -25,21 +26,24 @@ def indexing_rotation_tril(A):
         A 3x3 lower triangular matrix
     """
     from scipy.linalg import rq
-    #R is a "right" or upper triangular matrix
-    #Q is an orthogonal (rotation) matrix
+
+    # R is a "right" or upper triangular matrix
+    # Q is an orthogonal (rotation) matrix
     # A = Q.T@R.T
-    R,Q = rq(A.T)
+    R, Q = rq(A.T)
     return Q.T, R.T
+
 
 def normalize(A):
     """
     Normalize the last dimension of an array by dividing by its L2 norm
     """
-    return A / np.linalg.norm(A, axis=-1)[...,None]
+    return A / np.linalg.norm(A, axis=-1)[..., None]
+
 
 def hkl2ray(hkl, wavelength=None):
-    """ 
-    Convert a miller index to the shortest member of its central ray. 
+    """
+    Convert a miller index to the shortest member of its central ray.
     Optionally, adjust its wavelength accordingly.
 
     Parameters
@@ -55,22 +59,24 @@ def hkl2ray(hkl, wavelength=None):
         The miller index of the shortest vector on the same central ray as hkl
     reduced_wavelength : array (optional)
         The wavelengths corresponding to reduced_hkl
-    """ 
+    """
     gcd = np.gcd.reduce(hkl.astype(int), axis=-1)
     if wavelength is not None:
-        return hkl/gcd[...,None], wavelength*gcd
+        return hkl / gcd[..., None], wavelength * gcd
     else:
-        return hkl/gcd[...,None]
+        return hkl / gcd[..., None]
+
 
 def is_ray_equivalent(hkl1, hkl2):
     """
     Test for equivalency between two miller indices in a Laue experiment. Returns a boolean array for each of the `n` hkls in `hkl{1,2}`.
     """
-    return np.all(np.isclose(hkl2ray(hkl1),  hkl2ray(hkl2)), axis=1)
+    return np.all(np.isclose(hkl2ray(hkl1), hkl2ray(hkl2)), axis=1)
+
 
 def align_hkls(reference, target, spacegroup, anomalous=True):
     """
-    Use the point group operators in `spacegroup` to align target hkls to reference.    
+    Use the point group operators in `spacegroup` to align target hkls to reference.
 
     Parameters
     ----------
@@ -89,11 +95,11 @@ def align_hkls(reference, target, spacegroup, anomalous=True):
         n x 3 array of miller indices equivalent to target
     """
     aligned = target
-    cc = -1.
+    cc = -1.0
     for op in spacegroup.operations():
         aligned_ = rs.utils.apply_to_hkl(target, op)
         cc_mat = np.corrcoef(aligned_.T, reference.T)
-        cc_ = np.trace(cc_mat[:3,3:])
+        cc_ = np.trace(cc_mat[:3, 3:])
         if cc_ > cc:
             aligned = aligned_
             cc = cc_
@@ -101,43 +107,41 @@ def align_hkls(reference, target, spacegroup, anomalous=True):
         for op in spacegroup.operations():
             aligned_ = -rs.utils.apply_to_hkl(target, op)
             cc_mat = np.corrcoef(aligned_.T, reference.T)
-            cc_ = np.trace(cc_mat[:3,3:])
+            cc_ = np.trace(cc_mat[:3, 3:])
             if cc_ > cc:
                 aligned = aligned_
                 cc = cc_
     return aligned
 
 
-class Detector():
+class Detector:
     def __init__(self, ax1, ax2, ori):
-        """ 
-        This is a simple class to represent a detector panel. 
+        """
+        This is a simple class to represent a detector panel.
         """
         super().__init__()
-        self.D = np.vstack((
-            ax1,
-            ax2,
-            ori,
-        ))
+        self.D = np.vstack(
+            (
+                ax1,
+                ax2,
+                ori,
+            )
+        )
 
     @classmethod
     def from_inp_file(cls, filename, **kwargs):
-        """ doesn't account for tilt yet """
-        for line in  open(filename):
-            if 'Distance' in line:
+        """doesn't account for tilt yet"""
+        for line in open(filename):
+            if "Distance" in line:
                 ddist = float(line.split()[1])
-            if 'Center' in line:
+            if "Center" in line:
                 beam = np.array([float(line.split()[1]), float(line.split()[1])])
-            if 'Pixel' in line:
+            if "Pixel" in line:
                 size = np.array([float(line.split()[1]), float(line.split()[1])])
 
-        ax1 = np.array([size[0], 0., 0.])
-        ax2 = np.array([0., size[1], 0.])
-        ori = np.array([
-                -beam[0] * size[0], 
-                -beam[1] * size[1], 
-                ddist
-            ])
+        ax1 = np.array([size[0], 0.0, 0.0])
+        ax2 = np.array([0.0, size[1], 0.0])
+        ori = np.array([-beam[0] * size[0], -beam[1] * size[1], ddist])
         return cls(ax1, ax2, ori, **kwargs)
 
     @classmethod
@@ -146,98 +150,118 @@ class Detector():
         Return a generator of Detector instances for each panel described in `filename`
         """
         from dxtbx.model.experiment_list import ExperimentListFactory
+
         elist = ExperimentListFactory.from_json_file(filename)
         for detector in elist.detectors():
             for panel in detector.iter_panels():
                 ori = np.array(panel.get_origin())
                 size = panel.get_pixel_size()
-                ax1 = np.array(panel.get_fast_axis())*size[0]
-                ax2 = np.array(panel.get_slow_axis())*size[1]
+                ax1 = np.array(panel.get_fast_axis()) * size[0]
+                ax2 = np.array(panel.get_slow_axis()) * size[1]
                 yield cls(ax1, ax2, ori, **kwargs)
 
     def pix2lab(self, xy, D=None):
-        """ Map xy to 3d coordinates in the lab frame in mm"""
+        """Map xy to 3d coordinates in the lab frame in mm"""
         if D is None:
             D = self.D
-        xy = np.pad(xy, ((0,0), (0,1)), constant_values=1.)
-        S1 = xy@D
+        xy = np.pad(xy, ((0, 0), (0, 1)), constant_values=1.0)
+        S1 = xy @ D
         return S1
 
     def lab2pix(self, xyz, D=None):
-        """ Map 3d coordinates in the lab frame in mm to pixels """
+        """Map 3d coordinates in the lab frame in mm to pixels"""
         if D is None:
             D = self.D
         Dinv = np.linalg.inv(D)
-        return (xyz@Dinv)[:,:2]
+        return (xyz @ Dinv)[:, :2]
 
     def s12pix(self, s1, D=None):
-        """ Project a scattered beam wavevector into pixel coordinates. """
+        """Project a scattered beam wavevector into pixel coordinates."""
         if D is None:
             D = self.D
         Dinv = np.linalg.inv(D)
-        xya = s1@Dinv
-        xy = xya[:,:2]/xya[:,2,None]
+        xya = s1 @ Dinv
+        xy = xya[:, :2] / xya[:, 2, None]
         return xy
 
+
 def orthogonalization(a, b, c, alpha, beta, gamma):
-    """ Compute the orthogonalization matrix from cell params """
-    alpha,beta,gamma = np.pi*alpha/180.,np.pi*beta/180.,np.pi*gamma/180.
+    """Compute the orthogonalization matrix from cell params"""
+    alpha, beta, gamma = (
+        np.pi * alpha / 180.0,
+        np.pi * beta / 180.0,
+        np.pi * gamma / 180.0,
+    )
     cosa = np.cos(alpha)
     cosb = np.cos(beta)
     cosg = np.cos(gamma)
     sing = np.sin(gamma)
-    V = a*b*c*np.sqrt(1. - cosa*cosa-cosb*cosb-cosg*cosg + 2*cosa*cosb*cosg)
-    return np.array([
-        [a, b*cosg, c*cosb],
-        [0., b*sing, c*(cosa-cosb*cosg)/sing],
-        [0., 0., V/a/b/sing],
-    ], device=a.device)
+    V = (
+        a
+        * b
+        * c
+        * np.sqrt(
+            1.0 - cosa * cosa - cosb * cosb - cosg * cosg + 2 * cosa * cosb * cosg
+        )
+    )
+    return np.array(
+        [
+            [a, b * cosg, c * cosb],
+            [0.0, b * sing, c * (cosa - cosb * cosg) / sing],
+            [0.0, 0.0, V / a / b / sing],
+        ],
+        device=a.device,
+    )
+
 
 def mat_to_rot_xyz(R, deg=True):
-    """ Decompose a rotation matrix into euler angles """
+    """Decompose a rotation matrix into euler angles"""
     if R[2, 0] < 1:
-        if R[2,0] > -1:
+        if R[2, 0] > -1:
             rot_y = np.asin(-R[2, 0])
             rot_z = np.atan2(R[1, 0], R[0, 0])
             rot_x = np.atan2(R[2, 1], R[2, 2])
         else:
-            rot_y = np.pi/2.
-            rot_z = -np.atan2(-R[1,2], R[1,1])
-            rot_x = 0.
+            rot_y = np.pi / 2.0
+            rot_z = -np.atan2(-R[1, 2], R[1, 1])
+            rot_x = 0.0
     else:
-        rot_y = np.pi/2.
-        rot_z = np.atan2(-R[1,2], R[1,1])
-        rot_x = 0.
+        rot_y = np.pi / 2.0
+        rot_z = np.atan2(-R[1, 2], R[1, 1])
+        rot_x = 0.0
     if deg:
-        rot_x = np.rad2deg(rot_x) 
+        rot_x = np.rad2deg(rot_x)
         rot_y = np.rad2deg(rot_y)
         rot_z = np.rad2deg(rot_z)
     return rot_x, rot_y, rot_z
 
+
 def rot_xyz_to_mat(rot_x, rot_y, rot_z, deg=True):
-    """ Convert euler angles into a rotation matrix """
+    """Convert euler angles into a rotation matrix"""
     if deg:
         rot_x = np.deg2rad(rot_x)
         rot_y = np.deg2rad(rot_y)
         rot_z = np.deg2rad(rot_z)
-    cx,sx = np.cos(rot_x),np.sin(rot_x)
-    cy,sy = np.cos(rot_y),np.sin(rot_y)
-    cz,sz = np.cos(rot_z),np.sin(rot_z)
+    cx, sx = np.cos(rot_x), np.sin(rot_x)
+    cy, sy = np.cos(rot_y), np.sin(rot_y)
+    cz, sz = np.cos(rot_z), np.sin(rot_z)
 
-    return np.array([
-        [cy*cz, cz*sx*sy-cx*sz, cx*cz*sy+sx*sz],
-        [cy*sz, cx*cz+sx*sy*sz, -cz*sx+cx*sy*sz],
-        [-sy, cy*sx, cx*cy],
-    ], device=rot_x.device)
+    return np.array(
+        [
+            [cy * cz, cz * sx * sy - cx * sz, cx * cz * sy + sx * sz],
+            [cy * sz, cx * cz + sx * sy * sz, -cz * sx + cx * sy * sz],
+            [-sy, cy * sx, cx * cy],
+        ],
+        device=rot_x.device,
+    )
 
 
-
-
-class LaueAssigner():
+class LaueAssigner:
     """
-    An object to assign miller indices to a laue still. 
+    An object to assign miller indices to a laue still.
     """
-    def __init__(self, s0, s1, cell, R, lam_min, lam_max, dmin, spacegroup='1'):
+
+    def __init__(self, s0, s1, cell, R, lam_min, lam_max, dmin, spacegroup="1"):
         """
         Parameters
         ----------
@@ -277,7 +301,7 @@ class LaueAssigner():
 
         # self.s{0,1} are dynamically masked by their outlier status
         self.s0 = s0 / np.linalg.norm(s0)
-        self._s1 = s1 / np.linalg.norm(s1, axis=-1)[:,None]
+        self._s1 = s1 / np.linalg.norm(s1, axis=-1)[:, None]
         self._qobs = self._s1 - self.s0
         self._qpred = np.zeros_like(self._s1)
         self._H = np.zeros_like(self._s1)
@@ -285,24 +309,28 @@ class LaueAssigner():
         self._harmonics = np.zeros(len(self._s1), dtype=bool)
         self._inliers = np.ones(len(self._s1), dtype=bool)
 
-        #Initialize the full reciprocal grid
-        hmax,kmax,lmax = self.cell.get_hkl_limits(dmin)
-        Hall = np.mgrid[
-            -hmax:hmax+1:1.,
-            -kmax:kmax+1:1.,
-            -lmax:lmax+1:1.,
-        ].reshape((3, -1)).T
+        # Initialize the full reciprocal grid
+        hmax, kmax, lmax = self.cell.get_hkl_limits(dmin)
+        Hall = (
+            np.mgrid[
+                -hmax : hmax + 1 : 1.0,
+                -kmax : kmax + 1 : 1.0,
+                -lmax : lmax + 1 : 1.0,
+            ]
+            .reshape((3, -1))
+            .T
+        )
         Hall = Hall[np.any(Hall != 0, axis=1)]
         d = cell.calculate_d_array(Hall)
         Hall = Hall[d >= dmin]
 
-        #Just remove any systematic absences in the space group
+        # Just remove any systematic absences in the space group
         Hall = Hall[~rs.utils.is_absent(Hall, self.spacegroup)]
         self.Hall = Hall
 
     @property
     def RB(self):
-        return self.R@self.B
+        return self.R @ self.B
 
     @property
     def s1(self):
@@ -328,70 +356,73 @@ class LaueAssigner():
     def harmonics(self):
         return self._harmonics[self._inliers]
 
-    #<-- setters that operate on the currently inlying set
+    # <-- setters that operate on the currently inlying set
     def set_qpred(self, qpred):
         self._qpred[self._inliers] = qpred
 
     def set_H(self, H):
-        self._H[self._inliers]  = H
-        self._H[~self._inliers] = 0.
+        self._H[self._inliers] = H
+        self._H[~self._inliers] = 0.0
 
     def set_wav(self, wav):
-        self._wav[self._inliers]  = wav
-        self._wav[~self._inliers] = 0.
+        self._wav[self._inliers] = wav
+        self._wav[~self._inliers] = 0.0
 
     def set_inliers(self, inliers):
         self._inliers[self._inliers] = inliers
 
     def set_harmonics(self, harmonics):
         self._harmonics[self._inliers] = harmonics
-    #--> setters that operate on the currently inlying set
+
+    # --> setters that operate on the currently inlying set
 
     def reset_inliers(self):
         self._inliers = np.ones(len(self._inliers), dtype=bool)
 
-    def reject_outliers(self, nstd=10.):
-        """ update the list of inliers """
+    def reject_outliers(self, nstd=10.0):
+        """update the list of inliers"""
         from sklearn.covariance import MinCovDet
-        X = np.concatenate((self.qobs, self.qpred * self.wav[:,None]), axis=-1)
+
+        X = np.concatenate((self.qobs, self.qpred * self.wav[:, None]), axis=-1)
         dist = MinCovDet().fit(X).dist_
-        self.set_inliers(dist <= nstd**2.)
+        self.set_inliers(dist <= nstd**2.0)
 
     def assign(self):
-        """ 
-        Assign miller indices to the inlier reflections 
+        """
+        Assign miller indices to the inlier reflections
 
-        This method will update: 
+        This method will update:
             self.H     -- miller indices
             self.wav   -- wavelengths
             self.qpred -- predicted scattering vector
         """
-        #Generate the feasible set of reflections from the current geometry
+        # Generate the feasible set of reflections from the current geometry
         Hall = self.Hall
-        qall = (self.RB@Hall.T).T
+        qall = (self.RB @ Hall.T).T
         feasible = (
-            (np.linalg.norm(qall + self.s0/self.lam_min, axis=-1) < 1/self.lam_min) & 
-            (np.linalg.norm(qall + self.s0/self.lam_max, axis=-1) > 1/self.lam_max)
-        ) 
+            np.linalg.norm(qall + self.s0 / self.lam_min, axis=-1) < 1 / self.lam_min
+        ) & (np.linalg.norm(qall + self.s0 / self.lam_max, axis=-1) > 1 / self.lam_max)
         Hall = Hall[feasible]
         qall = qall[feasible]
 
         # Keep track of harmonics in the feasible set TODO
         Raypred = hkl2ray(Hall)
-        _,idx, counts = np.unique(Raypred, return_index=True, return_counts=True, axis=0)
-        harmonics = (counts > 1)
+        _, idx, counts = np.unique(
+            Raypred, return_index=True, return_counts=True, axis=0
+        )
+        harmonics = counts > 1
 
-        #Remove harmonics from the feasible set
+        # Remove harmonics from the feasible set
         Hall = Hall[idx]
         qall = qall[idx]
 
-
-        dmat = rs.utils.angle_between(self.qobs[...,None,:], qall[None,...,:])
+        dmat = rs.utils.angle_between(self.qobs[..., None, :], qall[None, ..., :])
         cost = dmat
 
         from scipy.optimize import linear_sum_assignment
-        _,idx = linear_sum_assignment(cost)
-        H   = Hall[idx]
+
+        _, idx = linear_sum_assignment(cost)
+        H = Hall[idx]
         qpred = qall[idx]
         harmonics = harmonics[idx]
 
@@ -400,24 +431,29 @@ class LaueAssigner():
         self.set_qpred(qpred)
         self.set_harmonics(harmonics)
 
-        #wav_pred = -2.*(self.s0 * qpred).sum(-1) / (qpred*qpred).sum(-1)
-        wav_obs = np.linalg.norm(self.qobs, axis=-1) / np.linalg.norm(self.qpred, axis=-1)
+        # wav_pred = -2.*(self.s0 * qpred).sum(-1) / (qpred*qpred).sum(-1)
+        wav_obs = np.linalg.norm(self.qobs, axis=-1) / np.linalg.norm(
+            self.qpred, axis=-1
+        )
         self.set_wav(wav_obs)
 
     def update_rotation(self):
-        """ Update the rotation matrix (self.R) based on the inlying refls """
+        """Update the rotation matrix (self.R) based on the inlying refls"""
         from scipy.linalg import orthogonal_procrustes
-        misset,_ = orthogonal_procrustes(
-            self.qobs, 
-            self.qpred * self.wav[:,None],
-        )
-        self.R = misset@self.R
 
-class LauePredictor():
+        misset, _ = orthogonal_procrustes(
+            self.qobs,
+            self.qpred * self.wav[:, None],
+        )
+        self.R = misset @ self.R
+
+
+class LauePredictor:
     """
     An object to predict spots given a Laue experiment.
     """
-    def __init__(self, s0, cell, R, lam_min, lam_max, dmin, spacegroup='1'):
+
+    def __init__(self, s0, cell, R, lam_min, lam_max, dmin, spacegroup="1"):
         """
         Parameters
         ----------
@@ -455,12 +491,16 @@ class LauePredictor():
         self.s0 = s0 / np.linalg.norm(s0)
 
         # Initialize the full reciprocal grid
-        hmax,kmax,lmax = self.cell.get_hkl_limits(dmin)
-        Hall = np.mgrid[
-            -hmax:hmax+1:1.,
-            -kmax:kmax+1:1.,
-            -lmax:lmax+1:1.,
-        ].reshape((3, -1)).T
+        hmax, kmax, lmax = self.cell.get_hkl_limits(dmin)
+        Hall = (
+            np.mgrid[
+                -hmax : hmax + 1 : 1.0,
+                -kmax : kmax + 1 : 1.0,
+                -lmax : lmax + 1 : 1.0,
+            ]
+            .reshape((3, -1))
+            .T
+        )
         Hall = Hall[np.any(Hall != 0, axis=1)]
         d = cell.calculate_d_array(Hall)
         Hall = Hall[d >= dmin]
@@ -468,10 +508,10 @@ class LauePredictor():
 
     @property
     def RB(self):
-        return self.R@self.B
+        return self.R @ self.B
 
     def predict_s1(self, delete_harmonics=False):
-        """ 
+        """
         Predicts all s1 vectors for all feasible spots given some resolution-dependent bandwidth
 
         This method provides:
@@ -481,21 +521,22 @@ class LauePredictor():
         """
         # Generate the feasible set of reflections from the current geometry
         Hall = self.Hall
-        qall = (self.RB@Hall.T).T
+        qall = (self.RB @ Hall.T).T
         feasible = (
-            (np.linalg.norm(qall + self.s0/self.lam_min, axis=-1) < 1/self.lam_min) & 
-            (np.linalg.norm(qall + self.s0/self.lam_max, axis=-1) > 1/self.lam_max)
-        ) 
+            np.linalg.norm(qall + self.s0 / self.lam_min, axis=-1) < 1 / self.lam_min
+        ) & (np.linalg.norm(qall + self.s0 / self.lam_max, axis=-1) > 1 / self.lam_max)
         Hall = Hall[feasible]
         qall = qall[feasible]
 
         # Remove harmonics from the feasible set
         Raypred = hkl2ray(Hall)
-        _,idx,counts   = np.unique(Raypred, return_index=True, return_counts=True, axis=0)
-        Hall = Hall[idx] # Remove duplicates
+        _, idx, counts = np.unique(
+            Raypred, return_index=True, return_counts=True, axis=0
+        )
+        Hall = Hall[idx]  # Remove duplicates
         qall = qall[idx]
-        if(delete_harmonics):
-            idx = (counts > 1) # Remove last harmonic
+        if delete_harmonics:
+            idx = counts > 1  # Remove last harmonic
             Hall = Hall[idx]
             qall = qall[idx]
 
@@ -503,10 +544,10 @@ class LauePredictor():
         # TODO: Skip for now and implement this filtration later just to see -- we'll overpredict at high resolution
 
         # For each q, find the wavelength of the Ewald sphere it lies on
-        lams = -2.*(self.s0 * qall).sum(-1) / (qall*qall).sum(-1)
+        lams = -2.0 * (self.s0 * qall).sum(-1) / (qall * qall).sum(-1)
 
         # Using this wavelength per q, generate s1 vectors
-        s0 = self.s0[None,:] / lams[:,None]
+        s0 = self.s0[None, :] / lams[:, None]
         s1_pred = qall + s0
 
         # Write s1 predictions

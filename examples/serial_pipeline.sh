@@ -1,5 +1,5 @@
-# The values in this script are for the DHFR data at 
-# https://zenodo.org/records/10199220. You may need 
+# The values in this script are for the DHFR data at
+# https://zenodo.org/records/10199220. You may need
 # to change these values if analyzing a different data set.
 
 FILE_INPUT_TEMPLATE="/PATH/TO/DATA"
@@ -22,7 +22,7 @@ dials.find_spots imported.expt \
     spotfinder.mp.nproc=$N \
     spotfinder.threshold.dispersion.gain=0.15 \
     spotfinder.filter.max_separation=10 \
-    lookup.mask=$MASK 
+    lookup.mask=$MASK
 
 # Get a monochromatic geometry model
 laue.index imported.expt strong.refl \

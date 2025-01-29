@@ -14,8 +14,7 @@ import numpy as np
 from dials.array_family import flex
 from dials.array_family.flex import reflection_table
 from dials.util import show_mail_handle_errors
-from dials.util.options import (ArgumentParser,
-                                reflections_and_experiments_from_files)
+from dials.util.options import ArgumentParser, reflections_and_experiments_from_files
 from dxtbx.model import ExperimentList
 
 from laue_dials.utils.matching import split_stills_by_image
@@ -168,7 +167,7 @@ def index_image(params, refls, expts):
         img_ids = np.unique(refls["id"])
         img_id = img_ids[img_ids != -1][0]
         logger.info(f"Reindexing experiment {img_id}.")
-            
+
         la = LaueAssigner(
             s0,
             s1,
@@ -225,13 +224,13 @@ def index_image(params, refls, expts):
         keep = all_wavelengths > 0  # Unindexed reflections assigned wavelength of 0
         refls = refls.select(flex.bool(keep))
         exp_ids = np.unique(refls["id"].as_numpy_array())
-        image_id = exp_ids[exp_ids != -1][0] # Should only be a single identifier
+        image_id = exp_ids[exp_ids != -1][0]  # Should only be a single identifier
         refls["id"] = flex.int(np.full(len(refls), image_id))
     else:
         all_wavelengths = refls["wavelength"].as_numpy_array()
         indexed = all_wavelengths > 0
         exp_ids = np.unique(refls["id"])
-        image_id = exp_ids[exp_ids != -1][0] # Should only be a single identifier
+        image_id = exp_ids[exp_ids != -1][0]  # Should only be a single identifier
         refls["id"].set_selected(indexed, flex.int(np.full(len(refls), image_id)))
 
     # Return reindexed expts, refls
@@ -350,7 +349,7 @@ def run(args=None, *, phil=working_phil):
     # Reindex data
     num_processes = params.nproc
     logger.info("Reindexing images.")
-    if num_processes==1:
+    if num_processes == 1:
         output = [index_image(*i) for i in inputs]
     else:
         with Pool(processes=num_processes) as pool:

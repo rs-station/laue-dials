@@ -19,8 +19,11 @@ from dials.util.options import ArgumentParser
 from dxtbx.model import ExperimentList
 from dxtbx.model.experiment_list import ExperimentListFactory
 
-from laue_dials.algorithms.laue import (gen_beam_models, remove_beam_models,
-                                        store_wavelengths)
+from laue_dials.algorithms.laue import (
+    gen_beam_models,
+    remove_beam_models,
+    store_wavelengths,
+)
 from laue_dials.utils.version import laue_version
 
 logger = logging.getLogger("laue-dials.command_line.refine")
@@ -299,9 +302,13 @@ def run(args=None, *, phil=working_phil):
         total_refined_expts, total_refined_refls
     )
 
-    logger.info(f"{np.sum(successes)}/{len(successes)} experiments successfully refined.")
+    logger.info(
+        f"{np.sum(successes)}/{len(successes)} experiments successfully refined."
+    )
     if np.sum(successes) < len(successes):
-        logger.info(f"The following experiments failed to refine: {np.where(successes == False)[0]}.")
+        logger.info(
+            f"The following experiments failed to refine: {np.where(successes == False)[0]}."
+        )
 
     # Save data
     logger.info("Saving refined experiments to %s", params.output.experiments)
