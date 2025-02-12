@@ -18,10 +18,8 @@ from dials.util.options import (ArgumentParser,
                                 reflections_and_experiments_from_files)
 from dxtbx.model import ExperimentList
 
+from laue_dials.utils.matching import split_stills_by_image
 from laue_dials.utils.version import laue_version
-
-# Print laue-dials + DIALS versions
-laue_version()
 
 logger = logging.getLogger("laue-dials.command_line.optimize_indexing")
 
@@ -137,7 +135,7 @@ def index_image(params, refls, expts):
     refls["miller_index"] = flex.miller_index(len(refls))
     refls["harmonics"] = flex.bool([False] * len(refls))
 
-    for i in range(len(expts.imagesets())):
+    for i in range(len(expts)):
         # Get experiment data from experiment objects
         experiment = expts[i]
         cryst = experiment.crystal
@@ -167,7 +165,10 @@ def index_image(params, refls, expts):
         U = np.asarray(cryst.get_U()).reshape(3, 3)
 
         # Generate assigner object
-        logger.info(f"Reindexing image {refls[0]['image_id']}.")
+        img_ids = np.unique(refls["id"])
+        img_id = img_ids[img_ids != -1][0]
+        logger.info(f"Reindexing experiment {img_id}.")
+
         la = LaueAssigner(
             s0,
             s1,
@@ -175,6 +176,7 @@ def index_image(params, refls, expts):
             U,
             params.wavelengths.lam_min,
             params.wavelengths.lam_max,
+            experiment.beam.get_wavelength(),
             params.reciprocal_grid.d_min,
             spacegroup,
         )
@@ -222,6 +224,15 @@ def index_image(params, refls, expts):
         all_wavelengths = refls["wavelength"].as_numpy_array()
         keep = all_wavelengths > 0  # Unindexed reflections assigned wavelength of 0
         refls = refls.select(flex.bool(keep))
+        exp_ids = np.unique(refls["id"].as_numpy_array())
+        image_id = exp_ids[exp_ids != -1][0]  # Should only be a single identifier
+        refls["id"] = flex.int(np.full(len(refls), image_id))
+    else:
+        all_wavelengths = refls["wavelength"].as_numpy_array()
+        indexed = all_wavelengths > 0
+        exp_ids = np.unique(refls["id"])
+        image_id = exp_ids[exp_ids != -1][0]  # Should only be a single identifier
+        refls["id"].set_selected(indexed, flex.int(np.full(len(refls), image_id)))
 
     # Return reindexed expts, refls
     return expts, refls
@@ -280,6 +291,9 @@ def run(args=None, *, phil=working_phil):
     xfel_logger.setLevel(loglevel)
     fh.setLevel(loglevel)
 
+    # Print version information
+    logger.info(laue_version())
+
     # Log diff phil
     diff_phil = parser.diff_phil.as_str()
     if diff_phil != "":
@@ -329,17 +343,14 @@ def run(args=None, *, phil=working_phil):
     ids = list(np.unique(reflections["id"]).astype(np.int32))
     if -1 in ids:
         ids.remove(-1)
-    expts_arr = []
-    refls_arr = []
-    for i in ids:  # Split DIALS objects into lists
-        expts_arr.append(ExperimentList([experiments[i]]))
-        refls_arr.append(reflections.select(reflections["image_id"] == i))
+
+    expts_arr, refls_arr = split_stills_by_image(experiments, reflections)
     inputs = list(zip(repeat(params), refls_arr, expts_arr))
 
     # Reindex data
     num_processes = params.nproc
     logger.info("Reindexing images.")
-    if num_processes==1:
+    if num_processes == 1:
         output = [index_image(*i) for i in inputs]
     else:
         with Pool(processes=num_processes) as pool:
