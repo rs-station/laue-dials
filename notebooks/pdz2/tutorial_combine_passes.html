@@ -6,13 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>Installation &#8212; laue-dials</title>
-    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../_static/basic.css?v=686e5160" />
     <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=0ca6144b" />
     <link rel="stylesheet" type="text/css" href="../../_static/nbsphinx-code-cells.css?v=2aa19091" />
     <script src="../../_static/jquery.js?v=5d32c60e"></script>
     <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-    <script src="../../_static/documentation_options.js?v=333ebcc3"></script>
+    <script src="../../_static/documentation_options.js?v=6f5810c2"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -118,7 +118,7 @@ declare -A OSCS=( [&quot;c&quot;]=2 [&quot;d&quot;]=2 [&quot;e&quot;]=2 [&quot;f
 <span class="k">pass</span><span class="o">=</span><span class="s2">&quot;c&quot;</span>
 <span class="n">FILE_INPUT_TEMPLATE</span><span class="o">=</span><span class="s2">&quot;data/e35$</span><span class="si">{pass}</span><span class="s2">_$</span><span class="si">{TIME}</span><span class="s2">_###.mccd&quot;</span>
 <span class="c1"># Import data into DIALS files</span>
-<span class="n">dials</span><span class="o">.</span><span class="kn">import</span> <span class="nn">geometry.scan.oscillation</span><span class="o">=</span><span class="err">$</span><span class="p">{</span><span class="n">START_ANGLES</span><span class="p">[</span><span class="err">$</span><span class="k">pass</span><span class="p">]},</span><span class="err">$</span><span class="p">{</span><span class="n">OSCS</span><span class="p">[</span><span class="err">$</span><span class="k">pass</span><span class="p">]}</span>\
+<span class="n">dials</span><span class="o">.</span><span class="kn">import</span><span class="w"> </span><span class="nn">geometry.scan.oscillation</span><span class="o">=</span><span class="err">$</span><span class="p">{</span><span class="n">START_ANGLES</span><span class="p">[</span><span class="err">$</span><span class="k">pass</span><span class="p">]},</span><span class="err">$</span><span class="p">{</span><span class="n">OSCS</span><span class="p">[</span><span class="err">$</span><span class="k">pass</span><span class="p">]}</span>\
     <span class="n">geometry</span><span class="o">.</span><span class="n">goniometer</span><span class="o">.</span><span class="n">invert_rotation_axis</span><span class="o">=</span><span class="kc">True</span> \
     <span class="n">geometry</span><span class="o">.</span><span class="n">goniometer</span><span class="o">.</span><span class="n">axes</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span> \
     <span class="n">geometry</span><span class="o">.</span><span class="n">beam</span><span class="o">.</span><span class="n">wavelength</span><span class="o">=</span><span class="mf">1.04</span> \
@@ -277,7 +277,7 @@ laue.compute_rmsds<span class="w"> </span>poly_refined.*<span class="w"> </span>
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">Image</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">IPython.display</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span>
 <span class="n">Image</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s1">&#39;wavelengths.png&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -399,7 +399,7 @@ python<span class="w"> </span>scripts/expt_concat.py<span class="w"> </span><spa
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">reciprocalspaceship</span> <span class="k">as</span> <span class="nn">rs</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">reciprocalspaceship</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">rs</span>
 <span class="n">rs</span><span class="o">.</span><span class="n">read_mtz</span><span class="p">(</span><span class="s2">&quot;gain_0,3/ld_0,3_mtzs/cdef_e35_off.mtz&quot;</span><span class="p">)</span>
 </pre></div>
 </div>

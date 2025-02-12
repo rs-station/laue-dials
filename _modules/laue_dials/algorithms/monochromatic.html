@@ -5,12 +5,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>laue_dials.algorithms.monochromatic &#8212; laue-dials</title>
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../_static/basic.css?v=686e5160" />
     <link rel="stylesheet" type="text/css" href="../../../_static/alabaster.css?v=0ca6144b" />
     <script src="../../../_static/jquery.js?v=5d32c60e"></script>
     <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-    <script src="../../../_static/documentation_options.js?v=333ebcc3"></script>
+    <script src="../../../_static/documentation_options.js?v=6f5810c2"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -42,7 +42,7 @@
 
 <div class="viewcode-block" id="find_spots">
 <a class="viewcode-back" href="../../../api/laue_dials.algorithms.html#laue_dials.algorithms.monochromatic.find_spots">[docs]</a>
-<span class="k">def</span> <span class="nf">find_spots</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">expts</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">find_spots</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">expts</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Find strong reflections on images given a set of experiments.</span>
 
@@ -53,7 +53,7 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        refls (dials.array_family.flex.reflection_table): A reflection table containing the found strong reflections.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">dials.command_line.find_spots</span> <span class="kn">import</span> <span class="n">do_spotfinding</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">dials.command_line.find_spots</span><span class="w"> </span><span class="kn">import</span> <span class="n">do_spotfinding</span>
 
     <span class="n">refls</span> <span class="o">=</span> <span class="n">do_spotfinding</span><span class="p">(</span><span class="n">expts</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">refls</span></div>
@@ -62,7 +62,7 @@
 
 <div class="viewcode-block" id="initial_index">
 <a class="viewcode-back" href="../../../api/laue_dials.algorithms.html#laue_dials.algorithms.monochromatic.initial_index">[docs]</a>
-<span class="k">def</span> <span class="nf">initial_index</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">expts</span><span class="p">,</span> <span class="n">refls</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">initial_index</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">expts</span><span class="p">,</span> <span class="n">refls</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Indexes a dataset at a single wavelength using FFT3D.</span>
 
@@ -75,7 +75,7 @@
 <span class="sd">        expts_indexed (dxtbx.model.ExperimentList): An ExperimentList containing the indexing solution geometry.</span>
 <span class="sd">        refls_indexed (dials.array_family.flex.reflection_table): A reflection table containing reflections with indexed data.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">dials.command_line.index</span> <span class="kn">import</span> <span class="n">index</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">dials.command_line.index</span><span class="w"> </span><span class="kn">import</span> <span class="n">index</span>
 
     <span class="n">expts_indexed</span><span class="p">,</span> <span class="n">refls_indexed</span> <span class="o">=</span> <span class="n">index</span><span class="p">(</span><span class="n">expts</span><span class="p">,</span> <span class="n">refls</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">expts_indexed</span><span class="p">,</span> <span class="n">refls_indexed</span></div>
@@ -84,7 +84,7 @@
 
 <div class="viewcode-block" id="scan_varying_refine">
 <a class="viewcode-back" href="../../../api/laue_dials.algorithms.html#laue_dials.algorithms.monochromatic.scan_varying_refine">[docs]</a>
-<span class="k">def</span> <span class="nf">scan_varying_refine</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">expts</span><span class="p">,</span> <span class="n">refls</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">scan_varying_refine</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">expts</span><span class="p">,</span> <span class="n">refls</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Performs scan-varying geometric refinement over a sequence of images.</span>
 
@@ -97,7 +97,7 @@
 <span class="sd">        expts_refined (dxtbx.model.ExperimentList): An ExperimentList containing the refined geometric solution.</span>
 <span class="sd">        refls_refined (dials.array_family.flex.reflection_table): A reflection table containing reflections with refined data.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">dials.command_line.refine</span> <span class="kn">import</span> <span class="n">run_dials_refine</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">dials.command_line.refine</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_dials_refine</span>
 
     <span class="n">expts_refined</span><span class="p">,</span> <span class="n">refls_refined</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">run_dials_refine</span><span class="p">(</span><span class="n">expts</span><span class="p">,</span> <span class="n">refls</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">expts_refined</span><span class="p">,</span> <span class="n">refls_refined</span></div>

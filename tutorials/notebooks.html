@@ -6,12 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>Contents &#8212; laue-dials</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=686e5160" />
     <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=0ca6144b" />
     <script src="../_static/jquery.js?v=5d32c60e"></script>
     <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-    <script src="../_static/documentation_options.js?v=333ebcc3"></script>
+    <script src="../_static/documentation_options.js?v=6f5810c2"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -43,6 +43,19 @@
 <h2>Jupyter Notebook Tutorials<a class="headerlink" href="#jupyter-notebook-tutorials" title="Link to this heading"></a></h2>
 <p>These tutorials can help guide you through analyzing a data set with Laue-DIALS. The data for
 these tutorials are stored on SBGrid, and can be downloaded using the following in any bash terminal:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># HEWL</span>
+rsync<span class="w"> </span>-av<span class="w"> </span>rsync://data.sbgrid.org/10.15785/SBGRID/1118<span class="w"> </span>.
+<span class="nb">cd</span><span class="w"> </span><span class="m">1118</span><span class="w"> </span><span class="p">;</span><span class="w"> </span>shasum<span class="w"> </span>-c<span class="w"> </span>files.sha
+
+<span class="c1"># PDZ2</span>
+rsync<span class="w"> </span>-av<span class="w"> </span>rsync://data.sbgrid.org/10.15785/SBGRID/1116<span class="w"> </span>.
+<span class="nb">cd</span><span class="w"> </span><span class="m">1116</span><span class="w"> </span><span class="p">;</span><span class="w"> </span>shasum<span class="w"> </span>-c<span class="w"> </span>files.sha
+
+<span class="c1"># DHFR</span>
+rsync<span class="w"> </span>-av<span class="w"> </span>rsync://data.sbgrid.org/10.15785/SBGRID/1117<span class="w"> </span>.
+<span class="nb">cd</span><span class="w"> </span><span class="m">1117</span><span class="w"> </span><span class="p">;</span><span class="w"> </span>shasum<span class="w"> </span>-c<span class="w"> </span>files.sha
+</pre></div>
+</div>
 <p>These tutorials are tested most recently with version 3.17.0 of DIALS.
 To reproduce a python environment for analyzing these data, you can
 install DIALS (see <a class="reference external" href="https://dials.github.io/index.html">DIALS</a>) and use the YAML file specified

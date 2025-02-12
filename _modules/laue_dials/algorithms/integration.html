@@ -5,12 +5,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>laue_dials.algorithms.integration &#8212; laue-dials</title>
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../_static/basic.css?v=686e5160" />
     <link rel="stylesheet" type="text/css" href="../../../_static/alabaster.css?v=0ca6144b" />
     <script src="../../../_static/jquery.js?v=5d32c60e"></script>
     <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-    <script src="../../../_static/documentation_options.js?v=333ebcc3"></script>
+    <script src="../../../_static/documentation_options.js?v=6f5810c2"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -39,17 +39,17 @@
 <span class="sd">This file contains useful classes and functions for profiling and integration</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">scipy.spatial</span> <span class="kn">import</span> <span class="n">KDTree</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.spatial</span><span class="w"> </span><span class="kn">import</span> <span class="n">KDTree</span>
 
 
 <div class="viewcode-block" id="Profile">
 <a class="viewcode-back" href="../../../api/laue_dials.algorithms.html#laue_dials.algorithms.integration.Profile">[docs]</a>
-<span class="k">class</span> <span class="nc">Profile</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Profile</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">x</span><span class="p">,</span>
         <span class="n">y</span><span class="p">,</span>
@@ -104,7 +104,7 @@
 
 <div class="viewcode-block" id="Profile.set_profile_params">
 <a class="viewcode-back" href="../../../api/laue_dials.algorithms.html#laue_dials.algorithms.integration.Profile.set_profile_params">[docs]</a>
-    <span class="k">def</span> <span class="nf">set_profile_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">slope</span><span class="p">,</span> <span class="n">intercept</span><span class="p">,</span> <span class="n">cen_x</span><span class="p">,</span> <span class="n">cen_y</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_profile_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">slope</span><span class="p">,</span> <span class="n">intercept</span><span class="p">,</span> <span class="n">cen_x</span><span class="p">,</span> <span class="n">cen_y</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set profile parameters.</span>
 
@@ -132,7 +132,7 @@
 
 <div class="viewcode-block" id="Profile.fit">
 <a class="viewcode-back" href="../../../api/laue_dials.algorithms.html#laue_dials.algorithms.integration.Profile.fit">[docs]</a>
-    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nsteps</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nsteps</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Fit the profile.</span>
 
@@ -153,7 +153,7 @@
 <div class="viewcode-block" id="Profile.from_dataframe">
 <a class="viewcode-back" href="../../../api/laue_dials.algorithms.html#laue_dials.algorithms.integration.Profile.from_dataframe">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">from_dataframe</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">x_key</span><span class="o">=</span><span class="s2">&quot;dx&quot;</span><span class="p">,</span> <span class="n">y_key</span><span class="o">=</span><span class="s2">&quot;dy&quot;</span><span class="p">,</span> <span class="n">count_key</span><span class="o">=</span><span class="s2">&quot;counts&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_dataframe</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">x_key</span><span class="o">=</span><span class="s2">&quot;dx&quot;</span><span class="p">,</span> <span class="n">y_key</span><span class="o">=</span><span class="s2">&quot;dy&quot;</span><span class="p">,</span> <span class="n">count_key</span><span class="o">=</span><span class="s2">&quot;counts&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create a Profile instance from a DataFrame.</span>
 
@@ -174,7 +174,7 @@
 
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">difference_vectors</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">difference_vectors</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the difference vectors.</span>
 
@@ -184,7 +184,7 @@
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">cen_x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">cen_y</span><span class="p">))</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">background</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">background</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the background.</span>
 
@@ -195,7 +195,7 @@
 
 <div class="viewcode-block" id="Profile.update_mask">
 <a class="viewcode-back" href="../../../api/laue_dials.algorithms.html#laue_dials.algorithms.integration.Profile.update_mask">[docs]</a>
-    <span class="k">def</span> <span class="nf">update_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fg_cutoff</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bg_cutoff</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fg_cutoff</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bg_cutoff</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Update the mask.</span>
 
@@ -242,7 +242,7 @@
 
 <div class="viewcode-block" id="Profile.update_background_plane">
 <a class="viewcode-back" href="../../../api/laue_dials.algorithms.html#laue_dials.algorithms.integration.Profile.update_background_plane">[docs]</a>
-    <span class="k">def</span> <span class="nf">update_background_plane</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.9</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_background_plane</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.9</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Update the background plane.</span>
 
@@ -266,7 +266,7 @@
 
 <div class="viewcode-block" id="Profile.update_profile">
 <a class="viewcode-back" href="../../../api/laue_dials.algorithms.html#laue_dials.algorithms.integration.Profile.update_profile">[docs]</a>
-    <span class="k">def</span> <span class="nf">update_profile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.9</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_profile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.9</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Update the profile.</span>
 
@@ -294,7 +294,7 @@
 
 <div class="viewcode-block" id="Profile.integrate">
 <a class="viewcode-back" href="../../../api/laue_dials.algorithms.html#laue_dials.algorithms.integration.Profile.integrate">[docs]</a>
-    <span class="k">def</span> <span class="nf">integrate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">integrate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Integrate the profile.&quot;&quot;&quot;</span>
         <span class="n">bg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">background</span>
 
@@ -306,8 +306,8 @@
 
 <div class="viewcode-block" id="SegmentedImage">
 <a class="viewcode-back" href="../../../api/laue_dials.algorithms.html#laue_dials.algorithms.integration.SegmentedImage">[docs]</a>
-<span class="k">class</span> <span class="nc">SegmentedImage</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pixels</span><span class="p">,</span> <span class="n">centroids</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SegmentedImage</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pixels</span><span class="p">,</span> <span class="n">centroids</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initialize a SegmentedImage instance.</span>
 
@@ -368,7 +368,7 @@
 
 <div class="viewcode-block" id="SegmentedImage.integrate">
 <a class="viewcode-back" href="../../../api/laue_dials.algorithms.html#laue_dials.algorithms.integration.SegmentedImage.integrate">[docs]</a>
-    <span class="k">def</span> <span class="nf">integrate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">isigi_cutoff</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">knn</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">integrate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">isigi_cutoff</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">knn</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Integrate the SegmentedImage.</span>
 

@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>laue_dials.diagnostics namespace &#8212; laue-dials</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=686e5160" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=0ca6144b" />
+    <script src="../_static/jquery.js?v=5d32c60e"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+    <script src="../_static/documentation_options.js?v=6f5810c2"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <link rel="icon" href="../_static/rs-favicon_32x32.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="laue_dials.utils namespace" href="laue_dials.utils.html" />
+    <link rel="prev" title="laue_dials.command_line namespace" href="laue_dials.command_line.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-laue_dials.diagnostics">
+<span id="laue-dials-diagnostics-namespace"></span><h1>laue_dials.diagnostics namespace<a class="headerlink" href="#module-laue_dials.diagnostics" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="laue-dials-diagnostics-compare-a-matrices-module">
+<h2>laue_dials.diagnostics.compare_A_matrices module<a class="headerlink" href="#laue-dials-diagnostics-compare-a-matrices-module" title="Link to this heading"></a></h2>
+</section>
+<section id="module-laue_dials.diagnostics.diffgeolib">
+<span id="laue-dials-diagnostics-diffgeolib-module"></span><h2>laue_dials.diagnostics.diffgeolib module<a class="headerlink" href="#module-laue_dials.diagnostics.diffgeolib" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="laue_dials.diagnostics.diffgeolib.Detector">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">laue_dials.diagnostics.diffgeolib.</span></span><span class="sig-name descname"><span class="pre">Detector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ori</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/diagnostics/diffgeolib.html#Detector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.diagnostics.diffgeolib.Detector" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.12/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="laue_dials.diagnostics.diffgeolib.Detector.from_expt_file">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_expt_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/diagnostics/diffgeolib.html#Detector.from_expt_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.diagnostics.diffgeolib.Detector.from_expt_file" title="Link to this definition"></a></dt>
+<dd><p>Return a generator of Detector instances for each panel described in <cite>filename</cite></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="laue_dials.diagnostics.diffgeolib.Detector.from_inp_file">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_inp_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/diagnostics/diffgeolib.html#Detector.from_inp_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.diagnostics.diffgeolib.Detector.from_inp_file" title="Link to this definition"></a></dt>
+<dd><p>doesn’t account for tilt yet</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="laue_dials.diagnostics.diffgeolib.Detector.lab2pix">
+<span class="sig-name descname"><span class="pre">lab2pix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xyz</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">D</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/diagnostics/diffgeolib.html#Detector.lab2pix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.diagnostics.diffgeolib.Detector.lab2pix" title="Link to this definition"></a></dt>
+<dd><p>Map 3d coordinates in the lab frame in mm to pixels</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="laue_dials.diagnostics.diffgeolib.Detector.pix2lab">
+<span class="sig-name descname"><span class="pre">pix2lab</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">D</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/diagnostics/diffgeolib.html#Detector.pix2lab"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.diagnostics.diffgeolib.Detector.pix2lab" title="Link to this definition"></a></dt>
+<dd><p>Map xy to 3d coordinates in the lab frame in mm</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="laue_dials.diagnostics.diffgeolib.Detector.s12pix">
+<span class="sig-name descname"><span class="pre">s12pix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">D</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/diagnostics/diffgeolib.html#Detector.s12pix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.diagnostics.diffgeolib.Detector.s12pix" title="Link to this definition"></a></dt>
+<dd><p>Project a scattered beam wavevector into pixel coordinates.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="laue_dials.diagnostics.diffgeolib.LaueAssigner">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">laue_dials.diagnostics.diffgeolib.</span></span><span class="sig-name descname"><span class="pre">LaueAssigner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lam_min</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lam_max</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dmin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spacegroup</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/diagnostics/diffgeolib.html#LaueAssigner"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.diagnostics.diffgeolib.LaueAssigner" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.12/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>An object to assign miller indices to a laue still.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="laue_dials.diagnostics.diffgeolib.LaueAssigner.H">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">H</span></span><a class="headerlink" href="#laue_dials.diagnostics.diffgeolib.LaueAssigner.H" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="laue_dials.diagnostics.diffgeolib.LaueAssigner.RB">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">RB</span></span><a class="headerlink" href="#laue_dials.diagnostics.diffgeolib.LaueAssigner.RB" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="laue_dials.diagnostics.diffgeolib.LaueAssigner.assign">
+<span class="sig-name descname"><span class="pre">assign</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/diagnostics/diffgeolib.html#LaueAssigner.assign"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.diagnostics.diffgeolib.LaueAssigner.assign" title="Link to this definition"></a></dt>
+<dd><p>Assign miller indices to the inlier reflections</p>
+<dl class="simple">
+<dt>This method will update:</dt><dd><p>self.H     – miller indices
+self.wav   – wavelengths
+self.qpred – predicted scattering vector</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="laue_dials.diagnostics.diffgeolib.LaueAssigner.harmonics">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">harmonics</span></span><a class="headerlink" href="#laue_dials.diagnostics.diffgeolib.LaueAssigner.harmonics" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="laue_dials.diagnostics.diffgeolib.LaueAssigner.qobs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">qobs</span></span><a class="headerlink" href="#laue_dials.diagnostics.diffgeolib.LaueAssigner.qobs" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="laue_dials.diagnostics.diffgeolib.LaueAssigner.qpred">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">qpred</span></span><a class="headerlink" href="#laue_dials.diagnostics.diffgeolib.LaueAssigner.qpred" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="laue_dials.diagnostics.diffgeolib.LaueAssigner.reject_outliers">
+<span class="sig-name descname"><span class="pre">reject_outliers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nstd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/diagnostics/diffgeolib.html#LaueAssigner.reject_outliers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.diagnostics.diffgeolib.LaueAssigner.reject_outliers" title="Link to this definition"></a></dt>
+<dd><p>update the list of inliers</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="laue_dials.diagnostics.diffgeolib.LaueAssigner.reset_inliers">
+<span class="sig-name descname"><span class="pre">reset_inliers</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/diagnostics/diffgeolib.html#LaueAssigner.reset_inliers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.diagnostics.diffgeolib.LaueAssigner.reset_inliers" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="laue_dials.diagnostics.diffgeolib.LaueAssigner.s1">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">s1</span></span><a class="headerlink" href="#laue_dials.diagnostics.diffgeolib.LaueAssigner.s1" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="laue_dials.diagnostics.diffgeolib.LaueAssigner.set_H">
+<span class="sig-name descname"><span class="pre">set_H</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">H</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/diagnostics/diffgeolib.html#LaueAssigner.set_H"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.diagnostics.diffgeolib.LaueAssigner.set_H" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="laue_dials.diagnostics.diffgeolib.LaueAssigner.set_harmonics">
+<span class="sig-name descname"><span class="pre">set_harmonics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">harmonics</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/diagnostics/diffgeolib.html#LaueAssigner.set_harmonics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.diagnostics.diffgeolib.LaueAssigner.set_harmonics" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="laue_dials.diagnostics.diffgeolib.LaueAssigner.set_inliers">
+<span class="sig-name descname"><span class="pre">set_inliers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inliers</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/diagnostics/diffgeolib.html#LaueAssigner.set_inliers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.diagnostics.diffgeolib.LaueAssigner.set_inliers" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="laue_dials.diagnostics.diffgeolib.LaueAssigner.set_qpred">
+<span class="sig-name descname"><span class="pre">set_qpred</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qpred</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/diagnostics/diffgeolib.html#LaueAssigner.set_qpred"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.diagnostics.diffgeolib.LaueAssigner.set_qpred" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="laue_dials.diagnostics.diffgeolib.LaueAssigner.set_wav">
+<span class="sig-name descname"><span class="pre">set_wav</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wav</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/diagnostics/diffgeolib.html#LaueAssigner.set_wav"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.diagnostics.diffgeolib.LaueAssigner.set_wav" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="laue_dials.diagnostics.diffgeolib.LaueAssigner.update_rotation">
+<span class="sig-name descname"><span class="pre">update_rotation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/diagnostics/diffgeolib.html#LaueAssigner.update_rotation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.diagnostics.diffgeolib.LaueAssigner.update_rotation" title="Link to this definition"></a></dt>
+<dd><p>Update the rotation matrix (self.R) based on the inlying refls</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="laue_dials.diagnostics.diffgeolib.LaueAssigner.wav">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">wav</span></span><a class="headerlink" href="#laue_dials.diagnostics.diffgeolib.LaueAssigner.wav" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="laue_dials.diagnostics.diffgeolib.LauePredictor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">laue_dials.diagnostics.diffgeolib.</span></span><span class="sig-name descname"><span class="pre">LauePredictor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lam_min</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lam_max</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dmin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spacegroup</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/diagnostics/diffgeolib.html#LauePredictor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.diagnostics.diffgeolib.LauePredictor" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.12/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>An object to predict spots given a Laue experiment.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="laue_dials.diagnostics.diffgeolib.LauePredictor.RB">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">RB</span></span><a class="headerlink" href="#laue_dials.diagnostics.diffgeolib.LauePredictor.RB" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="laue_dials.diagnostics.diffgeolib.LauePredictor.predict_s1">
+<span class="sig-name descname"><span class="pre">predict_s1</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">delete_harmonics</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/diagnostics/diffgeolib.html#LauePredictor.predict_s1"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.diagnostics.diffgeolib.LauePredictor.predict_s1" title="Link to this definition"></a></dt>
+<dd><p>Predicts all s1 vectors for all feasible spots given some resolution-dependent bandwidth</p>
+<dl class="simple">
+<dt>This method provides:</dt><dd><p>s1_pred – predicted feasible s1 vectors
+lams – the wavelengths (in Angstroms) associated with these s1 vectors
+qall – the q vectors associated with these s1 vectors</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="laue_dials.diagnostics.diffgeolib.align_hkls">
+<span class="sig-prename descclassname"><span class="pre">laue_dials.diagnostics.diffgeolib.</span></span><span class="sig-name descname"><span class="pre">align_hkls</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reference</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spacegroup</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">anomalous</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/diagnostics/diffgeolib.html#align_hkls"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.diagnostics.diffgeolib.align_hkls" title="Link to this definition"></a></dt>
+<dd><p>Use the point group operators in <cite>spacegroup</cite> to align target hkls to reference.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>reference</strong> (<em>array</em>) – n x 3 array of miller indices</p></li>
+<li><p><strong>target</strong> (<em>array</em>) – n x 3 array of miller indices</p></li>
+<li><p><strong>spacegroup</strong> (<em>gemmi.Spacegroup</em>) – The space group of reference/target.</p></li>
+<li><p><strong>anomalous</strong> (<a class="reference external" href="https://docs.python.org/3.12/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a><em>(</em><em>optional</em><em>)</em>) – If true, test Friedel symmetries too.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>aligned</strong> – n x 3 array of miller indices equivalent to target</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="laue_dials.diagnostics.diffgeolib.hkl2ray">
+<span class="sig-prename descclassname"><span class="pre">laue_dials.diagnostics.diffgeolib.</span></span><span class="sig-name descname"><span class="pre">hkl2ray</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hkl</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelength</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/diagnostics/diffgeolib.html#hkl2ray"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.diagnostics.diffgeolib.hkl2ray" title="Link to this definition"></a></dt>
+<dd><p>Convert a miller index to the shortest member of its central ray.
+Optionally, adjust its wavelength accordingly.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>hkl</strong> (<em>array</em>) – <cite>n x 3</cite> array of miller indices. the dtype must be interpretable as an integeger</p></li>
+<li><p><strong>wavelength</strong> (<em>array</em><em> (</em><em>optional</em><em>)</em>) – length <cite>n</cite> array of wavelengths corresponding to each miller index</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>reduced_hkl</strong> (<em>array</em>) – The miller index of the shortest vector on the same central ray as hkl</p></li>
+<li><p><strong>reduced_wavelength</strong> (<em>array (optional)</em>) – The wavelengths corresponding to reduced_hkl</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="laue_dials.diagnostics.diffgeolib.indexing_rotation_tril">
+<span class="sig-prename descclassname"><span class="pre">laue_dials.diagnostics.diffgeolib.</span></span><span class="sig-name descname"><span class="pre">indexing_rotation_tril</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/diagnostics/diffgeolib.html#indexing_rotation_tril"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.diagnostics.diffgeolib.indexing_rotation_tril" title="Link to this definition"></a></dt>
+<dd><p>Convert the reciprocal space indexing matrix, A into the product of
+an orthogonal matrix U and a lower triangular matrix B</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>A</strong> (<em>np.array</em>) – A 3x3 indexing matrix such that the scattering vector <cite>S1-S0=Q=A&#64;h</cite></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>U</strong> (<em>np.array</em>) – An orthogonal 3x3 matrix</p></li>
+<li><p><strong>B</strong> (<em>np.array</em>) – A 3x3 lower triangular matrix</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="laue_dials.diagnostics.diffgeolib.is_ray_equivalent">
+<span class="sig-prename descclassname"><span class="pre">laue_dials.diagnostics.diffgeolib.</span></span><span class="sig-name descname"><span class="pre">is_ray_equivalent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hkl1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hkl2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/diagnostics/diffgeolib.html#is_ray_equivalent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.diagnostics.diffgeolib.is_ray_equivalent" title="Link to this definition"></a></dt>
+<dd><p>Test for equivalency between two miller indices in a Laue experiment. Returns a boolean array for each of the <cite>n</cite> hkls in <cite>hkl{1,2}</cite>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="laue_dials.diagnostics.diffgeolib.mat_to_rot_xyz">
+<span class="sig-prename descclassname"><span class="pre">laue_dials.diagnostics.diffgeolib.</span></span><span class="sig-name descname"><span class="pre">mat_to_rot_xyz</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">R</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/diagnostics/diffgeolib.html#mat_to_rot_xyz"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.diagnostics.diffgeolib.mat_to_rot_xyz" title="Link to this definition"></a></dt>
+<dd><p>Decompose a rotation matrix into euler angles</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="laue_dials.diagnostics.diffgeolib.normalize">
+<span class="sig-prename descclassname"><span class="pre">laue_dials.diagnostics.diffgeolib.</span></span><span class="sig-name descname"><span class="pre">normalize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/diagnostics/diffgeolib.html#normalize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.diagnostics.diffgeolib.normalize" title="Link to this definition"></a></dt>
+<dd><p>Normalize the last dimension of an array by dividing by its L2 norm</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="laue_dials.diagnostics.diffgeolib.orthogonalization">
+<span class="sig-prename descclassname"><span class="pre">laue_dials.diagnostics.diffgeolib.</span></span><span class="sig-name descname"><span class="pre">orthogonalization</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/diagnostics/diffgeolib.html#orthogonalization"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.diagnostics.diffgeolib.orthogonalization" title="Link to this definition"></a></dt>
+<dd><p>Compute the orthogonalization matrix from cell params</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="laue_dials.diagnostics.diffgeolib.rot_xyz_to_mat">
+<span class="sig-prename descclassname"><span class="pre">laue_dials.diagnostics.diffgeolib.</span></span><span class="sig-name descname"><span class="pre">rot_xyz_to_mat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rot_x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rot_y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rot_z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/diagnostics/diffgeolib.html#rot_xyz_to_mat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.diagnostics.diffgeolib.rot_xyz_to_mat" title="Link to this definition"></a></dt>
+<dd><p>Convert euler angles into a rotation matrix</p>
+</dd></dl>
+
+</section>
+<section id="laue-dials-diagnostics-match-precog-hkls-module">
+<h2>laue_dials.diagnostics.match_precog_hkls module<a class="headerlink" href="#laue-dials-diagnostics-match-precog-hkls-module" title="Link to this heading"></a></h2>
+</section>
+<section id="laue-dials-diagnostics-quintile-strongs-module">
+<h2>laue_dials.diagnostics.quintile_strongs module<a class="headerlink" href="#laue-dials-diagnostics-quintile-strongs-module" title="Link to this heading"></a></h2>
+</section>
+<section id="laue-dials-diagnostics-viewer-module">
+<h2>laue_dials.diagnostics.viewer module<a class="headerlink" href="#laue-dials-diagnostics-viewer-module" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">laue_dials</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributions &amp; Help</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/notebooks.html">Contents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/notebooks.html#indices-and-tables">Indices and tables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cli/functions.html">Command-Line Reference</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">Full API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="laue_dials.html">laue_dials package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="laue_dials.html#subpackages">Subpackages</a></li>
+<li class="toctree-l3"><a class="reference internal" href="laue_dials.html#module-laue_dials">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/tutorials.html">Jupyter Tutorials</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">laue_dials</a><ul>
+  <li><a href="laue_dials.html">laue_dials package</a><ul>
+      <li>Previous: <a href="laue_dials.command_line.html" title="previous chapter">laue_dials.command_line namespace</a></li>
+      <li>Next: <a href="laue_dials.utils.html" title="next chapter">laue_dials.utils namespace</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2024, Rick Hewitt.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.1.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../_sources/api/laue_dials.diagnostics.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

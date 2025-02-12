@@ -6,12 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>laue_dials.compute_rmsds &#8212; laue-dials</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=686e5160" />
     <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=0ca6144b" />
     <script src="../_static/jquery.js?v=5d32c60e"></script>
     <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-    <script src="../_static/documentation_options.js?v=333ebcc3"></script>
+    <script src="../_static/documentation_options.js?v=6f5810c2"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -52,6 +52,7 @@
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">show</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="n">save</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="n">csv</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">image</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="n">output</span> <span class="o">=</span> <span class="s2">&quot;residuals.png&quot;</span>
 <span class="n">refined_only</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="n">log</span> <span class="o">=</span> <span class="s1">&#39;laue.compute_rmsds.log&#39;</span>
@@ -71,6 +72,9 @@
 <span class="n">csv</span> <span class="o">=</span> <span class="kc">None</span>
   <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Save a CSV of the RMSDs per image with this filename.&quot;</span>
   <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">str</span>
+<span class="n">image</span> <span class="o">=</span> <span class="kc">None</span>
+  <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Show a histogram of residuals for this image.&quot;</span>
+  <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">output</span> <span class="o">=</span> <span class="s2">&quot;residuals.png&quot;</span>
   <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;The filename for the generated plot.&quot;</span>
   <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">str</span>
@@ -125,6 +129,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/notebooks.html">Contents</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/notebooks.html#indices-and-tables">Indices and tables</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="functions.html">Command-Line Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="version.html">laue_dials.version</a></li>
 <li class="toctree-l2"><a class="reference internal" href="find_spots.html">laue_dials.find_spots</a></li>
 <li class="toctree-l2"><a class="reference internal" href="index.html">laue_dials.index</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sequence_to_stills.html">laue_dials.sequence_to_stills</a></li>
