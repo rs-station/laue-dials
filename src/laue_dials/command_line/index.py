@@ -15,9 +15,6 @@ from laue_dials.algorithms.monochromatic import (initial_index,
                                                  scan_varying_refine)
 from laue_dials.utils.version import laue_version
 
-# Print laue-dials + DIALS versions
-laue_version()
-
 logger = logging.getLogger("laue-dials.command_line.index")
 
 help_message = """
@@ -218,6 +215,9 @@ def run(args=None, *, phil=working_phil):
     xfel_logger.setLevel(loglevel)
     fh.setLevel(loglevel)
 
+    # Print version information
+    logger.info(laue_version())
+
     # Log diff phil
     diff_phil = parser.diff_phil.as_str()
     if diff_phil != "":
@@ -233,6 +233,10 @@ def run(args=None, *, phil=working_phil):
     strong_refls, imported_expts = reflections_and_experiments_from_files(
         params.input.reflections, params.input.experiments
     )
+
+    # Remove extraneous data from params
+    params.input.reflections = None
+    params.input.experiments = None
 
     # Get initial time for process
     start_time = time.time()

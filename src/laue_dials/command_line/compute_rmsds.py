@@ -19,9 +19,6 @@ from matplotlib import pyplot as plt
 
 from laue_dials.utils.version import laue_version
 
-# Print laue-dials + DIALS versions
-laue_version()
-
 logger = logging.getLogger("laue-dials.command_line.compute_rmsds")
 
 help_message = """
@@ -46,6 +43,10 @@ phil_scope = libtbx.phil.parse(
   csv = None
     .type = str
     .help = "Save a CSV of the RMSDs per image with this filename."
+
+  image = None
+    .type = int
+    .help = "Show a histogram of residuals for this image."
 
   output = "residuals.png"
     .type = str
@@ -126,6 +127,9 @@ def run(args=None, *, phil=working_phil):
     xfel_logger.setLevel(loglevel)
     fh.setLevel(loglevel)
 
+    # Print version information
+    logger.info(laue_version())
+
     # Print help if no input
     if not params.input.experiments or not params.input.reflections:
         parser.print_help()
@@ -184,12 +188,20 @@ def run(args=None, *, phil=working_phil):
     y_resids = data["ycal"] - data["yobs"]
     sqr_resids = x_resids**2 + y_resids**2
     mean_resids = np.zeros(len(images))
+    n_refls = np.zeros(len(images))
     for i, img_num in enumerate(images):
         sel = data["image"] == img_num
         mean_resids[i] = np.mean(sqr_resids[sel])
+        n_refls[i] = sum(sel)
+        if params.image == img_num:
+            plt.hist(np.sqrt(sqr_resids[sel]))
+            plt.xlabel("Residuals (px)")
+            plt.xlabel("# Reflections")
+            plt.title(f"Residuals for Image {img_num}")
+
     rmsds = np.sqrt(mean_resids)
 
-    resid_data = pd.DataFrame({"Image": images, "RMSD (px)": rmsds})
+    resid_data = pd.DataFrame({"Image": images, "RMSD (px)": rmsds, "N Spots": n_refls})
 
     pd.set_option("display.max_rows", None)
     logger.info(f"RMSDs per image: \n{resid_data}")

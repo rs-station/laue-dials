@@ -186,13 +186,16 @@ class LaueAssigner(LaueBase):
     An object to assign miller indices to a laue still
     """
 
-    def __init__(self, s0, s1, cell, R, lam_min, lam_max, dmin, spacegroup="1"):
+    def __init__(
+        self, s0, s1, cell, R, lam_min, lam_max, lam_peak, dmin, spacegroup="1"
+    ):
         """
         Parameters:
             s1 (np.ndarray): n x 3 array indicating the direction of the scattered beam wavevector.
         """
         super().__init__(s0, cell, R, lam_min, lam_max, dmin, spacegroup)
 
+        self.lam_peak = lam_peak
         self._s1 = s1 / np.linalg.norm(s1, axis=-1)[:, None]
         self._qobs = self._s1 - self.s0
         self._qpred = np.zeros_like(self._s1)
@@ -349,11 +352,30 @@ class LaueAssigner(LaueBase):
         _, idx, counts = np.unique(
             Raypred, return_index=True, return_counts=True, axis=0
         )
-        harmonics = counts > 1
+        unique_rays, counts = np.unique(Raypred, return_counts=True, axis=0)
+        harmonic_rays = counts > 1
 
-        # Remove harmonics from the feasible set
-        Hall = Hall[idx]
-        qall = qall[idx]
+        # Keep only harmonics closest to peak wavelength in feasible set
+        harmonics = np.zeros(len(Hall), dtype=bool)
+        to_keep = np.ones(len(Hall), dtype=bool)
+        for i, ray in enumerate(unique_rays[harmonic_rays]):
+            idh = np.where((Raypred == ray).all(axis=1))[0]
+            if len(idh) == 1:  # Not a harmonic
+                to_keep[idh] = True
+            else:
+                harmonics[idh] = True
+                qharm = qall[idh]
+                harmonic_wavelengths = (
+                    -2.0 * (self.s0 * qharm).sum(-1) / (qharm * qharm).sum(-1)
+                )
+                kept_harmonic = np.argmin(np.abs(harmonic_wavelengths - self.lam_peak))
+                to_keep[idh] = False
+                to_keep[idh[kept_harmonic]] = True
+
+        # Remove non-optimal harmonics from the feasible set
+        Hall = Hall[to_keep]
+        qall = qall[to_keep]
+        harmonics = harmonics[to_keep]
 
         dmat = rs.utils.angle_between(self.qobs[..., None, :], qall[None, ..., :])
         cost = dmat

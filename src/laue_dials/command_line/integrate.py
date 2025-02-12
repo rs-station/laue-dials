@@ -23,9 +23,6 @@ from dials.util.options import (ArgumentParser,
 from laue_dials.algorithms.integration import SegmentedImage
 from laue_dials.utils.version import laue_version
 
-# Print laue-dials + DIALS versions
-laue_version()
-
 logger = logging.getLogger("laue-dials.command_line.integrate")
 
 help_message = """
@@ -191,6 +188,9 @@ def run(args=None, *, phil=working_phil):
     xfel_logger.setLevel(loglevel)
     fh.setLevel(loglevel)
 
+    # Print version information
+    logger.info(laue_version())
+
     # Log diff phil
     diff_phil = parser.diff_phil.as_str()
     if diff_phil != "":
@@ -207,6 +207,10 @@ def run(args=None, *, phil=working_phil):
         params.input.reflections, params.input.experiments
     )
     preds = reflections[0]  # Get predictions
+
+    # Remove duplicate expt + refl data
+    params.input.experiments = None
+    params.input.reflections = None
 
     # Sanity checks
     if len(expts) == 0:
@@ -226,8 +230,11 @@ def run(args=None, *, phil=working_phil):
     # Multiprocess integration
     num_processes = params.nproc
     logger.info("Starting integration.")
-    with Pool(processes=num_processes) as pool:
-        refls_arr = pool.starmap(integrate_image, inputs, chunksize=1)
+    if num_processes == 1:
+        refls_arr = [integrate_image(*i) for i in inputs]
+    else:
+        with Pool(processes=num_processes) as pool:
+            refls_arr = pool.starmap(integrate_image, inputs, chunksize=1)
     logger.info("Integration finished.")
 
     # Construct an integrated reflection table

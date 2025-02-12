@@ -71,6 +71,12 @@ Note that you need to import the image data using ``dials.import``. For informat
 
 If any issues occur either with installation or use of the software, please file an issue at `issue tracker`_. Any and all questions, concerns, or feature requests are welcome.
 
+============
+Publications
+============
+
+`Laue-DIALS: Open-source software for polychromatic x-ray diffraction data <https://doi.org/10.1063/4.0000265>`_. **Hewitt, Rick A.** and Kevin M. Dalton, Derek Mendez, Harrison K. Wang, Margaret A. Klureza, Dennis E. Brookner, Jack B. Greisman, David McDonagh, Vukica Šrajer, Nicholas K. Sauter, Aaron S. Brewster, Doeke R. Hekstra. *Structural Dynamics, 2024*
+
 .. _careless: https://github.com/rs-station/careless
 .. _DIALS: https://dials.github.io/index.html
 .. _issue tracker: https://github.com/rs-station/laue-dials/issues
