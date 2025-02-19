@@ -118,8 +118,9 @@ def integrate_image(img_set, refls, isigi_cutoff):
     refls["intensity.sum.variance"] = flex.double(np.square(integrator.uncertainty))
     refls["background.sum.value"] = flex.double(integrator.background.squeeze())
     refls["background.sum.variance"] = flex.double(integrator.background.squeeze())
-    refls = refls.select(refls["intensity.sum.value"] != 0)
-    logger.info(f"Image {img_num} took {time.time() - proctime} seconds.")
+    refls = refls.select(refls["intensity.sum.value"] > 0)
+    refls = refls.select(refls["intensity.sum.variance"] > 0)
+    logger.info(f"Image {img_num} took {time.time() - proctime} seconds to integrate {len(refls)} reflections.")
     return refls  # Updated reflection table
 
 
