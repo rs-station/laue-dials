@@ -8,3 +8,4 @@ dynamic = ["description","authors","readme","requires-python","license","classif
 
 [tool.setuptools_scm]
 local_scheme = "no-local-version"
+version_scheme = "only-version"
