@@ -17,5 +17,5 @@ Module contents
 
 .. automodule:: laue_dials
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

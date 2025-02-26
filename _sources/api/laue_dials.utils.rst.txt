@@ -11,13 +11,13 @@ laue\_dials.utils.matching module
 
 .. automodule:: laue_dials.utils.matching
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 laue\_dials.utils.version module
 --------------------------------
 
 .. automodule:: laue_dials.utils.version
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
