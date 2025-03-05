@@ -103,7 +103,7 @@ class IntegratorBase:
 
     def predict(self):
         p = self.profile_values
-        v = self.intensity[:,None] * p + self.background
+        v = np.maximum(0., self.intensity[:,None]) * p + self.background
         return v
 
     def rectify(self, loc, scale):
