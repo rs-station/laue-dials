@@ -37,6 +37,9 @@ class IntegratorBase:
         #TODO: wrap indices that are out of bounds
         self.window_idx = np.round(self.centroids).astype('int')[:,None,:] + self.window_mask[None,:,:]
 
+        # Trim windows to image
+        self.window_idx[self.window_idx > np.max(self.pixels.shape) - 1] = np.max(self.pixels.shape) - 1 
+
         # order is [xy, refl, pixel]
         # you can index like self.pixels[*self.window_idx] -> array[refl, pixel]
         self.window_idx = self.window_idx.transpose(2, 0, 1)
