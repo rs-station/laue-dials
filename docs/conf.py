@@ -183,7 +183,7 @@ html_title = "laue-dials"
 
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
-# html_logo = ""
+html_logo = "./images/laue_dials_nasa_version_v2.svg"
 
 # The name of an image file (within the static path) to use as favicon of the
 # docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
