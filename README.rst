@@ -1,3 +1,7 @@
+.. image:: https://github.com/rs-station/laue-dials/blob/main/docs/images/laue_dials_nasa_version_v2.svg
+   :alt: Laue-DIALS Logo
+   :target: https://rs-station.github.io/laue-dials/index.html
+
 .. image:: https://github.com/rs-station/laue-dials/actions/workflows/build.yml/badge.svg
    :alt: Build Status
    :target: https://github.com/rs-station/laue-dials/actions/workflows/build.yml
