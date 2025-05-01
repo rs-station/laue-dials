@@ -43,7 +43,7 @@ jobs:
         conda install -n test_doc_build -c conda-forge -y dials pandoc
         conda info
         conda list
-        $CONDA/bin/pip install -e ".[docs]"
+        pip install -e ".[docs]"
         cd docs
         export SPHINXBUILD="$CONDA/envs/test_doc_build/bin/sphinx-build"
         make clean
