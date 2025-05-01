@@ -45,6 +45,6 @@ jobs:
         conda list
         $CONDA/bin/pip install -e ".[docs]"
         cd docs
-        export SPHINXBUILD="$CONDA/bin/sphinx-build"
+        export SPHINXBUILD="$CONDA/envs/test_doc_build/bin/sphinx-build"
         make clean
         make html
