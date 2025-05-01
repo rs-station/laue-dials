@@ -1,4 +1,5 @@
 .. image:: https://raw.githubusercontent.com/rs-station/laue-dials/05f4bd34c0ad8156bb5acf829a6be5f864b96902/docs/images/laue_dials_nasa_version_v2.svg
+   :width: 400
    :alt: Laue-DIALS Logo
    :target: https://rs-station.github.io/laue-dials/index.html
 
