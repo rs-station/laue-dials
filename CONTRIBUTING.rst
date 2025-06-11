@@ -42,12 +42,18 @@ or if, more likely, you've cloned the repo and are installing from your local co
 
     pip install -e ".[docs]"
 
-This makes sure that in addition to ``laue-dials``, you've also installed Sphinx and all of the necessary Sphinx extensions to build the docs.
+This makes sure that in addition to ``laue-dials``, you've also installed Sphinx and all of the necessary Sphinx extensions to build the docs. In particular, ``pandoc`` is a required dependency for building the docs. ``pandoc`` is available and can be installed with::
 
-To build a copy of the docs locally, you can navigate into the ``docs/`` subdirectory and call::
+    conda install -c conda-forge pandoc
+
+To build a copy of the docs locally using your current environment, you can navigate into the ``docs/`` subdirectory and call::
 
     make clean
     make html
+
+Alternatively, to perform a clean build from the ground-up, you can run::
+
+    tox -e docs
 
 The ``docs/_build/html/`` directory should now contain ``.html`` files which can be opened in your web browser.
 
