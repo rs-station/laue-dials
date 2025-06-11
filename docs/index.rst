@@ -11,6 +11,7 @@ Contents
    License <license>
    Authors <authors>
    Changelog <changelog>
+   Tutorials <tutorials/notebooks>
    Command-Line Reference <cli/functions>
    Full API Reference <api/modules>
    Jupyter Tutorials <notebooks/tutorials>
