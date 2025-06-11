@@ -7,8 +7,6 @@ from laue_dials.algorithms.diffgeo import *
 def test_get_UB_matrices():
     # Define an example indexing matrix
     A = np.array([[1, 0, 0], [0, 2, 0], [0, 0, 3]])
-
-    # Get the U and B matrices
     U, B = get_UB_matrices(A)
 
     # Verify that U is orthogonal
@@ -22,8 +20,6 @@ def test_get_UB_matrices():
 
     # Define another example indexing matrix
     A = np.array([[2, 1, 1], [1, 2, 1], [1, 1, 2]])
-
-    # Get the U and B matrices
     U, B = get_UB_matrices(A)
 
     # Verify that U is orthogonal
@@ -39,8 +35,6 @@ def test_get_UB_matrices():
 def test_normalize():
     # Define an example array
     A = np.array([[1, 2, 3], [4, 5, 6]])
-
-    # Normalize the array
     normalized_A = normalize(A)
 
     # Verify that the L2 norm of each row is 1
@@ -50,8 +44,6 @@ def test_normalize():
 
     # Define another example array
     A = np.array([[0, 0, 0], [1, 0, 0], [0, 1, 0]])
-
-    # Normalize the array
     normalized_A = normalize(A)
 
     # Verify that the L2 norm of each row is 1

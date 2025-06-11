@@ -11,20 +11,25 @@ from multiprocessing import Pool
 
 import libtbx.phil
 import numpy as np
+from dials.array_family import flex
 from dials.array_family.flex import reflection_table
 from dials.util import show_mail_handle_errors
 from dials.util.options import (ArgumentParser,
                                 reflections_and_experiments_from_files)
 from dxtbx.model import ExperimentList
 
+from laue_dials.utils.matching import split_stills_by_image
+from laue_dials.utils.version import laue_version
+
 logger = logging.getLogger("laue-dials.command_line.optimize_indexing")
 
 help_message = """
+This script optimizes Miller indices and wavelengths jointly.
 
 This program takes initial monochromatic estimates of the geometry in a
 DIALS experiment list and reflection table, and optimizes the indexed
 solution by allowing the wavelength to vary. Only Miller indices, s1
-vectors and wavelengths for scattered reflections are overwritten by
+vectors, and wavelengths for scattered reflections are overwritten by
 this program - all other geometry variables remain constant here.
 
 The outputs are a pair of files (optimized.expt, optimized.refl), which
@@ -32,7 +37,7 @@ mimic the input files but with updated Miller indices, s1 vectors, and
 wavelengths in the reflection table. Note that the experiment list is
 unchanged entirely.
 
-Examples::
+Examples:
 
     laue.optimize_indexing [options] monochromatic.expt monochromatic.refl
 """
@@ -55,31 +60,41 @@ output {
     .help = "The log filename."
   }
 
+geometry {
+  unit_cell = None
+    .type = floats(size=6)
+    .help = "Target unit cell for indexing."
+}
+
+filter_spectrum = True
+  .type = bool
+  .help = Whether to remove reflections outside of the provided wavelength limits.
+
 keep_unindexed = False
   .type = bool
-  .help = Whether to keep unindexed reflections
+  .help = Whether to keep unindexed reflections.
 
-n_proc = 1
+nproc = 1
   .type = int
-  .help = Number of parallel processes to run
+  .help = Number of parallel processes to run.
 
 n_macrocycles = 3
-  .type = int(value_min=1)
-  .help = "Number of macrocycles of index optimization to perform"
+  .type = int(value_min=0)
+  .help = "Number of macrocycles of index optimization to perform. A value of 0 performs one round of assignment without outlier rejection or crystal rotation."
 
 wavelengths {
   lam_min = None
     .type = float(value_min=0.1)
-    .help = "Minimum wavelength for beam spectrum"
+    .help = "Minimum wavelength for beam spectrum."
   lam_max = None
     .type = float(value_min=0.2)
-    .help = "Maximum wavelength for beam spectrum"
+    .help = "Maximum wavelength for beam spectrum."
   }
 
 reciprocal_grid {
   d_min = None
     .type = float(value_min=0.1)
-    .help = "Minimum d-spacing for reflecting planes"
+    .help = "Minimum d-spacing for reflecting planes."
   }
 
 """,
@@ -90,6 +105,18 @@ working_phil = phil_scope.fetch(sources=[phil_scope])
 
 
 def index_image(params, refls, expts):
+    """
+    Reindex the given image reflections and update the experiment geometry.
+
+    Args:
+        params (libtbx.phil.scope_extract): Program parameters.
+        refls (dials.array_family.flex.reflection_table): Reflection table for a single image.
+        expts (dxtbx.model.ExperimentList): List of experiment objects.
+
+    Returns:
+        expts (dxtbx.model.experiment_list.ExperimentList): The optimized experiment list with updated crystal rotations.
+        refls (dials.array_family.flex.reflection_table): The optimized reflection table with updated wavelengths.
+    """
     import gemmi
     from cctbx.sgtbx import space_group
     from cctbx.uctbx import unit_cell
@@ -108,7 +135,7 @@ def index_image(params, refls, expts):
     refls["miller_index"] = flex.miller_index(len(refls))
     refls["harmonics"] = flex.bool([False] * len(refls))
 
-    for i in range(len(expts.imagesets())):
+    for i in range(len(expts)):
         # Get experiment data from experiment objects
         experiment = expts[i]
         cryst = experiment.crystal
@@ -116,22 +143,32 @@ def index_image(params, refls, expts):
             cryst.get_space_group().type().universal_hermann_mauguin_symbol()
         )
 
-        # Get reflections on this image
-        idx = refls["id"] == int(experiment.identifier)
-        subrefls = refls.select(idx)
-
         # Get unit cell params
-        cell_params = cryst.get_unit_cell().parameters()
-        cell = gemmi.UnitCell(*cell_params)
+        if params.geometry.unit_cell is not None:
+            cell_params = params.geometry.unit_cell
+            cell = gemmi.UnitCell(*cell_params)
+            # Check compatibility with spacegroup
+            if not cell.is_compatible_with_spacegroup(spacegroup):
+                logger.warning(
+                    f"WARNING: User-provided unit cell is incompatible with crystal space group on image {i}. Using crystal unit cell instead."
+                )
+                cell_params = cryst.get_unit_cell().parameters()
+                cell = gemmi.UnitCell(*cell_params)
+        else:
+            cell_params = cryst.get_unit_cell().parameters()
+            cell = gemmi.UnitCell(*cell_params)
 
         # Generate s vectors
-        s1 = subrefls["s1"].as_numpy_array()
+        s1 = refls["s1"].as_numpy_array()
 
         # Get U matrix
         U = np.asarray(cryst.get_U()).reshape(3, 3)
 
         # Generate assigner object
-        logger.info(f"Reindexing image {experiment.identifier}.")
+        img_ids = np.unique(refls["id"])
+        img_id = img_ids[img_ids != -1][0]
+        logger.info(f"Reindexing experiment {img_id}.")
+
         la = LaueAssigner(
             s0,
             s1,
@@ -139,6 +176,7 @@ def index_image(params, refls, expts):
             U,
             params.wavelengths.lam_min,
             params.wavelengths.lam_max,
+            experiment.beam.get_wavelength(),
             params.reciprocal_grid.d_min,
             spacegroup,
         )
@@ -163,28 +201,17 @@ def index_image(params, refls, expts):
         cryst.set_space_group(space_group(la.spacegroup.hall))
         cryst.set_unit_cell(unit_cell(la.cell.parameters))
 
-        # Filter out wavelengths beyond limits
+        # Get wavelengths
         spot_wavelengths = np.asarray(la._wav.tolist())
-        spot_wavelengths[spot_wavelengths < params.wavelengths.lam_min] = 0
-        spot_wavelengths[spot_wavelengths > params.wavelengths.lam_max] = 0
 
         # Write data to reflections
-        refls["s1"].set_selected(idx, flex.vec3_double(s1))
-        refls["miller_index"].set_selected(
-            idx,
-            flex.miller_index(la._H.astype("int").tolist()),
-        )
-        refls["harmonics"].set_selected(
-            idx,
-            flex.bool(la._harmonics.tolist()),
-        )
-        refls["wavelength"].set_selected(
-            idx,
-            flex.double(spot_wavelengths),
-        )
+        refls["s1"] = flex.vec3_double(s1)
+        refls["miller_index"] = flex.miller_index(la._H.astype("int").tolist())
+        refls["harmonics"] = flex.bool(la._harmonics.tolist())
+        refls["wavelength"] = flex.double(spot_wavelengths)
 
     # Remove unindexed reflections
-    if not params.keep_unindexed:
+    if params.filter_spectrum:
         all_wavelengths = refls["wavelength"].as_numpy_array()
         keep = np.logical_and(
             all_wavelengths >= params.wavelengths.lam_min,
@@ -192,12 +219,37 @@ def index_image(params, refls, expts):
         )
         refls = refls.select(flex.bool(keep))
 
+    # Remove unindexed reflections
+    if not params.keep_unindexed:
+        all_wavelengths = refls["wavelength"].as_numpy_array()
+        keep = all_wavelengths > 0  # Unindexed reflections assigned wavelength of 0
+        refls = refls.select(flex.bool(keep))
+        exp_ids = np.unique(refls["id"].as_numpy_array())
+        image_id = exp_ids[exp_ids != -1][0]  # Should only be a single identifier
+        refls["id"] = flex.int(np.full(len(refls), image_id))
+    else:
+        all_wavelengths = refls["wavelength"].as_numpy_array()
+        indexed = all_wavelengths > 0
+        exp_ids = np.unique(refls["id"])
+        image_id = exp_ids[exp_ids != -1][0]  # Should only be a single identifier
+        refls["id"].set_selected(indexed, flex.int(np.full(len(refls), image_id)))
+
     # Return reindexed expts, refls
     return expts, refls
 
 
 @show_mail_handle_errors()
 def run(args=None, *, phil=working_phil):
+    """
+    Run the script to optimize Miller indices and wavelengths jointly.
+
+    Args:
+        args (list): Command-line arguments.
+        phil: The phil scope for the program.
+
+    Returns:
+        None
+    """
     # Parse arguments
     usage = "laue.optimize_indexing [options] monochromatic.expt monochromatic.refl"
 
@@ -239,6 +291,9 @@ def run(args=None, *, phil=working_phil):
     xfel_logger.setLevel(loglevel)
     fh.setLevel(loglevel)
 
+    # Print version information
+    logger.info(laue_version())
+
     # Log diff phil
     diff_phil = parser.diff_phil.as_str()
     if diff_phil != "":
@@ -273,6 +328,10 @@ def run(args=None, *, phil=working_phil):
         logger.info("Minimum wavelength cannot be greater than maximum wavelength.")
         return
 
+    # Remove duplicate expt + refl data
+    params.input.experiments = None
+    params.input.reflections = None
+
     # Get initial time for process
     start_time = time.time()
 
@@ -282,18 +341,20 @@ def run(args=None, *, phil=working_phil):
 
     # Prepare parallel input
     ids = list(np.unique(reflections["id"]).astype(np.int32))
-    expts_arr = []
-    refls_arr = []
-    for i in ids:  # Split DIALS objects into lists
-        expts_arr.append(ExperimentList([experiments[i]]))
-        refls_arr.append(reflections.select(reflections["id"] == i))
+    if -1 in ids:
+        ids.remove(-1)
+
+    expts_arr, refls_arr = split_stills_by_image(experiments, reflections)
     inputs = list(zip(repeat(params), refls_arr, expts_arr))
 
     # Reindex data
-    num_processes = params.n_proc
+    num_processes = params.nproc
     logger.info("Reindexing images.")
-    with Pool(processes=num_processes) as pool:
-        output = pool.starmap(index_image, inputs, chunksize=1)
+    if num_processes == 1:
+        output = [index_image(*i) for i in inputs]
+    else:
+        with Pool(processes=num_processes) as pool:
+            output = pool.starmap(index_image, inputs)
     logger.info(f"All images reindexed.")
 
     # Convert reindexed data to DIALS objects
@@ -302,6 +363,13 @@ def run(args=None, *, phil=working_phil):
     for i in ids:
         total_experiments.extend(output[i][0])
         total_reflections.extend(output[i][1])
+
+    # Give all unindexed experiments wavelength 0
+    hkls = np.asarray(total_reflections["miller_index"])
+    sel = np.all(hkls == [0, 0, 0], axis=1)
+    lams = np.asarray(total_reflections["wavelength"])
+    lams[sel] = 0.0
+    total_reflections["wavelength"] = flex.double(lams)
 
     # Save experiments
     logger.info("Saving optimized experiments to %s", params.output.experiments)

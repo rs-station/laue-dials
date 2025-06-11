@@ -11,17 +11,6 @@ Subpackages
    laue_dials.command_line
    laue_dials.utils
 
-Submodules
-----------
-
-laue\_dials.skeleton module
----------------------------
-
-.. automodule:: laue_dials.skeleton
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 Module contents
 ---------------
 

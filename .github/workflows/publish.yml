@@ -10,41 +10,45 @@ jobs:
     runs-on: [ubuntu-latest]
     steps:
     - uses: actions/checkout@v3
-    - name: Install Miniconda                 
-      uses: conda-incubator/setup-miniconda@v2
-      with:                                   
-        miniconda-version: "latest"           
-        channels: conda-forge, defaults       
-        auto-activate-base: true              
+
+    - name: Install Miniconda
+      uses: conda-incubator/setup-miniconda@v3
+      with:
+        miniconda-version: "latest"
+        channels: conda-forge, defaults
+        auto-activate-base: true
         activate-environment: ""
-    - name: Install DIALS environment and all dependencies
-      run: |                                         
+
+    - name: Source Miniconda
+      run: |
         source $CONDA/etc/profile.d/conda.sh
         conda activate
         which python
         python --version
         echo $CONDA
-        conda install -n base conda-libmamba-solver  
-        conda config --set solver libmamba           
-        conda install -n base -c conda-forge -y dials
-        $CONDA/bin/pip install -e ".[docs]"          
-        cd docs                                      
-        export SPHINXBUILD="$CONDA/bin/sphinx-build" 
-        make clean                                   
-        make html                                    
-        which python
-        echo $CONDA
+        conda install -n base conda-libmamba-solver
+        conda config --set solver libmamba
         python -m pip install --upgrade pip
-        pip install -U setuptools setuptools_scm wheel packaging twine typing-extensions tox-conda myst-parser docutils
+
+    - name: Install DIALS environment and all dependencies
+      run: |
+        source $CONDA/etc/profile.d/conda.sh
+        conda activate
+        conda install -n base -c conda-forge -y dials pandoc
+        $CONDA/bin/pip install -e ".[docs]"
+        cd docs
+        export SPHINXBUILD="$CONDA/bin/sphinx-build"
+        make clean
+        make html
+        pip install -U setuptools setuptools_scm wheel packaging twine typing-extensions tox tox-conda myst-parser docutils build
+
     - name: Build the Python package
       run: |
         source $CONDA/etc/profile.d/conda.sh
         conda activate
-        which python
-        echo $CONDA
-        conda list
-        tox -e build
-        tox -e docs
+        pip list
+        python -m build -n -w
+
     - name: Publish to PyPI
       uses: pypa/gh-action-pypi-publish@release/v1
       with:

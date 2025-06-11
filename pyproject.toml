@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=46.1.0", "setuptools_scm[toml]>=6.2"]
+requires = ["setuptools>=61", "setuptools_scm[toml]>=6.2"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -7,3 +7,5 @@ name = "laue_dials"
 dynamic = ["description","authors","readme","requires-python","license","classifiers","version","entry-points","dependencies","optional-dependencies","scripts"]
 
 [tool.setuptools_scm]
+local_scheme = "no-local-version"
+version_scheme = "only-version"

@@ -6,6 +6,7 @@
 .. toctree::
    :maxdepth: 1
 
+   version
    find_spots
    index
    sequence_to_stills
@@ -14,5 +15,6 @@
    predict
    integrate
    plot_wavelengths
+   compute_rmsds
 
 ```

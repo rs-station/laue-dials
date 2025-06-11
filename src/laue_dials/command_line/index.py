@@ -13,10 +13,12 @@ from dials.util.options import (ArgumentParser,
 
 from laue_dials.algorithms.monochromatic import (initial_index,
                                                  scan_varying_refine)
+from laue_dials.utils.version import laue_version
 
 logger = logging.getLogger("laue-dials.command_line.index")
 
 help_message = """
+Perform monochromatic indexing and optional scan-varying refinement.
 
 This program takes a DIALS imported experiment list (generated with
 dials.import) and a strong reflection table and generates an initial
@@ -161,6 +163,16 @@ working_phil = main_phil.fetch(sources=[indexer_phil, refiner_phil])
 
 @show_mail_handle_errors()
 def run(args=None, *, phil=working_phil):
+    """
+    Run the indexing script with the specified command-line arguments.
+
+    Args:
+        args (list): Command-line arguments.
+        phil: The phil scope for the program.
+
+    Returns:
+        None
+    """
     # Parse arguments
     usage = "laue.index [options] imported.expt strong.refl"
 
@@ -203,6 +215,9 @@ def run(args=None, *, phil=working_phil):
     xfel_logger.setLevel(loglevel)
     fh.setLevel(loglevel)
 
+    # Print version information
+    logger.info(laue_version())
+
     # Log diff phil
     diff_phil = parser.diff_phil.as_str()
     if diff_phil != "":
@@ -218,6 +233,10 @@ def run(args=None, *, phil=working_phil):
     strong_refls, imported_expts = reflections_and_experiments_from_files(
         params.input.reflections, params.input.experiments
     )
+
+    # Remove extraneous data from params
+    params.input.reflections = None
+    params.input.experiments = None
 
     # Get initial time for process
     start_time = time.time()

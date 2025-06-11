@@ -21,10 +21,12 @@ from dials.util.options import (ArgumentParser,
 from dxtbx.model import ExperimentList
 
 from laue_dials.algorithms.outliers import gen_kde
+from laue_dials.utils.version import laue_version
 
 logger = logging.getLogger("laue-dials.command_line.predict")
 
 help_message = """
+This script predicts reflections for integration using a refined geometry experiment and reflection file.
 
 This program takes a refined geometry experiment and reflection file, builds a
 DIALS experiment list and reflection table, and predicts the feasible set of
@@ -52,7 +54,7 @@ output {
     .help = "The log filename."
   }
 
-n_proc = 1
+nproc = 1
   .type = int
   .help = Number of parallel processes to run
 
@@ -83,7 +85,17 @@ working_phil = phil_scope.fetch(sources=[phil_scope])
 
 def predict_spots(lam_min, lam_max, d_min, refls, expts):
     """
-    A function for predicting spots given a geometry
+    Predict spots given a geometry.
+
+    Args:
+        lam_min (float): Minimum wavelength for the beam spectrum.
+        lam_max (float): Maximum wavelength for the beam spectrum.
+        d_min (float): Minimum d-spacing for reflecting planes.
+        refls (dials.array_family.flex.reflection_table): The reflection table.
+        expts (dxtbx.model.experiment_list.ExperimentList): The experiment list.
+
+    Returns:
+        final_preds (dials.array_family.flex.reflection_table): Predicted reflection table.
     """
     from laue_dials.algorithms.laue import LauePredictor
 
@@ -190,6 +202,13 @@ def predict_spots(lam_min, lam_max, d_min, refls, expts):
 
 @show_mail_handle_errors()
 def run(args=None, *, phil=working_phil):
+    """
+    Run the prediction script.
+
+    Args:
+        args (list): Command-line arguments.
+        phil: Working phil scope.
+    """
     # Parse arguments
     usage = "laue.predict [options] poly_refined.expt poly_refined.refl"
 
@@ -230,6 +249,9 @@ def run(args=None, *, phil=working_phil):
     dxtbx_logger.setLevel(loglevel)
     xfel_logger.setLevel(loglevel)
     fh.setLevel(loglevel)
+
+    # Print version information
+    logger.info(laue_version())
 
     # Log diff phil
     diff_phil = parser.diff_phil.as_str()
@@ -291,7 +313,7 @@ def run(args=None, *, phil=working_phil):
 
     # Predict reflections
     logger.info(f"Predicting reflections")
-    num_processes = params.n_proc
+    num_processes = params.nproc
     with Pool(processes=num_processes) as pool:
         output = pool.starmap(predict_spots, inputs, chunksize=1)
     logger.info(f"Finished predicting feasible spots.")

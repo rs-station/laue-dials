@@ -23,6 +23,21 @@ class Profile:
         eps=1e-5,
         frac_step_size=0.50,
     ):
+        """
+        Initialize a Profile instance.
+
+        Parameters:
+            x (np.array): x-coordinates.
+            y (np.array): y-coordinates.
+            counts (np.array): Counts associated with each coordinate.
+            cen_x (Optional[np.array]): Center x-coordinate.
+            cen_y (Optional[np.array]): Center y-coordinate.
+            fg_cutoff (float): Foreground cutoff value.
+            bg_cutoff (float): Background cutoff value.
+            minfrac (float): Minimum fraction of pixels in a profile.
+            eps (float): Small positive epsilon value to remove negative intensities.
+            frac_step_size (float): Fractional step size for fitting iterations.
+        """
         self.frac_step_size = frac_step_size
         self.eps = eps
         self.minfrac = minfrac
@@ -49,6 +64,19 @@ class Profile:
         self.update_mask()
 
     def set_profile_params(self, scale, slope, intercept, cen_x, cen_y):
+        """
+        Set profile parameters.
+
+        Parameters:
+            scale (np.array): Scaling factor.
+            slope (np.array): Slope of the profile.
+            intercept (float): Intercept value.
+            cen_x (np.array): Center x-coordinate.
+            cen_y (np.array): Center y-coordinate.
+
+        Returns:
+            self (Profile): Updated Profile instance.
+        """
         self.scale = scale
         self.slope = slope
         self.intercept = intercept
@@ -61,6 +89,12 @@ class Profile:
         return self
 
     def fit(self, nsteps=5):
+        """
+        Fit the profile.
+
+        Parameters:
+            nsteps (int): Number of fitting steps.
+        """
         self.success = True
         for i in range(nsteps):
             try:
@@ -73,6 +107,19 @@ class Profile:
 
     @classmethod
     def from_dataframe(cls, df, x_key="dx", y_key="dy", count_key="counts", **kwargs):
+        """
+        Create a Profile instance from a DataFrame.
+
+        Parameters:
+            df (pd.DataFrame): Input DataFrame.
+            x_key (str): x-coordinate column name.
+            y_key (str): y-coordinate column name.
+            count_key (str): Counts column name.
+            kwargs: Additional keyword arguments.
+
+        Returns:
+            Profile: Created Profile instance.
+        """
         x = df[x_key].astype("float32")
         y = df[y_key].astype("float32")
         counts = df[count_key].astype("float32")
@@ -80,13 +127,32 @@ class Profile:
 
     @property
     def difference_vectors(self):
+        """
+        Get the difference vectors.
+
+        Returns:
+            np.array: Difference vectors.
+        """
         return np.column_stack((self.x - self.cen_x, self.y - self.cen_y))
 
     @property
     def background(self):
+        """
+        Get the background.
+
+        Returns:
+            np.array: Background values.
+        """
         return self.difference_vectors @ self.slope + self.intercept
 
     def update_mask(self, fg_cutoff=None, bg_cutoff=None):
+        """
+        Update the mask.
+
+        Parameters:
+            fg_cutoff (Optional[float]): Foreground cutoff value.
+            bg_cutoff (Optional[float]): Background cutoff value.
+        """
         if fg_cutoff is None:
             fg_cutoff = self.fg_cutoff
         if bg_cutoff is None:
@@ -124,6 +190,12 @@ class Profile:
             return
 
     def update_background_plane(self, alpha=0.9):
+        """
+        Update the background plane.
+
+        Parameters:
+            alpha (float): Alpha value for updating slope and intercept.
+        """
         y = self.counts
         X = np.pad(self.difference_vectors, [[0, 0], [0, 1]], constant_values=1.0)
         weights = np.reciprocal(self.counts)  # Inverse variance poisson because #stats
@@ -139,6 +211,12 @@ class Profile:
         self.intercept = (1.0 - alpha) * self.intercept + alpha * intercept
 
     def update_profile(self, alpha=0.9):
+        """
+        Update the profile.
+
+        Parameters:
+            alpha (float): Alpha value for updating scale factor and profile centroid.
+        """
         weights = self.counts - self.background
         weights = np.maximum(
             weights, self.eps
@@ -158,8 +236,8 @@ class Profile:
         self.cen_y = (1.0 - alpha) * self.cen_y + alpha * cen_y
 
     def integrate(self):
+        """Integrate the profile."""
         bg = self.background
-        bg + self.counts
 
         self.I = ((self.counts - bg) * self.fg_mask).sum()
         self.SigI = np.sqrt(((self.counts + bg) * self.fg_mask).sum())
@@ -167,6 +245,14 @@ class Profile:
 
 class SegmentedImage:
     def __init__(self, pixels, centroids, radius=20):
+        """
+        Initialize a SegmentedImage instance.
+
+        Parameters:
+            pixels (np.array): Pixel values.
+            centroids (np.array): Centroids of the pixels.
+            radius (int): Radius value.
+        """
         super().__init__()
         self.radius = radius
         pixels = np.array(pixels).astype("float32")
@@ -218,6 +304,16 @@ class SegmentedImage:
         self.distance_vectors = distance_vectors
 
     def integrate(self, isigi_cutoff=2.0, knn=5):
+        """
+        Integrate the SegmentedImage.
+
+        Parameters:
+            isigi_cutoff (float): I/SIGI cutoff value.
+            knn (int): Number of nearest neighbors.
+
+        Returns:
+            strong_idx (np.array): Strong indices.
+        """
         # Implement k nearest-neighbors for weak spots to average profile params from nearby strong spots
         strong_idx = np.array(
             [i for i, p in enumerate(self.profiles) if p.I / p.SigI > isigi_cutoff]

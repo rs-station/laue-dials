@@ -21,10 +21,12 @@ from dxtbx.model.experiment_list import ExperimentListFactory
 
 from laue_dials.algorithms.laue import (gen_beam_models, remove_beam_models,
                                         store_wavelengths)
+from laue_dials.utils.version import laue_version
 
 logger = logging.getLogger("laue-dials.command_line.refine")
 
 help_message = """
+This script handles polychromatic geometry refinement.
 
 This program takes an indexed DIALS experiment list and reflection table
 (with wavelengths) and refines the experiment geometry. The outputs are a pair of
@@ -41,7 +43,7 @@ main_phil = libtbx.phil.parse(
     """
 include scope dials.command_line.refine.working_phil
 
-n_proc = 1
+nproc = 1
   .type = int
   .help = Number of parallel processes to run
 """,
@@ -110,7 +112,54 @@ output {
 working_phil = main_phil.fetch(sources=[refiner_phil])
 
 
+def correct_identifiers(expts, refls):
+    """
+    Correct identifiers in case of skipped images.
+
+    Args:
+        expts (dxtbx.model.ExperimentList): Experiment list.
+        refls (flex.reflection_table): Reflection table.
+
+    Returns:
+        corrected_expts (dxtbx.model.experiment_list.ExperimentList): The corrected experiment list with corrected identifiers.
+        corrected_refls (dials.array_family.flex.reflection_table): The corrected reflection table with updated identifiers.
+    """
+
+    # Initialize arrays
+    corrected_expts = ExperimentList()
+    corrected_refls = reflection_table()
+
+    # Fix identifiers
+    skipped_expts = 0
+    for i, expt in enumerate(expts):
+        if i != int(expt.identifier) - skipped_expts:  # Found skipped image
+            skipped_expts = skipped_expts + 1
+        img_refls = refls.select(refls["id"] == i + skipped_expts)
+
+        # Correct ids
+        expt.identifier = str(i)
+        ids = np.full(len(img_refls), i)
+        img_refls["id"] = flex.int(ids)
+
+        # Add data to array
+        corrected_expts.append(expt)
+        corrected_refls.extend(img_refls)
+    return corrected_expts, corrected_refls
+
+
 def refine_image(params, expts, refls):
+    """
+    Refine image given parameters, experiments, and reflections.
+
+    Args:
+        params (libtbx.phil.scope_extract): Refinement parameters.
+        expts (dxtbx.model.ExperimentList): Experiment list.
+        refls (flex.reflection_table): Reflection table.
+
+    Returns:
+        refined_expts (dxtbx.model.experiment_list.ExperimentList): The refined experiment list with updated geometry.
+        refined_refls (dials.array_family.flex.reflection_table): The refined reflection table with updated wavelength and centroid data.
+    """
     img_num = refls["id"][0]
     original_ids = refls["id"]
     refls["id"] = flex.int([0] * len(refls))
@@ -127,7 +176,7 @@ def refine_image(params, expts, refls):
         logger.warning(
             f"WARNING: Experiment {img_num} could not be refined. Skipping image."
         )
-        return ExperimentList(), reflection_table()  # Return empty
+        return ExperimentList(), reflection_table(), False  # Return empty
 
     # Write wavelengths and centroid data
     refined_refls = store_wavelengths(refined_expts, refined_refls)
@@ -138,11 +187,18 @@ def refine_image(params, expts, refls):
     refined_refls["id"] = original_ids
 
     # Return refined data
-    return refined_expts, refined_refls
+    return refined_expts, refined_refls, True
 
 
 @show_mail_handle_errors()
 def run(args=None, *, phil=working_phil):
+    """
+    Run the refinement script.
+
+    Args:
+        args (list): Command-line arguments.
+        phil: Working phil scope.
+    """
     # Parse arguments
     usage = "laue.refine [options] optimized.expt optimized.refl"
 
@@ -183,6 +239,9 @@ def run(args=None, *, phil=working_phil):
     xfel_logger.setLevel(loglevel)
     fh.setLevel(loglevel)
 
+    # Print version information
+    logger.info(laue_version())
+
     # Log diff phil
     diff_phil = parser.diff_phil.as_str()
     if diff_phil != "":
@@ -203,6 +262,10 @@ def run(args=None, *, phil=working_phil):
         input_refls["wavelength"] != 0
     )  # Remove unindexed reflections
 
+    # Remove duplicate expt + refl data
+    params.input.experiments = None
+    params.input.reflections = None
+
     # Get initial time for process
     start_time = time.time()
 
@@ -216,24 +279,40 @@ def run(args=None, *, phil=working_phil):
     inputs = list(zip(repeat(params), expts_arr, refls_arr))
 
     # Refine data
-    num_processes = params.n_proc
+    num_processes = params.nproc
     with Pool(processes=num_processes) as pool:
         output = pool.starmap(refine_image, inputs)
 
     # Initialize arrays for final results
     total_refined_expts = ExperimentList()
     total_refined_refls = reflection_table()
+    successes = np.zeros(len(ids), dtype=bool)
 
     # Convert refined data to DIALS objects
     for i in ids:
         total_refined_expts.extend(output[i][0])
         total_refined_refls.extend(output[i][1])
+        successes[i] = output[i][2]
 
+    # Correct any mismatching identifiers
+    final_expts, final_refls = correct_identifiers(
+        total_refined_expts, total_refined_refls
+    )
+
+    logger.info(
+        f"{np.sum(successes)}/{len(successes)} experiments successfully refined."
+    )
+    if np.sum(successes) < len(successes):
+        logger.info(
+            f"The following experiments failed to refine: {np.where(successes == False)[0]}."
+        )
+
+    # Save data
     logger.info("Saving refined experiments to %s", params.output.experiments)
-    total_refined_expts.as_file(params.output.experiments)
+    final_expts.as_file(params.output.experiments)
 
     logger.info("Saving refined reflections to %s", params.output.reflections)
-    total_refined_refls.as_file(filename=params.output.reflections)
+    final_refls.as_file(filename=params.output.reflections)
 
     # Final logs
     logger.info("")

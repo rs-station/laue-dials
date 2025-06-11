@@ -1,7 +1,8 @@
 """
-    Setup file for laue_dials.
-    Use setup.cfg to configure.
+Setup file for laue_dials.
+Use setup.cfg to configure.
 """
+
 from setuptools import setup
 
 if __name__ == "__main__":

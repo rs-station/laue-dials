@@ -77,7 +77,11 @@ extensions = [
     "sphinx_rtd_theme",
     "libtbx.sphinx.phil",
     "libtbx.sphinx.python_string",
+    "nbsphinx",
 ]
+
+# Set nbsphinx parameters
+nbsphinx_execute = "never"
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
@@ -93,7 +97,7 @@ master_doc = "index"
 
 # General information about the project.
 project = "laue_dials"
-copyright = "2023, PrinceWalnut"
+copyright = "2024, Rick Hewitt"
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -179,7 +183,7 @@ html_title = "laue-dials"
 
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
-# html_logo = ""
+html_logo = "./images/laue_dials_nasa_version_v2.svg"
 
 # The name of an image file (within the static path) to use as favicon of the
 # docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32

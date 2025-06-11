@@ -80,6 +80,11 @@ New pages can be added to the docs by creating new files in the `docs/` director
 
 Additionally, you must add any new pages to the table of contents listed in ``docs/index.rst``. List your new page as ``Display Name <filename>``, and place it where you'd like it to appear in order in the Table of Contents.
 
+If you wish to ``make html`` directly, be sure to install ``pandoc`` via
+
+    ``conda install pandoc``
+
+first.
 
 Code Contributions
 ==================
