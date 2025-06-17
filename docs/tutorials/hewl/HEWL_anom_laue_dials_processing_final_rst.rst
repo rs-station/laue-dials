@@ -65,7 +65,7 @@ detector pixel measurements (in mm), and the goniometer axes.
 
     %%time
     %%bash
-    
+
     # Import data
     dials.import geometry.scan.oscillation=0,1 \
         geometry.goniometer.axes=-1,0,0 \
@@ -109,7 +109,7 @@ unit cell.
 
     %%time
     %%bash
-    
+
     laue.find_spots imported_HEWL_anom_3049.expt \
         spotfinder.mp.nproc=60 \
         spotfinder.threshold.dispersion.gain=0.15 \
@@ -141,14 +141,14 @@ here <https://dials.github.io/documentation/tutorials/processing_in_detail_betal
     %%time
     %%bash
     # I found it helpful to set the brightness to 30
-    
+
     dials.image_viewer imported_HEWL_anom_3049.expt strong_HEWL_anom_3049.refl
 
 .. code:: ipython3
 
     %%time
     %%bash
-    
+
     laue.index imported_HEWL_anom_3049.expt strong_HEWL_anom_3049.refl \
         indexer.indexing.nproc=60 \
         indexer.indexing.known_symmetry.space_group=96 \
@@ -177,7 +177,7 @@ which do not match between the two programs.
 
     %%time
     %%bash
-    
+
     laue.sequence_to_stills monochromatic_HEWL_anom_3049.expt \
         monochromatic_HEWL_anom_3049.refl \
         output.experiments=stills_HEWL_anom_3049.expt \
@@ -208,7 +208,7 @@ on the detector.
 
     %%time
     %%bash
-    
+
     laue.optimize_indexing stills_HEWL_anom_3049.refl \
         stills_HEWL_anom_3049.expt \
         output.experiments=optimized_HEWL_anom_3049.expt \
@@ -223,7 +223,7 @@ on the detector.
 
     %%time
     %%bash
-    
+
     laue.refine optimized_HEWL_anom_3049.expt \
         optimized_HEWL_anom_3049.refl \
         output.experiments=poly_refined_HEWL_anom_3049.expt \
@@ -244,7 +244,7 @@ Check results in image viewer
 
     %%time
     %%bash
-    
+
     dials.image_viewer monochromatic_HEWL_anom_3049.expt monochromatic_HEWL_anom_3049.refl
 
 Predictions do not look great - many shoeboxes do not have a predicted
@@ -255,7 +255,7 @@ fully false positives.
 
     %%time
     %%bash
-    
+
     dials.image_viewer poly_refined_HEWL_anom_3049.expt poly_refined_HEWL_anom_3049.refl
 
 The polychromatic predictions look much better!
@@ -273,7 +273,7 @@ assignment at this stage before predicting the full set of reflections.
 
     %%time
     %%bash
-    
+
     laue.plot_wavelengths poly_refined_HEWL_anom_3049.refl \
         refined_only=True \
         save=True \
@@ -286,7 +286,7 @@ assignment at this stage before predicting the full set of reflections.
     from IPython.display import Image
     import os
     cwd = os.getcwd()
-    Image(filename=cwd+'/wavelengths_HEWL_anom_3049.png') 
+    Image(filename=cwd+'/wavelengths_HEWL_anom_3049.png')
 
 Spot prediction
 ---------------
@@ -305,7 +305,7 @@ merging in a program like ``careless``.
 
     %%time
     %%bash
-    
+
     laue.predict poly_refined_HEWL_anom_3049.expt \
         poly_refined_HEWL_anom_3049.refl \
         output.reflections=predicted_HEWL_anom_3049.refl \
@@ -322,7 +322,7 @@ Integration
 
     %%time
     %%bash
-    
+
     laue.integrate poly_refined_HEWL_anom_3049.expt \
         predicted_HEWL_anom_3049.refl \
         output.filename=integrated_HEWL_anom_3049.mtz \
