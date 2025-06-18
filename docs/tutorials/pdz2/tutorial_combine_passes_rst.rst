@@ -251,7 +251,7 @@ resemble the beam spectrum, so this is a good check to do at this time!
 .. code:: bash
 
     laue.plot_wavelengths poly_refined.refl refined_only=True save=True show=False
-    
+
     xdg-open wavelengths.png
 
 This is the expected wavelength profile, indicating successful
