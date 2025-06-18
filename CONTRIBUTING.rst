@@ -62,7 +62,7 @@ Adding docs for new command-line functions
 
 In order for a command-line function to be added to the documention, you must do two things:
 
-1. Create a file in the ``docs/cli/`` directory called ``{function-name}.rst``. The contents of this file should match the contents of the other ``.rst`` files in this directory, using the new function's name as appropriate. The easiest thing is to just copy one of the existing files and update it. Note that if the ``====`` header underneath ``laue_dials.{function-name}`` isn't the same length as the text, Sphinx might get mad.
+1. Create a file in the ``docs/cli/`` directory called ``{function-name}.rst``. The contents of this file should match the contents of the other ``.rst`` files in this directory, using the new function's name as appropriate. The easiest thing is to just copy one of the existing files and update it. Note that if the ``====`` underlining the header ``laue_dials.{function-name}`` isn't at least as long as the text, Sphinx will print the following: ``WARNING: Title underline too short``.
 2. Add the new function to the table of contents in ``docs/cli/functions.md``. Otherwise, your new page will exist, but there will be no link to it anywhere!
 
 In order for a new command-line function to be maximally compatible with this documentation format, three things should be true:
