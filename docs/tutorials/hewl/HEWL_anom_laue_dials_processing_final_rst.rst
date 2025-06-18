@@ -61,10 +61,7 @@ experimental facilities into a format that is friendly to both ``DIALS``
 and ``laue-dials``. We provide the peak wavelength of the beam, the
 detector pixel measurements (in mm), and the goniometer axes.
 
-.. code:: ipython3
-
-    %%time
-    %%bash
+.. code:: bash
 
     # Import data
     dials.import geometry.scan.oscillation=0,1 \
@@ -105,10 +102,7 @@ image viewer to ensure we have the gain set to an appropriate level, and
 then try our hand at ``laue.index`` to see the quality of the indexed
 unit cell.
 
-.. code:: ipython3
-
-    %%time
-    %%bash
+.. code:: bash
 
     laue.find_spots imported_HEWL_anom_3049.expt \
         spotfinder.mp.nproc=60 \
@@ -136,18 +130,11 @@ lower (for more) during spotfinding. You can find more details on the
 image viewer in the `DIALS tutorial
 here <https://dials.github.io/documentation/tutorials/processing_in_detail_betalactamase.html>`__.
 
-.. code:: ipython3
-
-    %%time
-    %%bash
-    # I found it helpful to set the brightness to 30
+.. code:: bash
 
     dials.image_viewer imported_HEWL_anom_3049.expt strong_HEWL_anom_3049.refl
 
-.. code:: ipython3
-
-    %%time
-    %%bash
+.. code:: bash
 
     laue.index imported_HEWL_anom_3049.expt strong_HEWL_anom_3049.refl \
         indexer.indexing.nproc=60 \
@@ -173,10 +160,7 @@ utility called ``laue.sequence_to_stills`` for this.
 NOTE: Do not use ``dials.sequence_to_stills``, as there are data columns
 which do not match between the two programs.
 
-.. code:: ipython3
-
-    %%time
-    %%bash
+.. code:: bash
 
     laue.sequence_to_stills monochromatic_HEWL_anom_3049.expt \
         monochromatic_HEWL_anom_3049.refl \
@@ -204,10 +188,7 @@ the centroids of all strong and weak reflections on the detector.
 ``laue.integrate`` then builds spot profiles and integrates intensities
 on the detector.
 
-.. code:: ipython3
-
-    %%time
-    %%bash
+.. code:: bash
 
     laue.optimize_indexing stills_HEWL_anom_3049.refl \
         stills_HEWL_anom_3049.expt \
@@ -219,10 +200,7 @@ on the detector.
         reciprocal_grid.d_min=1.4 \
         nproc=60
 
-.. code:: ipython3
-
-    %%time
-    %%bash
+.. code:: bash
 
     laue.refine optimized_HEWL_anom_3049.expt \
         optimized_HEWL_anom_3049.refl \
@@ -240,10 +218,7 @@ restart it, and then resume processing below.
 Check results in image viewer
 -----------------------------
 
-.. code:: ipython3
-
-    %%time
-    %%bash
+.. code:: bash
 
     dials.image_viewer monochromatic_HEWL_anom_3049.expt monochromatic_HEWL_anom_3049.refl
 
@@ -251,10 +226,7 @@ Predictions do not look great - many shoeboxes do not have a predicted
 spot, and there are also some predicted spots that are off-target or
 fully false positives.
 
-.. code:: ipython3
-
-    %%time
-    %%bash
+.. code:: bash
 
     dials.image_viewer poly_refined_HEWL_anom_3049.expt poly_refined_HEWL_anom_3049.refl
 
@@ -269,10 +241,7 @@ If you know approximately the shape of your beam spectrum, this can be a
 useful check to ensure that nothing has gone wrong with wavelength
 assignment at this stage before predicting the full set of reflections.
 
-.. code:: ipython3
-
-    %%time
-    %%bash
+.. code:: bash
 
     laue.plot_wavelengths poly_refined_HEWL_anom_3049.refl \
         refined_only=True \
@@ -281,12 +250,7 @@ assignment at this stage before predicting the full set of reflections.
         output=wavelengths_HEWL_anom_3049.png \
         log=laue.plot_wavelengths_HEWL_anom_3049.log
 
-.. code:: ipython3
-
-    from IPython.display import Image
-    import os
-    cwd = os.getcwd()
-    Image(filename=cwd+'/wavelengths_HEWL_anom_3049.png')
+    xdg-open ./wavelengths_HEWL_anom_3049.png
 
 Spot prediction
 ---------------
@@ -301,10 +265,7 @@ output reflection table can then be fed along with the refined ``expt``
 file into ``laue.integrate`` to generate ``mtz`` files suitable for
 merging in a program like ``careless``.
 
-.. code:: ipython3
-
-    %%time
-    %%bash
+.. code:: bash
 
     laue.predict poly_refined_HEWL_anom_3049.expt \
         poly_refined_HEWL_anom_3049.refl \
@@ -318,10 +279,7 @@ merging in a program like ``careless``.
 Integration
 -----------
 
-.. code:: ipython3
-
-    %%time
-    %%bash
+.. code:: bash
 
     laue.integrate poly_refined_HEWL_anom_3049.expt \
         predicted_HEWL_anom_3049.refl \
