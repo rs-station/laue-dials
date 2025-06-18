@@ -9,6 +9,7 @@ Subpackages
 
    laue_dials.algorithms
    laue_dials.command_line
+   laue_dials.diagnostics
    laue_dials.utils
 
 Module contents

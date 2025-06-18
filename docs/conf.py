@@ -129,7 +129,7 @@ release = version
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", ".venv"]
+exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", ".venv", "tutorials/*/*.ipynb"]
 
 # The reST default role (used for this markup: `text`) to use for all documents.
 # default_role = None
@@ -167,7 +167,12 @@ html_theme = "alabaster"
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
-html_theme_options = {"sidebar_width": "300px", "page_width": "1200px"}
+html_theme_options = {
+    "sidebar_width": "300px",
+    "page_width": "1200px",
+    "fixed_sidebar": True,
+    "logo_name": False,
+}
 
 html_favicon = "images/rs-favicon_32x32.png"
 

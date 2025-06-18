@@ -149,7 +149,7 @@ class LaueBase:
         self.dmin = dmin
 
         self.s0 = s0 / np.linalg.norm(s0)
-        self.B = np.array(self.cell.fractionalization_matrix).T
+        self.B = np.array(self.cell.frac.mat).T
 
         # Initialize the full reciprocal grid
         hmax, kmax, lmax = self.cell.get_hkl_limits(dmin)
