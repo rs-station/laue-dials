@@ -18,7 +18,7 @@ Jack B. Greisman
 
 David McDonagh
 
-Vukica Srajer
+Vukica Šrajer
 
 Nicholas K. Sauter
 
