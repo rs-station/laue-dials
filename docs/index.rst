@@ -1,9 +1,7 @@
 .. include:: ../README.rst
 
-Contents
-========
-
 .. toctree::
+   :hidden:
    :maxdepth: 2
 
    Contributions & Help <contributing>
@@ -13,14 +11,6 @@ Contents
    Tutorials <tutorials/tutorials>
    Command-Line Reference <cli/functions>
    Full API Reference <api/modules>
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
 
 .. _toctree: https://www.sphinx-doc.org/en/master/usage/restructuredtext/directives.html
 .. _reStructuredText: https://www.sphinx-doc.org/en/master/usage/restructuredtext/basics.html
