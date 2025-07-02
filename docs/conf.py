@@ -97,7 +97,9 @@ master_doc = "index"
 
 # General information about the project.
 project = "laue_dials"
-copyright = "2025, Research Agreement between Harvard University and University of Chicago"
+copyright = (
+    "2025, Research Agreement between Harvard University and University of Chicago"
+)
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the

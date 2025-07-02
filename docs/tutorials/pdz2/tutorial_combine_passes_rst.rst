@@ -66,7 +66,7 @@ analyze all sixteen passes in a single script, and combine the output
 mtzs into a single mtz file.
 
 Data processing will rely on images found in ``./data`` that can be downloaded
-`on SBGrid <https://data.sbgrid.org/dataset/1116/>`__ and scripts found in 
+`on SBGrid <https://data.sbgrid.org/dataset/1116/>`__ and scripts found in
 ``./scripts`` downloadable `here <pdz2_scripts.tar.gz>`__.
 
 Importing Data
