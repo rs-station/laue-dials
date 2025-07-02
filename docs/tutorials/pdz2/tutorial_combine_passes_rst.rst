@@ -65,8 +65,9 @@ We start with the ``off`` timepoint pass ``c`` only. Then, we will
 analyze all sixteen passes in a single script, and combine the output
 mtzs into a single mtz file.
 
-Data processing will rely on images found in ``./images`` and scripts
-found in ``./scripts``.
+Data processing will rely on images found in ``./data`` that can be downloaded
+`on SBGrid <https://data.sbgrid.org/dataset/1116/>`__ and scripts found in 
+``./scripts`` downloadable `here <pdz2_scripts.tar.gz>`__.
 
 Importing Data
 ==============
@@ -92,10 +93,6 @@ Then, we import the files for the ``c``,\ ``off`` images using
 ``dials.import``.
 
 .. code:: bash
-
-    #these start-angles and sweep angles are to be manually input by the user using information from their particular experimental design.
-    declare -A START_ANGLES=( ["c"]=0 ["d"]=92 ["e"]=181 ["f"]=361.5)
-    declare -A OSCS=( ["c"]=2 ["d"]=2 ["e"]=2 ["f"]=1)
 
     #this is the delay time.
     TIME="off"
@@ -176,6 +173,11 @@ here <https://dials.github.io/documentation/tutorials/processing_in_detail_betal
 
     dials.image_viewer imported.expt strong.refl
 
+.. image:: tutorial_images/PDZ2_spotfinding_image_viewer.png
+   :width: 800
+   :alt: First image of PDZ2 dataset with spotfinding results.
+
+
 Making Stills
 =============
 
@@ -189,7 +191,6 @@ which do not match between the two programs.
 .. code:: bash
 
     laue.sequence_to_stills monochromatic.*
-    #cctbx.python scripts/sequence_to_stills-newest_ld.py monochromatic.*
 
 Polychromatic Analysis
 ======================
@@ -213,7 +214,6 @@ on the detector.
 
 .. code:: bash
 
-    N=8 # Max multiprocessing
     laue.optimize_indexing stills.* \
         output.experiments="optimized.expt" \
         output.reflections="optimized.refl" \
@@ -221,23 +221,26 @@ on the detector.
         wavelengths.lam_min=0.95 \
         wavelengths.lam_max=1.2 \
         reciprocal_grid.d_min=1.7 \
-        nproc=$N
+        nproc=8
 
 .. code:: bash
 
-    N=8 # Max multiprocessing
     laue.refine optimized.* \
         output.experiments="poly_refined.expt" \
         output.reflections="poly_refined.refl" \
         output.log="laue.poly_refined.log" \
-        nproc=$N >> sink.log
+        nproc=8 >> sink.log
 
 To check the refinement quality, we check the spotfinding
 root-mean-square deviations (rmsds) as a function of image.
 
 .. code:: bash
 
-    laue.compute_rmsds poly_refined.* refined_only=True
+    laue.compute_rmsds poly_refined.* refined_only=True show=True save=True
+
+.. image:: tutorial_images/residuals.png
+    :width: 600
+    :alt: RMSDs of PDZ2 dataset after polychromatic refinement.
 
 These ``rmsd``\ s look good.
 
@@ -250,9 +253,11 @@ resemble the beam spectrum, so this is a good check to do at this time!
 
 .. code:: bash
 
-    laue.plot_wavelengths poly_refined.refl refined_only=True save=True show=False
-    
-    xdg-open wavelengths.png
+    laue.plot_wavelengths poly_refined.refl refined_only=True save=True show=True
+
+.. image:: tutorial_images/wavelengths.png
+    :width: 600
+    :alt: Assigned wavelengths of PDZ2 dataset after polychromatic refinement.
 
 This is the expected wavelength profile, indicating successful
 wavelength assignment.
@@ -282,22 +287,20 @@ integrate the intensities to get an ``mtz`` file that we can feed into
 
 .. code:: bash
 
-    N=8 # Max multiprocessing
     laue.predict poly_refined.* \
         output.reflections="predicted.refl" \
         output.log="laue.predict.log" \
         wavelengths.lam_min=0.95 \
         wavelengths.lam_max=1.2 \
         reciprocal_grid.d_min=1.7 \
-        nproc=$N
+        nproc=8
 
 .. code:: bash
 
-    N=8 # Max multiprocessing
     laue.integrate poly_refined.expt predicted.refl \
         output.filename="integrated.mtz" \
         output.log="laue.integrate.log" \
-        nproc=$N
+        nproc=8
 
 Processing and Combining All Passes
 ===================================
