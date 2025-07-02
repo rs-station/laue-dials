@@ -29,7 +29,8 @@ Building off the ``DIALS`` framework, and including modern tools like ``numpy``,
 ``reciprocalspaceship``, this package allows for analysis of X-ray crystallographic data using
 wide-bandwidth light sources. This package is intended to be used in conjunction with `DIALS`_,
 `careless`_, and `Phenix`_ in order to generate molecular models from raw data. For documentation, see
-https://rs-station.github.io/laue-dials/index.html.
+https://rs-station.github.io/laue-dials/index.html. For the Github repository, please visit
+https://github.com/rs-station/laue-dials.
 
 ============
 Installation
