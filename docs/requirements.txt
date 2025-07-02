@@ -9,6 +9,8 @@ nbsphinx
 sphinx-design
 autodocsumm
 docutils
+tox
+tox-conda
 importlib-metadata
 reciprocalspaceship
 tqdm
