@@ -17,8 +17,7 @@ import reciprocalspaceship as rs
 from cctbx import sgtbx
 from dials.array_family import flex
 from dials.util import show_mail_handle_errors
-from dials.util.options import (ArgumentParser,
-                                reflections_and_experiments_from_files)
+from dials.util.options import ArgumentParser, reflections_and_experiments_from_files
 
 from laue_dials.algorithms.integration import SegmentedImage
 from laue_dials.utils.version import laue_version
