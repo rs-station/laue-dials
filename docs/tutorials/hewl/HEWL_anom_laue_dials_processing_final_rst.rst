@@ -42,7 +42,8 @@ Introduction
 
 In this notebook, we will process an anomalous HEWL dataset. The data is
 comprised of 3049 frames that constitute several rotations of a HEWL
-crystal.
+crystal and be downloaded `on SBGrid <https://data.sbgrid.org/dataset/1118/>`__.
+We will use the first 360 images in this tutorial.
 
 At the end of processing, we would like an integrated ``.mtz`` file we
 can then process with ``careless`` for merging. We must run
@@ -51,7 +52,7 @@ fewer images for tutorial purposes if needed. The data are spaced by one
 degree per frame, so 180 frames represents a single full rotation.
 
 Data processing will rely on images found in ``./data`` and scripts
-found in ``./scripts``.
+found in ``./scripts``. Scripts can be downloaded `here <hewl_scripts.tar.gz>`__.
 
 Importing Data
 ==============
@@ -133,6 +134,10 @@ here <https://dials.github.io/documentation/tutorials/processing_in_detail_betal
 .. code:: bash
 
     dials.image_viewer imported_HEWL_anom_3049.expt strong_HEWL_anom_3049.refl
+
+.. image:: tutorial_images/HEWL_spotfinding_image_viewer.png
+  :width: 800
+  :alt: First image of HEWL dataset with spotfinding results.
 
 .. code:: bash
 
@@ -222,6 +227,10 @@ Check results in image viewer
 
     dials.image_viewer monochromatic_HEWL_anom_3049.expt monochromatic_HEWL_anom_3049.refl
 
+.. image:: tutorial_images/HEWL_refinement_monochromatic.png
+  :width: 800
+  :alt: First image of HEWL dataset with monochromatic indexing results.
+
 Predictions do not look great - many shoeboxes do not have a predicted
 spot, and there are also some predicted spots that are off-target or
 fully false positives.
@@ -229,6 +238,10 @@ fully false positives.
 .. code:: bash
 
     dials.image_viewer poly_refined_HEWL_anom_3049.expt poly_refined_HEWL_anom_3049.refl
+
+.. image:: tutorial_images/HEWL_refinement_polychromatic.png
+  :width: 800
+  :alt: First image of HEWL dataset with polychromatic indexing results.
 
 The polychromatic predictions look much better!
 
@@ -246,10 +259,13 @@ assignment at this stage before predicting the full set of reflections.
     laue.plot_wavelengths poly_refined_HEWL_anom_3049.refl \
         refined_only=True \
         save=True \
-        show=False \
+        show=True \
         output=wavelengths_HEWL_anom_3049.png \
         log=laue.plot_wavelengths_HEWL_anom_3049.log
 
+.. image:: tutorial_images/wavelengths_HEWL_anom_3049.png
+  :width: 600
+  :alt: First image of HEWL dataset with monochromatic indexing results.
     xdg-open ./wavelengths_HEWL_anom_3049.png
 
 Spot prediction
