@@ -295,7 +295,7 @@ class LaueAssigner:
         self.lam_min = lam_min
         self.lam_max = lam_max
         self.dmin = dmin
-        self.B = np.array(self.cell.fractionalization_matrix).T
+        self.B = np.array(self.cell.frac.mat).T
         self.ewald_offset = None
 
         # self.s{0,1} are dynamically masked by their outlier status
