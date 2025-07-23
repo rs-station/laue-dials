@@ -244,7 +244,6 @@ class Integrator(IntegratorBase):
     def estimate_background(self):
         c = self.windows
         w = self.profile_dist 
-        w = np.ones_like(c)
         I = self.intensity
 
         p = self.profile_values
