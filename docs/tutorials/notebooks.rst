@@ -1,21 +1,5 @@
-Contents
-========
-
-.. include:: tutorial_README.rst
-
-.. toctree::
-   :maxdepth: 2
-
-   Time-Resolved EFX Data with PDZ2 <pdz2/tutorial_combine_passes.ipynb>
-   Anomalous Scattering with HEWL <hewl/HEWL_anom_laue_dials_processing_final.ipynb>
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+Processing Anomalous Scattering with HEWL Data <hewl/HEWL_anom_laue_dials_processing_final_rst>
+Time-Resolved EF-X Processing on PDZ2 Data <pdz2/tutorial_combine_passes_rst>
 
 .. _toctree: https://www.sphinx-doc.org/en/master/usage/restructuredtext/directives.html
 .. _reStructuredText: https://www.sphinx-doc.org/en/master/usage/restructuredtext/basics.html
