@@ -1,7 +1,6 @@
 # Requirements file for ReadTheDocs, check .readthedocs.yml.
 # To build the module reference correctly, make sure every external package
 # under `install_requires` in `setup.cfg` is also listed here!
-dials>=3.22.1
 sphinx
 myst-parser
 sphinxcontrib-autoprogram
@@ -10,13 +9,15 @@ nbsphinx
 sphinx-design
 autodocsumm
 docutils
+tox
+tox-conda
 importlib-metadata
 reciprocalspaceship
 tqdm
 numpy
 pandas
 argparse
-gemmi
+gemmi>=0.7.0
 matplotlib
 scipy
 jupyter

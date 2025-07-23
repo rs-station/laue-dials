@@ -43,7 +43,7 @@ except FileNotFoundError:
 try:
     import sphinx
 
-    cmd_line = f"sphinx-apidoc --implicit-namespaces -f -o {output_dir} {module_dir}"
+    cmd_line = f"sphinx-apidoc --implicit-namespaces -f -o {output_dir} {module_dir} {module_dir}/diagnostics*"
 
     args = cmd_line.split(" ")
     if tuple(sphinx.__version__.split(".")) >= ("1", "7"):
@@ -97,7 +97,9 @@ master_doc = "index"
 
 # General information about the project.
 project = "laue_dials"
-copyright = "2024, Rick Hewitt"
+copyright = (
+    "2025, Research Agreement between Harvard University and University of Chicago"
+)
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -129,7 +131,7 @@ release = version
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", ".venv"]
+exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", ".venv", "tutorials/*/*.ipynb"]
 
 # The reST default role (used for this markup: `text`) to use for all documents.
 # default_role = None
@@ -167,7 +169,12 @@ html_theme = "alabaster"
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
-html_theme_options = {"sidebar_width": "300px", "page_width": "1200px"}
+html_theme_options = {
+    "sidebar_width": "300px",
+    "page_width": "1200px",
+    "fixed_sidebar": True,
+    "logo_name": False,
+}
 
 html_favicon = "images/rs-favicon_32x32.png"
 
@@ -183,7 +190,7 @@ html_title = "laue-dials"
 
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
-# html_logo = ""
+html_logo = "./images/laue_dials_nasa_version_v2_sidebar.png"
 
 # The name of an image file (within the static path) to use as favicon of the
 # docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
@@ -254,7 +261,7 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-    ("index", "user_guide.tex", "laue_dials Documentation", "PrinceWalnut", "manual")
+    ("index", "user_guide.tex", "laue_dials Documentation", "Rick Hewitt", "manual")
 ]
 
 # The name of an image file (relative to this directory) to place at the top of

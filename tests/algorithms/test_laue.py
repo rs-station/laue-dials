@@ -56,9 +56,11 @@ def test_LaueAssigner():
     s1 = np.array([[1, 1, 1], [2, 2, 2]])
     cell = (1, 1, 1, 90, 90, 90)
     R = np.eye(3)
-    lam_min, lam_max, dmin = 0.8, 1.2, 1.0
+    lam_min, lam_max, lam_peak, dmin = 0.8, 1.2, 1.0, 1.4
     spacegroup = "P1"
-    laue_assigner = LaueAssigner(s0, s1, cell, R, lam_min, lam_max, dmin, spacegroup)
+    laue_assigner = LaueAssigner(
+        s0, s1, cell, R, lam_min, lam_max, lam_peak, dmin, spacegroup
+    )
     assert laue_assigner is not None
 
 

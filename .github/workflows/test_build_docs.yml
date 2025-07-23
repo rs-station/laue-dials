@@ -17,33 +17,34 @@ jobs:
     - uses: actions/checkout@v3
 
     - name: Install Miniconda
-      uses: conda-incubator/setup-miniconda@v2
+      uses: conda-incubator/setup-miniconda@v3
       with:
         miniconda-version: "latest"
         channels: conda-forge, defaults
-        auto-activate-base: true
-        activate-environment: ""
+        auto-activate-base: false
+        activate-environment: test_doc_build
+        python-version: 3.12
 
     - name: Source Miniconda
       run: |
         source $CONDA/etc/profile.d/conda.sh
-        conda activate
+        conda activate test_doc_build
         which python
         python --version
         echo $CONDA
-        conda install -n base conda-libmamba-solver
+        conda install -n test_doc_build conda-libmamba-solver
         conda config --set solver libmamba
         python -m pip install --upgrade pip
 
     - name: Install DIALS environment and more
       run: |
         source $CONDA/etc/profile.d/conda.sh
-        conda activate
-        conda install -n base -c conda-forge -y dials pandoc
+        conda activate test_doc_build
+        conda install -n test_doc_build -c conda-forge -y dials pandoc
         conda info
         conda list
-        $CONDA/bin/pip install -e ".[docs]"
+        pip install -e ".[docs]"
         cd docs
-        export SPHINXBUILD="$CONDA/bin/sphinx-build"
+        export SPHINXBUILD="$CONDA/envs/test_doc_build/bin/sphinx-build"
         make clean
         make html

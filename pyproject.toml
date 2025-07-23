@@ -7,3 +7,5 @@ name = "laue_dials"
 dynamic = ["description","authors","readme","requires-python","license","classifiers","version","entry-points","dependencies","optional-dependencies","scripts"]
 
 [tool.setuptools_scm]
+local_scheme = "no-local-version"
+version_scheme = "only-version"

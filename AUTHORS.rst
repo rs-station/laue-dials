@@ -4,12 +4,26 @@ Contributors
 
 Rick A. Hewitt
 
-Kevin Dalton
+Kevin M. Dalton
 
-Doeke Hekstra
+Derek A. Mendez
+
+Harrison K. Wang
+
+Margaret A. Klureza
+
+Dennis E. Brookner
+
+Jack B. Greisman
+
+David McDonagh
+
+Vukica Šrajer
+
+Nicholas K. Sauter
 
 Aaron S. Brewster
 
-Derek Mendez
+Doeke R. Hekstra
 
-Dennis E. Brookner
+Luis A. Aldama
