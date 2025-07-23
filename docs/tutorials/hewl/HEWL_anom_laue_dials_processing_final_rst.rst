@@ -42,7 +42,7 @@ Introduction
 
 In this notebook, we will process an anomalous HEWL dataset. The data is
 comprised of 3049 frames that constitute several rotations of a HEWL
-crystal and be downloaded `on SBGrid <https://data.sbgrid.org/dataset/1118/>`__.
+crystal and can be downloaded `on SBGrid <https://data.sbgrid.org/dataset/1118/>`__.
 We will use the first 360 images in this tutorial.
 
 At the end of processing, we would like an integrated ``.mtz`` file we
@@ -373,14 +373,14 @@ was done using the 5 scripts below, in order:
 
    - Copies files with a set of custom refinement parameters for each
      step of refinement in Phenix into the appropriate directory.
-     Refinement 1 is a rigid-body refinment only, while Refinement 2
+     Refinement 1 is a rigid-body refinement only, while Refinement 2
      also refines individual B-factors.
    - Calls the utility sbatch_phenix_Refine.sh to run Phenix refinement
 
 4. HEWL_anom_peak_heights.sh
 
    - Calls the anomalous_peak_heights.py utility to calculate the
-     anomalous peak heights for each I and S atom accross all frame
+     anomalous peak heights for each I and S atom across all frame
      number sizes and store the resulting outputs in csv files
    - Calls the concatenate_anomalous_peak_csv.py utility to concatenate
      the resulting 13 csv files into one

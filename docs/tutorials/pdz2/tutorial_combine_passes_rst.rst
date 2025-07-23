@@ -44,7 +44,7 @@ In this notebook, we will process a time-resolved EF-X dataset.
 
 The data is comprised of four passes of four timepoints each. Each of
 the four electric-field timepoints is taken for a given ``phi`` angle,
-then the crystal is rotated aaround the phi goniometer axis and then the
+then the crystal is rotated around the phi goniometer axis and then the
 four timepoints are taken again. This is done over four passes,
 ``c,d,e,f``. The start angle and the step can be found in the below
 table.
@@ -320,7 +320,7 @@ contains all of the above ``bash`` code, we iterate over all of the
 passes in the below cell. The below cell takes a while to run – we don’t
 recommend to run this in the jupyter notebook. Instead, we recommend to
 run it as a standalone parallel script, attached as
-``../scripts/process.sh``. Either proccedure will create a folder named
+``../scripts/process.sh``. Either procedure will create a folder named
 ``gain_0,3`` containing subfolders of ``dials`` files for each pass. For
 example, ``../gain_0,3-from_stills/dials_files_d_100ns`` contains
 ``dials`` files for pass ``d``, timepoint ``100ns``.

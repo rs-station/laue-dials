@@ -74,7 +74,7 @@ In order for a new command-line function to be maximally compatible with this do
 Adding other pages to the docs
 ------------------------------
 
-New pages can be added to the docs by creating new files in the `docs/` directory. Files can be either ``.rst`` (reStructuredText) or ``.md`` (Markdown) formats. Additionally, ``.md`` files can contain chunks of reStructuredText wrapped inside of ``{eval-rst}`` triple braces::
+New pages can be added to the docs by creating new files in the `docs/` directory. Files can be either ``.rst`` (reStructuredText) or ``.md`` (Markdown) formats. Additionally, ``.md`` files can contain chunks of reStructuredText wrapped inside of ``{eval-rst}`` triple backticks::
 
     ## Markdown heading
     Lots of *markdown* code.
