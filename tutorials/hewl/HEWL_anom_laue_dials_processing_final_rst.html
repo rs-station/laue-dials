@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Installation &#8212; laue-dials</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/basic.css?v=686e5160" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=8c38d6ca" />
+    <script src="../../_static/jquery.js?v=5d32c60e"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+    <script src="../../_static/documentation_options.js?v=837179f8"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <link rel="icon" href="../../_static/rs-favicon_32x32.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/laue_dials_nasa_version_v2_sidebar.png" alt="Logo of laue_dials"/>
+            </a></p>
+<h1 class="logo"><a href="../../index.html">laue_dials</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributions &amp; Help</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cli/functions.html">Command-Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/modules.html">Full API Reference</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h1>
+<p>The easiest way to install <code class="docutils literal notranslate"><span class="pre">laue-dials</span></code> and its dependencies is using
+<a class="reference external" href="https://docs.anaconda.com/free/anaconda/install/index.html">Anaconda</a>.
+First we update and install the libmamba solver with</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">update</span> <span class="o">-</span><span class="n">n</span> <span class="n">base</span> <span class="n">conda</span>
+<span class="n">conda</span> <span class="n">install</span> <span class="o">-</span><span class="n">n</span> <span class="n">base</span> <span class="n">conda</span><span class="o">-</span><span class="n">libmamba</span><span class="o">-</span><span class="n">solver</span>
+<span class="n">conda</span> <span class="n">config</span> <span class="o">--</span><span class="nb">set</span> <span class="n">solver</span> <span class="n">libmamba</span>
+</pre></div>
+</div>
+<p>With Anaconda, we can then create and activate a custom environment for
+your install by running</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">create</span> <span class="o">--</span><span class="n">name</span> <span class="n">laue</span><span class="o">-</span><span class="n">dials</span>
+<span class="n">conda</span> <span class="n">activate</span> <span class="n">laue</span><span class="o">-</span><span class="n">dials</span>
+</pre></div>
+</div>
+<p>Now we are ready to install the main dependency and framework:
+<a class="reference external" href="https://dials.github.io">DIALS</a>. After installing that, we can
+install <code class="docutils literal notranslate"><span class="pre">laue-dials</span></code> using pip, as below:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">install</span> <span class="o">-</span><span class="n">c</span> <span class="n">conda</span><span class="o">-</span><span class="n">forge</span> <span class="n">dials</span>
+<span class="n">pip</span> <span class="n">install</span> <span class="n">laue</span><span class="o">-</span><span class="n">dials</span>
+</pre></div>
+</div>
+<p>All other dependencies will then be automatically installed for us, and
+we’ll be ready to analyze your first Laue data set! Reopen this notebook
+with the appropriate environment activated when ready.</p>
+<p>Documentation for <code class="docutils literal notranslate"><span class="pre">laue-dials</span></code> can be found at
+<a class="reference external" href="https://rs-station.github.io/laue-dials/index.html">here</a>, and
+entering a command with no arguments on the command line will also print
+a help page!</p>
+</section>
+<section id="introduction">
+<h1>Introduction<a class="headerlink" href="#introduction" title="Link to this heading"></a></h1>
+<p>In this notebook, we will process an anomalous HEWL dataset. The data is
+comprised of 3049 frames that constitute several rotations of a HEWL
+crystal and can be downloaded <a class="reference external" href="https://data.sbgrid.org/dataset/1118/">on SBGrid</a>.
+We will use the first 360 images in this tutorial.</p>
+<p>At the end of processing, we would like an integrated <code class="docutils literal notranslate"><span class="pre">.mtz</span></code> file we
+can then process with <code class="docutils literal notranslate"><span class="pre">careless</span></code> for merging. We must run
+<code class="docutils literal notranslate"><span class="pre">laue-dials</span></code> on the whole dataset for completeness, but we can use
+fewer images for tutorial purposes if needed. The data are spaced by one
+degree per frame, so 180 frames represents a single full rotation.</p>
+<p>Data processing will rely on images found in <code class="docutils literal notranslate"><span class="pre">./data</span></code> and scripts
+found in <code class="docutils literal notranslate"><span class="pre">./scripts</span></code>. Scripts can be downloaded <a class="reference external" href="hewl_scripts.tar.gz">here</a>.</p>
+</section>
+<section id="importing-data">
+<h1>Importing Data<a class="headerlink" href="#importing-data" title="Link to this heading"></a></h1>
+<p>We can use <code class="docutils literal notranslate"><span class="pre">dials.import</span></code> as a way to import the data files written at
+experimental facilities into a format that is friendly to both <code class="docutils literal notranslate"><span class="pre">DIALS</span></code>
+and <code class="docutils literal notranslate"><span class="pre">laue-dials</span></code>. We provide the peak wavelength of the beam, the
+detector pixel measurements (in mm), and the goniometer axes.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Import data</span>
+dials.import<span class="w"> </span>geometry.scan.oscillation<span class="o">=</span><span class="m">0</span>,1<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>geometry.goniometer.axes<span class="o">=</span>-1,0,0<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>geometry.beam.wavelength<span class="o">=</span><span class="m">1</span>.05<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>geometry.detector.panel.pixel<span class="o">=</span><span class="m">0</span>.08854,0.08854<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>input.template<span class="o">=</span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span><span class="s1">&#39;/data/HEWL_NaI_3_2_####.mccd&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>output.experiments<span class="o">=</span>imported_HEWL_anom_3049.expt<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>output.log<span class="o">=</span>dials.import_HEWL_anom_3049.log
+</pre></div>
+</div>
+</section>
+<section id="getting-an-initial-estimate">
+<h1>Getting an Initial Estimate<a class="headerlink" href="#getting-an-initial-estimate" title="Link to this heading"></a></h1>
+<p>After importing our data, the first thing we need to do is get an
+initial estimate for the experimental geometry. Here, we’ll use some
+monochromatic algorithms from DIALS to help! This step can be tricky –
+failure can be due to several causes. In the event of failure, here are
+a few common causes:</p>
+<ol class="arabic simple">
+<li><p>The spotfinding gain is either too high or too low. Try looking at
+the results of <code class="docutils literal notranslate"><span class="pre">dials.image_viewer</span> <span class="pre">imported.expt</span> <span class="pre">strong.refl</span></code> as
+below and seeing if you have too many (or too few) reflections. Lower
+gain gives you more spots, but also more likely to give false
+positives.</p></li>
+<li><p>Supplying the space group or unit cell during indexing can be
+helpful. When supplying the unit cell, allow for some variation in
+the lengths of the axes, since the monochromatic algorithms may
+result in a slightly scaled unit cell depending on the chosen
+wavelength.</p></li>
+<li><p>You may have intensities that need to be masked. These can come from
+bad panels or extraneous scatter. You can use <code class="docutils literal notranslate"><span class="pre">dials.image_viewer</span></code>
+(described below) to create a mask file for your data, and then
+provide the <code class="docutils literal notranslate"><span class="pre">spotfinder.lookup.mask=&quot;pixels.mask&quot;</span></code> command below to
+use that mask during spotfinding.</p></li>
+</ol>
+<p>First we will run spotfinding algorithms, then check using the DIALS
+image viewer to ensure we have the gain set to an appropriate level, and
+then try our hand at <code class="docutils literal notranslate"><span class="pre">laue.index</span></code> to see the quality of the indexed
+unit cell.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>laue.find_spots<span class="w"> </span>imported_HEWL_anom_3049.expt<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>spotfinder.mp.nproc<span class="o">=</span><span class="m">60</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>spotfinder.threshold.dispersion.gain<span class="o">=</span><span class="m">0</span>.15<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>spotfinder.filter.max_separation<span class="o">=</span><span class="m">10</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>output.reflections<span class="o">=</span>strong_HEWL_anom_3049.refl<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>output.log<span class="o">=</span>laue.find_spots_HEWL_anom_3049.log
+</pre></div>
+</div>
+</section>
+<section id="viewing-images">
+<h1>Viewing Images<a class="headerlink" href="#viewing-images" title="Link to this heading"></a></h1>
+<p>Sometimes it’s helpful to be able to see the analysis data overlayed on
+the raw data. DIALS has a utility for viewing spot information on the
+raw images called <code class="docutils literal notranslate"><span class="pre">dials.image_viewer</span></code>. For example, the spotfinding
+gain parameter can be tuned to capture more spots, but lowering it too
+much finds nonexistent spots. To check this, we can use the image viewer
+to see what spots were found on images. We need to provide an <code class="docutils literal notranslate"><span class="pre">expt</span></code>
+file and a <code class="docutils literal notranslate"><span class="pre">refl</span></code> file – the <code class="docutils literal notranslate"><span class="pre">imported.expt</span></code> and <code class="docutils literal notranslate"><span class="pre">strong.refl</span></code>
+files will do for checking spotfinding. This program also has utilities
+for generating masks if they are needed. The red dots from the checkbox
+“Mark centers of mass” are the spots found by <code class="docutils literal notranslate"><span class="pre">laue.find_spots</span></code> (which
+in turn makes a call to <code class="docutils literal notranslate"><span class="pre">dials.find_spots</span></code>). These are best used for
+judging whether you need to adjust the gain higher (for fewer spots) or
+lower (for more) during spotfinding. You can find more details on the
+image viewer in the <a class="reference external" href="https://dials.github.io/documentation/tutorials/processing_in_detail_betalactamase.html">DIALS tutorial
+here</a>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>dials.image_viewer<span class="w"> </span>imported_HEWL_anom_3049.expt<span class="w"> </span>strong_HEWL_anom_3049.refl
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="../../_images/HEWL_spotfinding_image_viewer.png"><img alt="First image of HEWL dataset with spotfinding results." src="../../_images/HEWL_spotfinding_image_viewer.png" style="width: 800px;" />
+</a>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>laue.index<span class="w"> </span>imported_HEWL_anom_3049.expt<span class="w"> </span>strong_HEWL_anom_3049.refl<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>indexer.indexing.nproc<span class="o">=</span><span class="m">60</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>indexer.indexing.known_symmetry.space_group<span class="o">=</span><span class="m">96</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>indexer.indexing.refinement_protocol.mode<span class="o">=</span>refine_shells<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>indexer.refinement.parameterisation.auto_reduction.action<span class="o">=</span>fix<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>laue_output.index_only<span class="o">=</span>False<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>laue_output.indexed.experiments<span class="o">=</span>indexed_HEWL_anom_3049.expt<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>laue_output.indexed.reflections<span class="o">=</span>indexed_HEWL_anom_3049.refl<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>laue_output.refined.experiments<span class="o">=</span>refined_HEWL_anom_3049.expt<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>laue_output.refined.reflections<span class="o">=</span>refined_HEWL_anom_3049.refl<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>laue_output.final_output.experiments<span class="o">=</span>monochromatic_HEWL_anom_3049.expt<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>laue_output.final_output.reflections<span class="o">=</span>monochromatic_HEWL_anom_3049.refl<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>laue_output.log<span class="o">=</span>laue.index_HEWL_anom_3049.log
+</pre></div>
+</div>
+</section>
+<section id="making-stills">
+<h1>Making Stills<a class="headerlink" href="#making-stills" title="Link to this heading"></a></h1>
+<p>Here we will now split our monochromatic estimate into a series of
+stills to prepare it for the polychromatic pipeline. There is a useful
+utility called <code class="docutils literal notranslate"><span class="pre">laue.sequence_to_stills</span></code> for this.</p>
+<p>NOTE: Do not use <code class="docutils literal notranslate"><span class="pre">dials.sequence_to_stills</span></code>, as there are data columns
+which do not match between the two programs.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>laue.sequence_to_stills<span class="w"> </span>monochromatic_HEWL_anom_3049.expt<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>monochromatic_HEWL_anom_3049.refl<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>output.experiments<span class="o">=</span>stills_HEWL_anom_3049.expt<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>output.reflections<span class="o">=</span>stills_HEWL_anom_3049.refl<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>output.log<span class="o">=</span>laue.sequence_to_stills_HEWL_anom_3049.log
+</pre></div>
+</div>
+</section>
+<section id="polychromatic-analysis">
+<h1>Polychromatic Analysis<a class="headerlink" href="#polychromatic-analysis" title="Link to this heading"></a></h1>
+<p>Here we will use four other programs in <code class="docutils literal notranslate"><span class="pre">laue-dials</span></code> to create a
+polychromatic experimental geometry using our initial monochromatic
+estimate. Each of the programs does the following:</p>
+<p><code class="docutils literal notranslate"><span class="pre">laue.optimize_indexing</span></code> assigns wavelengths to reflections and
+refines the crystal orientation jointly.</p>
+<p><code class="docutils literal notranslate"><span class="pre">laue.refine</span></code> is a polychromatic wrapper for <code class="docutils literal notranslate"><span class="pre">dials.refine</span></code> and
+allows for refining the experimental geometry overall to one suitable
+for spot prediction and integration.</p>
+<p><code class="docutils literal notranslate"><span class="pre">laue.predict</span></code> takes the refined experimental geometry and predicts
+the centroids of all strong and weak reflections on the detector.</p>
+<p><code class="docutils literal notranslate"><span class="pre">laue.integrate</span></code> then builds spot profiles and integrates intensities
+on the detector.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>laue.optimize_indexing<span class="w"> </span>stills_HEWL_anom_3049.refl<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>stills_HEWL_anom_3049.expt<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>output.experiments<span class="o">=</span>optimized_HEWL_anom_3049.expt<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>output.reflections<span class="o">=</span>optimized_HEWL_anom_3049.refl<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>output.log<span class="o">=</span>laue.optimize_indexing_HEWL_anom_3049.log<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>wavelengths.lam_min<span class="o">=</span><span class="m">0</span>.97<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>wavelengths.lam_max<span class="o">=</span><span class="m">1</span>.25<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>reciprocal_grid.d_min<span class="o">=</span><span class="m">1</span>.4<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span><span class="nv">nproc</span><span class="o">=</span><span class="m">60</span>
+</pre></div>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>laue.refine<span class="w"> </span>optimized_HEWL_anom_3049.expt<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>optimized_HEWL_anom_3049.refl<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>output.experiments<span class="o">=</span>poly_refined_HEWL_anom_3049.expt<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>output.reflections<span class="o">=</span>poly_refined_HEWL_anom_3049.refl<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>output.log<span class="o">=</span>laue.poly_refined_HEWL_anom_3049.log<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span><span class="nv">nproc</span><span class="o">=</span><span class="m">60</span>
+</pre></div>
+</div>
+<p>Note: even without maxing out the available cores, jupyterlab has a
+tendency to crash/think that the above cell is running indefinitely.
+After confirming that the experiment &amp; reflections files had been
+successfully written out via terminal, I had to interrupt the kernel,
+restart it, and then resume processing below.</p>
+<section id="check-results-in-image-viewer">
+<h2>Check results in image viewer<a class="headerlink" href="#check-results-in-image-viewer" title="Link to this heading"></a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>dials.image_viewer<span class="w"> </span>monochromatic_HEWL_anom_3049.expt<span class="w"> </span>monochromatic_HEWL_anom_3049.refl
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="../../_images/HEWL_refinement_monochromatic.png"><img alt="First image of HEWL dataset with monochromatic indexing results." src="../../_images/HEWL_refinement_monochromatic.png" style="width: 800px;" />
+</a>
+<p>Predictions do not look great - many shoeboxes do not have a predicted
+spot, and there are also some predicted spots that are off-target or
+fully false positives.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>dials.image_viewer<span class="w"> </span>poly_refined_HEWL_anom_3049.expt<span class="w"> </span>poly_refined_HEWL_anom_3049.refl
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="../../_images/HEWL_refinement_polychromatic.png"><img alt="First image of HEWL dataset with polychromatic indexing results." src="../../_images/HEWL_refinement_polychromatic.png" style="width: 800px;" />
+</a>
+<p>The polychromatic predictions look much better!</p>
+</section>
+<section id="check-wavelength-spectrum">
+<h2>Check wavelength spectrum<a class="headerlink" href="#check-wavelength-spectrum" title="Link to this heading"></a></h2>
+<p>There is a utility in <code class="docutils literal notranslate"><span class="pre">laue-dials</span></code> called <code class="docutils literal notranslate"><span class="pre">laue.plot_wavelengths</span></code>.
+This command generates a histogram of the assigned wavelength spectrum.
+If you know approximately the shape of your beam spectrum, this can be a
+useful check to ensure that nothing has gone wrong with wavelength
+assignment at this stage before predicting the full set of reflections.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>laue.plot_wavelengths<span class="w"> </span>poly_refined_HEWL_anom_3049.refl<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span><span class="nv">refined_only</span><span class="o">=</span>True<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span><span class="nv">save</span><span class="o">=</span>True<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span><span class="nv">show</span><span class="o">=</span>True<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span><span class="nv">output</span><span class="o">=</span>wavelengths_HEWL_anom_3049.png<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span><span class="nv">log</span><span class="o">=</span>laue.plot_wavelengths_HEWL_anom_3049.log
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="../../_images/wavelengths_HEWL_anom_3049.png"><img alt="First image of HEWL dataset with monochromatic indexing results. xdg-open ./wavelengths_HEWL_anom_3049.png" src="../../_images/wavelengths_HEWL_anom_3049.png" style="width: 600px;" />
+</a>
+</section>
+<section id="spot-prediction">
+<h2>Spot prediction<a class="headerlink" href="#spot-prediction" title="Link to this heading"></a></h2>
+<p>Since the assigned spectrum looks good, we can move on to predicting the
+full set of reflections. If the assigned beam spectrum ends up narrower
+than the wavelength limits you provided in <code class="docutils literal notranslate"><span class="pre">laue.optimize_indexing</span></code>,
+you can always narrow down the spectrum here for <code class="docutils literal notranslate"><span class="pre">laue.predict</span></code>. The
+predictor will find the locations of all feasible spots and build
+profiles for the weak spots based on the observed strong spots. The
+output reflection table can then be fed along with the refined <code class="docutils literal notranslate"><span class="pre">expt</span></code>
+file into <code class="docutils literal notranslate"><span class="pre">laue.integrate</span></code> to generate <code class="docutils literal notranslate"><span class="pre">mtz</span></code> files suitable for
+merging in a program like <code class="docutils literal notranslate"><span class="pre">careless</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>laue.predict<span class="w"> </span>poly_refined_HEWL_anom_3049.expt<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>poly_refined_HEWL_anom_3049.refl<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>output.reflections<span class="o">=</span>predicted_HEWL_anom_3049.refl<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>output.log<span class="o">=</span>laue.predict_HEWL_anom_3049.log<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>wavelengths.lam_min<span class="o">=</span><span class="m">0</span>.97<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>wavelengths.lam_max<span class="o">=</span><span class="m">1</span>.25<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>reciprocal_grid.d_min<span class="o">=</span><span class="m">1</span>.4<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span><span class="nv">nproc</span><span class="o">=</span><span class="m">60</span>
+</pre></div>
+</div>
+</section>
+<section id="integration">
+<h2>Integration<a class="headerlink" href="#integration" title="Link to this heading"></a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>laue.integrate<span class="w"> </span>poly_refined_HEWL_anom_3049.expt<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>predicted_HEWL_anom_3049.refl<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>output.filename<span class="o">=</span>integrated_HEWL_anom_3049.mtz<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>output.log<span class="o">=</span>laue.integrate_HEWL_anom_3049.log<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span><span class="nv">nproc</span><span class="o">=</span><span class="m">12</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="conclusion">
+<h1>Conclusion<a class="headerlink" href="#conclusion" title="Link to this heading"></a></h1>
+<p>At this point, you now have integrated <code class="docutils literal notranslate"><span class="pre">mtz</span></code> files that you can pass
+to <a class="reference external" href="https://github.com/rs-station/careless">careless</a> for scaling and
+merging. We provide an example SLURM-compatible <code class="docutils literal notranslate"><span class="pre">careless</span></code> script,
+found at <code class="docutils literal notranslate"><span class="pre">scripts/sbatch_careless_varied_frames.sh</span></code>. There are also
+several other scripts that can be used for further processing that are
+described by <code class="docutils literal notranslate"><span class="pre">README.txt</span></code>.</p>
+<p>Note that throughout this pipeline, you can use DIALS utilities like
+<code class="docutils literal notranslate"><span class="pre">dials.image_viewer</span></code> or <code class="docutils literal notranslate"><span class="pre">dials.report</span></code> to check progress and ensure
+your data is being analyzed properly. We recommend regularly checking
+the analysis by looking at the data on images, which can be done by</p>
+<p><code class="docutils literal notranslate"><span class="pre">dials.image_viewer</span> <span class="pre">FILE.expt</span> <span class="pre">FILE.refl</span></code>.</p>
+<p>These files are generally written as pairs with the same base name, with
+the exception of combining <code class="docutils literal notranslate"><span class="pre">imported.expt</span></code> + <code class="docutils literal notranslate"><span class="pre">strong.refl</span></code>, or
+<code class="docutils literal notranslate"><span class="pre">poly_refined.expt</span></code> + <code class="docutils literal notranslate"><span class="pre">predicted.refl</span></code>.</p>
+<p>Also note that you can take any program and enter it on the command-line
+for further help. For example, writing</p>
+<p><code class="docutils literal notranslate"><span class="pre">laue.optimize_indexing</span></code></p>
+<p>will print a help page for the program. You can see all configurable
+parameters by using</p>
+<p><code class="docutils literal notranslate"><span class="pre">laue.optimize_indexing</span> <span class="pre">-c</span></code>.</p>
+<p>This applies to all <code class="docutils literal notranslate"><span class="pre">laue-dials</span></code> command-line programs.</p>
+<p>For further processing of these data in programs like <code class="docutils literal notranslate"><span class="pre">careless</span></code>, the
+<code class="docutils literal notranslate"><span class="pre">README.txt</span></code> file includes instructions for using the programs in
+<code class="docutils literal notranslate"><span class="pre">/scripts/</span></code> (reproduced below).</p>
+<p>Congratulations! This tutorial is now over. For further questions, feel
+free to consult documentation or email the
+<a class="reference external" href="https://pypi.org/project/laue-dials/">authors</a>.</p>
+</section>
+<section id="post-laue-dials-processing">
+<h1>Post-Laue-DIALS processing<a class="headerlink" href="#post-laue-dials-processing" title="Link to this heading"></a></h1>
+<p>All HEWL anomalous data analysis and figure generation post-laue-dials
+was done using the 5 scripts below, in order:</p>
+<ol class="arabic simple">
+<li><p>HEWL_anom_cut_friedelize_careless.sh</p>
+<ul class="simple">
+<li><p>Copies the integrated (unmerged) mtz file produced by the
+HEWL_anom_laue_dials_processing_final.ipynb notebook into the
+working directory</p></li>
+<li><p>Calls the cut_unmerged_mtz_by_frames.py utility to create mtzs with
+only a subset of the overall images</p></li>
+<li><p>Calls the friedelize.py utility to split the Friedel mates into two
+mtz files (*_plus.mtz and *_minus.mtz)</p></li>
+<li><p>Copies those split mtzs into the appropriate directory</p></li>
+<li><p>Calls the sbatch_careless_varied_frames.sh utility to scale those
+mtzs</p></li>
+</ul>
+</li>
+<li><p>HEWL_anom_unfriedelize.sh</p>
+<ul class="simple">
+<li><p>Calls the unfriedelize.py utility to recombine the Friedel mates
+into a single mtz file</p></li>
+<li><p>Moves the resulting mtz to the refinement directory</p></li>
+</ul>
+</li>
+<li><p>HEWL_anom_refine.sh</p>
+<ul class="simple">
+<li><p>Copies files with a set of custom refinement parameters for each
+step of refinement in Phenix into the appropriate directory.
+Refinement 1 is a rigid-body refinement only, while Refinement 2
+also refines individual B-factors.</p></li>
+<li><p>Calls the utility sbatch_phenix_Refine.sh to run Phenix refinement</p></li>
+</ul>
+</li>
+<li><p>HEWL_anom_peak_heights.sh</p>
+<ul class="simple">
+<li><p>Calls the anomalous_peak_heights.py utility to calculate the
+anomalous peak heights for each I and S atom across all frame
+number sizes and store the resulting outputs in csv files</p></li>
+<li><p>Calls the concatenate_anomalous_peak_csv.py utility to concatenate
+the resulting 13 csv files into one</p></li>
+</ul>
+</li>
+<li><p>HEWL_anom_figures.sh</p>
+<ul class="simple">
+<li><p>Calls the HEWL_anom_peaks.pml utility to generate the PyMOL figure
+showing anomalous density</p></li>
+<li><p>Calls the careless.ccanom and careless.cchalf function to prepare
+data for subsequent plotting in Jupyter notebooks</p></li>
+</ul>
+</li>
+</ol>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &#169;2025, Research Agreement between Harvard University and University of Chicago.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.1.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../../_sources/tutorials/hewl/HEWL_anom_laue_dials_processing_final_rst.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
