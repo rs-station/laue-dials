@@ -89,6 +89,9 @@ wavelengths {
   lam_max = None
     .type = float(value_min=0.2)
     .help = "Maximum wavelength for beam spectrum."
+  lam_peak = None
+    .type = float(value_min=0.1)
+    .help = "Peak wavelength for beam spectrum."
   }
 
 reciprocal_grid {
@@ -128,7 +131,7 @@ def index_image(params, refls, expts):
     if type(expts) != ExperimentList:
         expts = ExperimentList([expts])
 
-    s0 = np.array(expts[0].beam.get_s0())
+    s0 = np.array(expts[0].beam.get_unit_s0())
 
     # Write to reflection file
     refls["wavelength"] = flex.double(len(refls))
@@ -176,7 +179,7 @@ def index_image(params, refls, expts):
             U,
             params.wavelengths.lam_min,
             params.wavelengths.lam_max,
-            experiment.beam.get_wavelength(),
+            params.wavelengths.lam_peak,
             params.reciprocal_grid.d_min,
             spacegroup,
         )
