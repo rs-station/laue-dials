@@ -113,10 +113,10 @@ def integrate_image(img_set, refls, isigi_cutoff):
     integrator.fit()
 
     # Update reflection data
-    i = np.zeros(len(refls))
-    sigi = np.zeros(len(refls))
-    bg = np.zeros(len(refls))
-    sigbg = np.zeros(len(refls))
+    np.zeros(len(refls))
+    np.zeros(len(refls))
+    np.zeros(len(refls))
+    np.zeros(len(refls))
 
     refls["intensity.sum.value"] = flex.double(integrator.intensity)
     refls["intensity.sum.variance"] = flex.double(np.square(integrator.uncertainty))
@@ -124,7 +124,9 @@ def integrate_image(img_set, refls, isigi_cutoff):
     refls["background.sum.variance"] = flex.double(integrator.background.squeeze())
     refls = refls.select(refls["intensity.sum.value"] != 0)
     refls = refls.select(refls["intensity.sum.variance"] > 0)
-    logger.info(f"Image {img_num} took {time.time() - proctime} seconds to integrate {len(refls)} reflections.")
+    logger.info(
+        f"Image {img_num} took {time.time() - proctime} seconds to integrate {len(refls)} reflections."
+    )
     return refls  # Updated reflection table
 
 
@@ -237,7 +239,9 @@ def run(args=None, *, phil=working_phil):
         final_refls.extend(refls)
     refls = final_refls
     if params.output.reflections != None:
-        logger.info("Saving integrated reflection table to %s", params.output.reflections)
+        logger.info(
+            "Saving integrated reflection table to %s", params.output.reflections
+        )
         refls.as_file(params.output.reflections)
 
     # Get data needed for MTZ file
