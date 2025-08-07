@@ -53,6 +53,10 @@ output {
     .type = str
     .help = "The output MTZ filename."
 
+  reflections = None
+    .type = str
+    .help = "The output reflection table filename. None will output no reflection table."
+
   log = 'laue.integrate.log'
     .type = str
     .help = "The log filename."
@@ -232,6 +236,9 @@ def run(args=None, *, phil=working_phil):
     for refls in refls_arr:
         final_refls.extend(refls)
     refls = final_refls
+    if params.output.reflections != None:
+        logger.info("Saving integrated reflection table to %s", params.output.reflections)
+        refls.as_file(params.output.reflections)
 
     # Get data needed for MTZ file
     logger.info("Converting to MTZ format.")
