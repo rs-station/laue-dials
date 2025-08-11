@@ -20,7 +20,7 @@ from dials.util import show_mail_handle_errors
 from dials.util.options import (ArgumentParser,
                                 reflections_and_experiments_from_files)
 
-from laue_dials.algorithms.integration import SegmentedImage
+from laue_dials.algorithms.integration import Integrator
 from laue_dials.utils.version import laue_version
 
 logger = logging.getLogger("laue-dials.command_line.integrate")
@@ -52,6 +52,10 @@ output {
   filename = 'integrated.mtz'
     .type = str
     .help = "The output MTZ filename."
+
+  reflections = None
+    .type = str
+    .help = "The output reflection table filename. None will output no reflection table."
 
   log = 'laue.integrate.log'
     .type = str
@@ -105,33 +109,24 @@ def integrate_image(img_set, refls, isigi_cutoff):
     # Make SegmentedImage
     all_spots = refls["xyzcal.px"].as_numpy_array()[:, :2].astype("float32")
     pixels = img_set.get_raw_data(0)[0].as_numpy_array().astype("float32")
-    sim = SegmentedImage(pixels, all_spots)
-
-    # Get integrated reflections only
-    refls = refls.select(flex.bool(sim.used_reflections))
-
-    # Integrate reflections
-    sim.integrate(isigi_cutoff)
+    integrator = Integrator(pixels, all_spots)
+    integrator.fit()
 
     # Update reflection data
-    i = np.zeros(len(refls))
-    sigi = np.zeros(len(refls))
-    bg = np.zeros(len(refls))
-    sigbg = np.zeros(len(refls))
-    profiles = sim.profiles.to_list()
-    for j in range(len(refls)):
-        prof = profiles[j]
-        if prof.success:
-            i[j] = prof.I
-            sigi[j] = prof.SigI
-            bg[j] = np.maximum((prof.background * prof.bg_mask), 0.0).sum()
-            sigbg[j] = np.sqrt(np.maximum((prof.background * prof.bg_mask), 0.0)).sum()
-    refls["intensity.sum.value"] = flex.double(i)
-    refls["intensity.sum.variance"] = flex.double(sigi**2)
-    refls["background.sum.value"] = flex.double(bg)
-    refls["background.sum.variance"] = flex.double(sigbg**2)
+    np.zeros(len(refls))
+    np.zeros(len(refls))
+    np.zeros(len(refls))
+    np.zeros(len(refls))
+
+    refls["intensity.sum.value"] = flex.double(integrator.intensity)
+    refls["intensity.sum.variance"] = flex.double(np.square(integrator.uncertainty))
+    refls["background.sum.value"] = flex.double(integrator.background.squeeze())
+    refls["background.sum.variance"] = flex.double(integrator.background.squeeze())
     refls = refls.select(refls["intensity.sum.value"] != 0)
-    logger.info(f"Image {img_num} took {time.time() - proctime} seconds.")
+    refls = refls.select(refls["intensity.sum.variance"] > 0)
+    logger.info(
+        f"Image {img_num} took {time.time() - proctime} seconds to integrate {len(refls)} reflections."
+    )
     return refls  # Updated reflection table
 
 
@@ -243,6 +238,11 @@ def run(args=None, *, phil=working_phil):
     for refls in refls_arr:
         final_refls.extend(refls)
     refls = final_refls
+    if params.output.reflections != None:
+        logger.info(
+            "Saving integrated reflection table to %s", params.output.reflections
+        )
+        refls.as_file(params.output.reflections)
 
     # Get data needed for MTZ file
     logger.info("Converting to MTZ format.")
