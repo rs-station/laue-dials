@@ -210,6 +210,10 @@ def index_image(params, refls, expts):
         refls["harmonics"] = flex.bool(la._harmonics.tolist())
         refls["wavelength"] = flex.double(spot_wavelengths)
 
+    # Get image ID before filtering reflections
+    exp_ids = np.unique(refls["id"].as_numpy_array())
+    image_id = exp_ids[exp_ids != -1][0]  # Should only be a single identifier
+
     # Remove unindexed reflections
     if params.filter_spectrum:
         all_wavelengths = refls["wavelength"].as_numpy_array()
@@ -224,14 +228,10 @@ def index_image(params, refls, expts):
         all_wavelengths = refls["wavelength"].as_numpy_array()
         keep = all_wavelengths > 0  # Unindexed reflections assigned wavelength of 0
         refls = refls.select(flex.bool(keep))
-        exp_ids = np.unique(refls["id"].as_numpy_array())
-        image_id = exp_ids[exp_ids != -1][0]  # Should only be a single identifier
         refls["id"] = flex.int(np.full(len(refls), image_id))
     else:
         all_wavelengths = refls["wavelength"].as_numpy_array()
         indexed = all_wavelengths > 0
-        exp_ids = np.unique(refls["id"])
-        image_id = exp_ids[exp_ids != -1][0]  # Should only be a single identifier
         refls["id"].set_selected(indexed, flex.int(np.full(len(refls), image_id)))
 
     # Return reindexed expts, refls
