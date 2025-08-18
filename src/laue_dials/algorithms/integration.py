@@ -2,7 +2,6 @@
 This file contains useful classes and functions for profiling and integration
 """
 
-
 import numpy as np
 # TODO: remove this
 from scipy.spatial import KDTree
@@ -287,7 +286,6 @@ class Integrator(IntegratorBase):
         xy = self.xy - self.centroids[:, None, :]
         bg = self.background
         self.knn
-
 
         # w = self.pixel_weights * self.profile_values
         self.profile_dist
