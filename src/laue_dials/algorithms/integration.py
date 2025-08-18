@@ -44,7 +44,7 @@ class IntegratorBase:
         )
 
         # order is [xy, refl, pixel]
-        # you can index like self.pixels[*self.window_idx] -> array[refl, pixel]
+        # you can index like self.pixels[tuple(self.window_idx)] -> array[refl, pixel]
         self.window_idx = self.window_idx.transpose(2, 0, 1)
         self.m = self.window_idx.shape[-1]
 
@@ -57,7 +57,7 @@ class IntegratorBase:
 
     @property
     def windows(self):
-        return self.pixels[*self.window_idx]
+        return self.pixels[tuple(self.window_idx)]
 
     def fit(self, maxiter=2):
         pass
