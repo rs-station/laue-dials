@@ -377,12 +377,18 @@ class LaueAssigner(LaueBase):
         qall = qall[to_keep]
         harmonics = harmonics[to_keep]
 
+        # Build cost matrix for assignment
         dmat = rs.utils.angle_between(self.qobs[..., None, :], qall[None, ..., :])
         cost = dmat
 
         from scipy.optimize import linear_sum_assignment
 
         ido, idx = linear_sum_assignment(cost)
+
+        # Reset observation inliers to matched observations
+        inliers = np.zeros(cost.shape[0], dtype=bool)
+        inliers[ido] = True
+        self.set_inliers(inliers)
 
         # Update appropriate variables
         H = Hall[idx]
