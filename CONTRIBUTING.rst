@@ -33,16 +33,58 @@ by adding missing information and correcting mistakes.
 
 ``laue-dials`` documentation uses Sphinx_ as its main documentation compiler.
 This means that the docs are kept in the same repository as the project code, and
-that any documentation update is done in the same way was a code contribution.
-When working on documentation changes in your local machine, you can
-compile them using ``tox``
+that any documentation update is done in the same way as a code contribution.
+When working on documentation changes in your local machine, make sure you have installed the "docs" extension of the package::
+
+    pip install laue-dials[docs]
+
+or if, more likely, you've cloned the repo and are installing from your local copy::
+
+    pip install -e ".[docs]"
+
+This makes sure that in addition to ``laue-dials``, you've also installed Sphinx and all of the necessary Sphinx extensions to build the docs. In particular, ``pandoc`` is a required dependency for building the docs. ``pandoc`` is available and can be installed with::
+
+    conda install -c conda-forge pandoc
+
+To build a copy of the docs locally using your current environment, you can navigate into the ``docs/`` subdirectory and call::
+
+    make clean
+    make html
+
+Alternatively, to perform a clean build from the ground-up, you can run::
 
     tox -e docs
 
-and use Python's built-in web server for a preview in your web browser
-(``http://localhost:8000``)::
+The ``docs/_build/html/`` directory should now contain ``.html`` files which can be opened in your web browser.
 
-    python3 -m http.server --directory 'docs/_build/html'
+Adding docs for new command-line functions
+------------------------------------------
+
+In order for a command-line function to be added to the documention, you must do two things:
+
+1. Create a file in the ``docs/cli/`` directory called ``{function-name}.rst``. The contents of this file should match the contents of the other ``.rst`` files in this directory, using the new function's name as appropriate. The easiest thing is to just copy one of the existing files and update it. Note that if the ``====`` underlining the header ``laue_dials.{function-name}`` isn't at least as long as the text, Sphinx will print the following: ``WARNING: Title underline too short``.
+2. Add the new function to the table of contents in ``docs/cli/functions.md``. Otherwise, your new page will exist, but there will be no link to it anywhere!
+
+In order for a new command-line function to be maximally compatible with this documentation format, three things should be true:
+
+1. The function's ``help_message`` should exist and contain a useful introduction to the function and it's usage.
+2. The function's most commonly used parameters should have expert level 0.
+3. Any parameters of the function that ever need to be available to the user should have expert level no higher than 2.
+
+Adding other pages to the docs
+------------------------------
+
+New pages can be added to the docs by creating new files in the `docs/` directory. Files can be either ``.rst`` (reStructuredText) or ``.md`` (Markdown) formats. Additionally, ``.md`` files can contain chunks of reStructuredText wrapped inside of ``{eval-rst}`` triple backticks::
+
+    ## Markdown heading
+    Lots of *markdown* code.
+
+    ```{eval-rst}
+    .. rstcommand::
+
+    ```
+
+Additionally, you must add any new pages to the table of contents listed in ``docs/index.rst``. List your new page as ``Display Name <filename>``, and place it where you'd like it to appear in order in the Table of Contents.
 
 If you wish to ``make html`` directly, be sure to install ``pandoc`` via
 

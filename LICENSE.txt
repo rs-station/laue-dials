@@ -1,6 +1,7 @@
 The MIT License (MIT)
 
-Copyright (c) 2023 PrinceWalnut
+Copyright is specified by a research agreement between Harvard University and
+the University of Chicago.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

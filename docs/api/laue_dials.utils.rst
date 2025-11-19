@@ -6,6 +6,14 @@ laue\_dials.utils namespace
 Submodules
 ----------
 
+laue\_dials.utils.matching module
+---------------------------------
+
+.. automodule:: laue_dials.utils.matching
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 laue\_dials.utils.version module
 --------------------------------
 

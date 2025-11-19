@@ -1,16 +1,12 @@
-.. include:: ../README.rst
+.. include:: tutorial_README.rst
 
-.. toctree::
-   :hidden:
-   :maxdepth: 2
+--------------------------
+Tutorials
+--------------------------
 
-   Contributions & Help <contributing>
-   License <license>
-   Authors <authors>
-   Changelog <changelog>
-   Tutorials <tutorials/tutorials>
-   Command-Line Reference <cli/functions>
-   Full API Reference <api/modules>
+| :doc:`Processing Anomalous Scattering with HEWL Data <hewl/HEWL_anom_laue_dials_processing_final_rst>`
+| :doc:`Time-Resolved EF-X Processing on PDZ2 Data <pdz2/tutorial_combine_passes_rst>`
+
 
 .. _toctree: https://www.sphinx-doc.org/en/master/usage/restructuredtext/directives.html
 .. _reStructuredText: https://www.sphinx-doc.org/en/master/usage/restructuredtext/basics.html
