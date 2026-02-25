@@ -388,7 +388,7 @@ class LaueAssigner(LaueBase):
         # Reset observation inliers to matched observations
         inliers = np.zeros(cost.shape[0], dtype=bool)
         inliers[ido] = True
-        self.set_inliers(inliers)
+        self.set_inliers(inliers and self._inliers)
 
         # Update appropriate variables
         H = Hall[idx]
