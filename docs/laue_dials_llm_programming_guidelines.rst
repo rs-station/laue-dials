@@ -290,8 +290,7 @@ Imports
   (``laue_dials.*``). isort enforces this.
 - Defer heavy DIALS internal imports to inside functions when they are
   only needed in a specific code path. This reduces startup time and
-  avoids circular imports. See ``gen_beam_models`` in ``laue.py`` for an
-  example.
+  avoids circular imports.
 
 Testing
 =======
