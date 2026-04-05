@@ -1,7 +1,8 @@
 # laue-dials
 
-At the start of every session, read the full contents of
-`docs/laue_dials_llm_programming_guidelines.rst`.
+At the start of every session, read the full contents of:
+- `docs/laue_dials_llm_programming_guidelines.rst`
+- `CONTRIBUTING.rst`
 
 ## Git Commits
 
