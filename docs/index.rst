@@ -11,6 +11,7 @@
    Tutorials <tutorials/tutorials>
    Command-Line Reference <cli/functions>
    Full API Reference <api/modules>
+   LLM Programming Guidelines <laue_dials_llm_programming_guidelines>
 
 .. _toctree: https://www.sphinx-doc.org/en/master/usage/restructuredtext/directives.html
 .. _reStructuredText: https://www.sphinx-doc.org/en/master/usage/restructuredtext/basics.html
