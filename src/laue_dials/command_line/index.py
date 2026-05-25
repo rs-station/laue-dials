@@ -2,6 +2,7 @@
 """
 This script performs monochromatic indexing and optional scan-varying refinement.
 """
+
 import logging
 import sys
 import time
@@ -85,8 +86,7 @@ refiner {
     process_includes=True,
 )
 
-indexer_phil = libtbx.phil.parse(
-    """
+indexer_phil = libtbx.phil.parse("""
 indexer {
   indexing {
     refinement_procotol {
@@ -122,11 +122,9 @@ indexer {
     }
   }
 }
-"""
-)
+""")
 
-refiner_phil = libtbx.phil.parse(
-    """
+refiner_phil = libtbx.phil.parse("""
 refiner {
   refinement {
     parameterisation {
@@ -155,8 +153,7 @@ refiner {
     }
   }
 }
-"""
-)
+""")
 
 working_phil = main_phil.fetch(sources=[indexer_phil, refiner_phil])
 
