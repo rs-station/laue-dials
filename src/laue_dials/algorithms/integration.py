@@ -268,7 +268,7 @@ class Integrator(IntegratorBase):
         self.intensity = I.sum(-1)
         SigI = v * w
         SigI = np.sqrt(np.sum(SigI, axis=-1))
-        self.uncertainty = SigI
+        self.intensity, self.uncertainty = self.rectify(self.intensity, SigI)
 
 
 def cov(m, aweights=None, return_mean=False, ddof=0):
