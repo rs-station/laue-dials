@@ -30,16 +30,15 @@ class IntegratorBase:
         self.profile_loc = self.centroids
         self.background = np.ones((self.n, 1))
 
-        # TODO: wrap indices that are out of bounds
         self.window_idx = (
             np.round(self.centroids).astype("int")[:, None, :]
             + self.window_mask[None, :, :]
         )
 
-        # Trim windows to image
-        self.window_idx[self.window_idx > np.max(self.pixels.shape) - 1] = (
-            np.max(self.pixels.shape) - 1
-        )
+        # Clamp each axis independently to image bounds
+        h, w = self.pixels.shape
+        self.window_idx[..., 0] = np.clip(self.window_idx[..., 0], 0, h - 1)
+        self.window_idx[..., 1] = np.clip(self.window_idx[..., 1], 0, w - 1)
 
         # order is [xy, refl, pixel]
         # you can index like self.pixels[tuple(self.window_idx)] -> array[refl, pixel]
