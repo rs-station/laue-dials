@@ -58,11 +58,8 @@ class IntegratorBase:
         return self.pixels[tuple(self.window_idx)]
 
     def fit(self, maxiter=2):
-        pass
-
         size = []
         obj = []
-        tol = 0.1  # percent
         self.assign_knn()
         for i in range(maxiter):
             obj.append(self.score)
