@@ -9,7 +9,6 @@ from scipy.spatial.distance import pdist, squareform
 
 class IntegratorBase:
     def __init__(self, pixels, centroids, radius=None, k=5, isigi_cutoff=3.0):
-        self.pixel_variance = None
         self.pixels = pixels
         self.pdist = pdist(centroids)
         self.dmat = squareform(self.pdist)
@@ -227,7 +226,6 @@ class Integrator(IntegratorBase):
         knn = KDTree(self.centroids[self.strong]).query(
             self.centroids, k=k + 1
         )  # k includes self
-        self.kdist = knn[0][:, 1:]  # remove self
         knn = knn[1][:, 1:]  # remove self
         self.knn = np.where(self.strong)[0][knn]
 
