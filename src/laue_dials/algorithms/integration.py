@@ -229,8 +229,21 @@ class Integrator(IntegratorBase):
 
     def assign_knn(self):
         k = self.k
+        n_strong = self.strong.sum()
+        if n_strong <= 1:
+            raise RuntimeError(
+                f"Only {n_strong} strong spot(s) found; cannot perform KNN profile estimation."
+            )
+        k_actual = min(k, n_strong - 1)
+        if k_actual < k:
+            logger.warning(
+                "Only %d strong spots available; using %d neighbors instead of %d.",
+                n_strong,
+                k_actual,
+                k,
+            )
         knn = KDTree(self.centroids[self.strong]).query(
-            self.centroids, k=k + 1
+            self.centroids, k=k_actual + 1
         )  # k includes self
         knn = knn[1][:, 1:]  # remove self
         self.knn = np.where(self.strong)[0][knn]
