@@ -57,18 +57,16 @@ class IntegratorBase:
         return self.pixels[tuple(self.window_idx)]
 
     def fit(self, maxiter=2):
-        size = []
         obj = []
         self.assign_knn()
         for i in range(maxiter):
             obj.append(self.score)
-            size.append(np.exp(np.linalg.slogdet(self.profile_scale)[1]))
             self.assign_knn()
             self.estimate_background()
             self.estimate_profiles()
             self.integrate()
             self.set_strong()
-            if len(size) == 1:
+            if len(obj) == 1:
                 continue
             if obj[-1] > obj[-2]:
                 break
