@@ -17,8 +17,7 @@ import reciprocalspaceship as rs
 from cctbx import sgtbx
 from dials.array_family import flex
 from dials.util import show_mail_handle_errors
-from dials.util.options import (ArgumentParser,
-                                reflections_and_experiments_from_files)
+from dials.util.options import ArgumentParser, reflections_and_experiments_from_files
 
 from laue_dials.algorithms.integration import Integrator
 from laue_dials.utils.version import laue_version
@@ -113,14 +112,10 @@ def integrate_image(img_set, refls, isigi_cutoff):
     integrator.fit()
 
     # Update reflection data
-    np.zeros(len(refls))
-    np.zeros(len(refls))
-    np.zeros(len(refls))
-    np.zeros(len(refls))
-
     refls["intensity.sum.value"] = flex.double(integrator.intensity)
     refls["intensity.sum.variance"] = flex.double(np.square(integrator.uncertainty))
     refls["background.sum.value"] = flex.double(integrator.background.squeeze())
+    # For Poisson noise, variance equals the mean background count
     refls["background.sum.variance"] = flex.double(integrator.background.squeeze())
     refls = refls.select(refls["intensity.sum.value"] != 0)
     refls = refls.select(refls["intensity.sum.variance"] > 0)

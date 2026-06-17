@@ -3,7 +3,6 @@ This file contains useful classes and functions for profiling and integration
 """
 
 import numpy as np
-# TODO: remove this
 from scipy.spatial import KDTree
 from scipy.spatial.distance import pdist, squareform
 
@@ -77,34 +76,6 @@ class IntegratorBase:
                 continue
             if obj[-1] > obj[-2]:
                 break
-
-        # size.append(np.exp(np.linalg.slogdet(self.profile_scale)[1]))
-        # obj.append(self.score.sum())
-
-        # size = np.vstack(size)
-        # self.plot_image_with_profiles()
-        # plt.figure()
-        # plt.plot(obj)
-        # plt.semilogy()
-        # plt.xlabel("Step")
-        # plt.ylabel("Score")
-
-        # plt.figure()
-        # plt.plot(size)
-        # plt.semilogy()
-        # plt.xlabel("Step")
-        # plt.ylabel("Covariance ellipsoid volume")
-
-        # plt.figure()
-        # plt.hist(self.intensity / self.uncertainty, 100, color='k')
-        # plt.xlabel("I / SigI")
-
-        # plt.figure()
-        # plt.hist(self.background, 100, color='k')
-        # plt.xlabel("Background")
-        # obj = np.vstack(obj)
-        # plt.show()
-        # from IPython import embed;embed(colors='linux')
 
     def predict(self):
         p = self.profile_values
@@ -243,8 +214,6 @@ class Integrator(IntegratorBase):
     @property
     def pixel_weights(self):
         v = self.predict()
-        # r = np.abs(v - self.windows) / np.sqrt(np.maximum(1., self.windows))
-        # return r * r
         from scipy.stats import poisson
 
         w = -poisson.logpmf(self.windows, v)
@@ -260,10 +229,7 @@ class Integrator(IntegratorBase):
         self.strong = self.intensity >= self.isigi_cutoff * self.uncertainty
 
     def assign_knn(self):
-        pass
-
         k = self.k
-        # self.strong = np.ones_like(self.strong)
         knn = KDTree(self.centroids[self.strong]).query(
             self.centroids, k=k + 1
         )  # k includes self
@@ -285,17 +251,11 @@ class Integrator(IntegratorBase):
         c = self.windows
         xy = self.xy - self.centroids[:, None, :]
         bg = self.background
-        self.knn
 
-        # w = self.pixel_weights * self.profile_values
-        self.profile_dist
-        self.predict()
         p = np.exp(
             self.log_profile_values
         )  # normalized over all space, not the profile
-        self.pixel_weights
         w = np.maximum(0.0, (c - bg) / self.intensity[:, None]) * p
-        # w = w * self.profile_values
 
         w = w[self.knn].reshape((self.n, -1))
         xy = xy[self.knn].reshape((self.n, -1, 2))
