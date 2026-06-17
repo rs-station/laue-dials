@@ -242,7 +242,7 @@ class Integrator(IntegratorBase):
         p = self.profile_values
 
         bg = np.average(c - I[:, None] * p, axis=-1, weights=w, keepdims=True)
-        self.background = np.maximum(0.0, bg)
+        self.background = np.maximum(1e-6, bg)
 
     def estimate_profiles(self):
         c = self.windows
