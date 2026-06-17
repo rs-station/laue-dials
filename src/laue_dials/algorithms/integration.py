@@ -2,9 +2,13 @@
 This file contains useful classes and functions for profiling and integration
 """
 
+import logging
+
 import numpy as np
 from scipy.spatial import KDTree
 from scipy.spatial.distance import pdist, squareform
+
+logger = logging.getLogger("laue-dials.algorithms.integration")
 
 
 class IntegratorBase:
@@ -65,6 +69,8 @@ class IntegratorBase:
             self.estimate_profiles()
             self.integrate()
             self.set_strong()
+            if not self.strong.any():
+                raise RuntimeError("No strong spots remaining after integration.")
             if len(obj) == 1:
                 continue
             if obj[-1] > obj[-2]:

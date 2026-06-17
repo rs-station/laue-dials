@@ -109,7 +109,11 @@ def integrate_image(img_set, refls, isigi_cutoff):
     all_spots = refls["xyzcal.px"].as_numpy_array()[:, :2].astype("float32")
     pixels = img_set.get_raw_data(0)[0].as_numpy_array().astype("float32")
     integrator = Integrator(pixels, all_spots)
-    integrator.fit()
+    try:
+        integrator.fit()
+    except RuntimeError as e:
+        logger.warning("Image %s: %s Skipping.", img_num, e)
+        return flex.reflection_table()
 
     # Update reflection data
     refls["intensity.sum.value"] = flex.double(integrator.intensity)
@@ -233,6 +237,9 @@ def run(args=None, *, phil=working_phil):
     for refls in refls_arr:
         final_refls.extend(refls)
     refls = final_refls
+    if len(refls) == 0:
+        logger.error("No reflections were successfully integrated. Exiting.")
+        return
     if params.output.reflections != None:
         logger.info(
             "Saving integrated reflection table to %s", params.output.reflections
