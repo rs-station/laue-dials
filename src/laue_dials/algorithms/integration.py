@@ -29,7 +29,7 @@ class IntegratorBase:
         self.profile_scale = (
             np.ones(self.n)[:, None, None] * np.eye(2) * self.radius / 2.0
         )
-        self.profile_loc = self.centroids
+        self.profile_loc = self.centroids.copy()
         self.background = np.ones((self.n, 1))
 
         self.window_idx = (
