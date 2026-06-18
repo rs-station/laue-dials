@@ -273,11 +273,18 @@ class Integrator(IntegratorBase):
         w = w[self.knn].reshape((self.n, -1))
         xy = xy[self.knn].reshape((self.n, -1, 2))
 
-        pscale, ploc = cov(xy, w[..., None], return_mean=True)
-        ploc = ploc.squeeze(-2)
-
-        self.profile_loc = ploc + self.centroids
-        self.profile_scale = pscale
+        # Only update profiles for reflections with nonzero weights. All-zero
+        # weights (e.g. from dead pixels or negative intensity) would cause
+        # cov() to divide by zero. Keeping the previous profile estimate is
+        # better than overwriting it with nan.
+        has_signal = w.sum(-1) > 0
+        if has_signal.any():
+            pscale, ploc = cov(
+                xy[has_signal], w[has_signal][..., None], return_mean=True
+            )
+            ploc = ploc.squeeze(-2)
+            self.profile_loc[has_signal] = ploc + self.centroids[has_signal]
+            self.profile_scale[has_signal] = pscale
 
     def integrate(self):
         c = self.windows
