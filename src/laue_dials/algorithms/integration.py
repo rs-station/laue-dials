@@ -14,10 +14,9 @@ logger = logging.getLogger("laue-dials.algorithms.integration")
 class IntegratorBase:
     def __init__(self, pixels, centroids, radius=None, k=5, isigi_cutoff=3.0):
         self.pixels = pixels
-        self.pdist = pdist(centroids)
-        self.dmat = squareform(self.pdist)
         if radius is None:
-            closest_spot_dist = np.sort(self.dmat, axis=0)[1]
+            dmat = squareform(pdist(centroids))
+            closest_spot_dist = np.sort(dmat, axis=0)[1]
             radius = 0.5 * np.percentile(closest_spot_dist, 20)
             radius = int(np.round(radius))
         window = np.mgrid[-radius : radius + 1, -radius : radius + 1].reshape((2, -1)).T
