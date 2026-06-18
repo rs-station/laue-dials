@@ -241,11 +241,15 @@ class Integrator(IntegratorBase):
                 k_actual,
                 k,
             )
-        knn = KDTree(self.centroids[self.strong]).query(
+        knn_idx = KDTree(self.centroids[self.strong]).query(
             self.centroids, k=k_actual + 1
-        )  # k includes self
-        knn = knn[1][:, 1:]  # remove self
-        self.knn = np.where(self.strong)[0][knn]
+        )[1]
+        # Strong spots have themselves as first result (distance 0); non-strong
+        # spots are not in the tree so their first result is already a neighbor.
+        # Select the right k_actual columns for each case.
+        self.knn = np.where(self.strong)[0][
+            np.where(self.strong[:, None], knn_idx[:, 1:], knn_idx[:, :k_actual])
+        ]
 
     def estimate_background(self):
         c = self.windows
