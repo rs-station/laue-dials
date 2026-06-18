@@ -105,7 +105,7 @@ def integrate_image(img_set, refls, isigi_cutoff):
     logger.info(f"Integrating image {img_num}.")
     proctime = time.time()
 
-    # Make SegmentedImage
+    # Integrate image
     all_spots = refls["xyzcal.px"].as_numpy_array()[:, :2].astype("float32")
     pixels = img_set.get_raw_data(0)[0].as_numpy_array().astype("float32")
     integrator = Integrator(pixels, all_spots)

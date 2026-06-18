@@ -168,6 +168,7 @@ class IntegratorBase:
 
             ellipse.set_transform(transf + ax.transData)
             retval.append(ax.add_patch(ellipse))
+        return retval
 
     def single_profile_image(self, fg_values, fill_value=0.0):
         im = (
