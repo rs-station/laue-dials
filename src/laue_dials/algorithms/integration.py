@@ -60,7 +60,6 @@ class IntegratorBase:
 
     def fit(self, maxiter=2):
         obj = []
-        self.assign_knn()
         for i in range(maxiter):
             obj.append(self.score)
             self.assign_knn()
