@@ -287,7 +287,10 @@ class Integrator(IntegratorBase):
             )
             ploc = ploc.squeeze(-2)
             self.profile_loc[has_signal] = ploc + self.centroids[has_signal]
-            self.profile_scale[has_signal] = pscale
+            # Tikhonov regularization: add a small multiple of the identity to
+            # guarantee positive definiteness and prevent LinAlgError in
+            # mvn_log_pdf when neighboring pixels are collinear.
+            self.profile_scale[has_signal] = pscale + 1e-6 * np.eye(2)
 
     def integrate(self):
         c = self.windows
