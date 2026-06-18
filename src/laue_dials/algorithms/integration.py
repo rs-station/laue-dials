@@ -266,7 +266,9 @@ class Integrator(IntegratorBase):
         p = np.exp(
             self.log_profile_values
         )  # normalized over all space, not the profile
-        w = np.maximum(0.0, (c - bg) / self.intensity[:, None]) * p
+        # Avoid division by zero; np.maximum below zeros out results for intensity <= 0
+        safe_intensity = np.where(self.intensity == 0, 1.0, self.intensity)
+        w = np.maximum(0.0, (c - bg) / safe_intensity[:, None]) * p
 
         w = w[self.knn].reshape((self.n, -1))
         xy = xy[self.knn].reshape((self.n, -1, 2))
