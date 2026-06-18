@@ -216,6 +216,15 @@ def run(args=None, *, phil=working_phil):
     ids = list(np.unique(preds["id"]).astype(np.int32))
     get_refls = partial(get_refls_image, preds)
     tables = list(map(get_refls, ids))
+    if len(imagesets) != len(tables):
+        logger.error(
+            "Number of imagesets (%d) does not match the number of images with "
+            "predictions (%d). Check that the experiment and reflection files "
+            "correspond to the same dataset.",
+            len(imagesets),
+            len(tables),
+        )
+        return
     inputs = list(zip(imagesets, tables, repeat(params.isigi_cutoff)))
 
     # Get initial time for process
