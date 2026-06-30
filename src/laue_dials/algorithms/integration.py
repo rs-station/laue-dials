@@ -12,8 +12,11 @@ logger = logging.getLogger("laue-dials.algorithms.integration")
 
 
 class IntegratorBase:
-    def __init__(self, pixels, centroids, radius=None, k=5, isigi_cutoff=3.0):
+    def __init__(
+        self, pixels, centroids, radius=None, k=5, isigi_cutoff=3.0, epsilon=1e-6
+    ):
         self.pixels = pixels
+        self.epsilon = epsilon
         if radius is None:
             dmat = squareform(pdist(centroids))
             closest_spot_dist = np.sort(dmat, axis=0)[1]
@@ -259,7 +262,7 @@ class Integrator(IntegratorBase):
         p = self.profile_values
 
         bg = np.average(c - I[:, None] * p, axis=-1, weights=w, keepdims=True)
-        self.background = np.maximum(1e-6, bg)
+        self.background = np.maximum(self.epsilon, bg)
 
     def estimate_profiles(self):
         c = self.windows
@@ -290,7 +293,7 @@ class Integrator(IntegratorBase):
             # Tikhonov regularization: add a small multiple of the identity to
             # guarantee positive definiteness and prevent LinAlgError in
             # mvn_log_pdf when neighboring pixels are collinear.
-            self.profile_scale[has_signal] = pscale + 1e-6 * np.eye(2)
+            self.profile_scale[has_signal] = pscale + self.epsilon * np.eye(2)
 
     def integrate(self):
         c = self.windows
