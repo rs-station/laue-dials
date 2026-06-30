@@ -82,16 +82,6 @@ class IntegratorBase:
         v = np.maximum(0.0, self.intensity[:, None]) * p + self.background
         return v
 
-    def rectify(self, loc, scale):
-        """Cast normal random variable to positive support under Sivia's prior"""
-        from scipy.stats import truncnorm
-
-        a = -loc / scale
-        b = np.inf
-        loc = truncnorm.mean(a, b, loc, scale)
-        scale = truncnorm.std(a, b, loc, scale)
-        return loc, scale
-
     def get_log_p_mdist(self):
         return mvn_log_pdf(
             self.xy, self.profile_loc, self.profile_scale, return_zscore=True
@@ -305,7 +295,7 @@ class Integrator(IntegratorBase):
         self.intensity = I.sum(-1)
         SigI = v * w
         SigI = np.sqrt(np.sum(SigI, axis=-1))
-        self.intensity, self.uncertainty = self.rectify(self.intensity, SigI)
+        self.uncertainty = SigI
 
 
 def cov(m, aweights=None, return_mean=False, ddof=0):
