@@ -180,6 +180,66 @@ def predict_spots(lam_min, lam_max, d_min, refls, expts):
     return final_preds
 
 
+def estimate_integration_radius(x, y):
+    """
+    Estimate a default mask-dilation radius from the spacing of predicted
+    centroids, matching the default radius formula used by IntegratorBase.
+
+    Args:
+        x (np.ndarray): Integer pixel x-coordinates of predicted centroids.
+        y (np.ndarray): Integer pixel y-coordinates of predicted centroids.
+
+    Returns:
+        int: Estimated radius in pixels.
+    """
+    centroids = np.column_stack([x, y])
+    dmat = squareform(pdist(centroids))
+    closest_spot_dist = np.sort(dmat, axis=0)[1]
+    radius = 0.5 * np.percentile(closest_spot_dist, 20)
+    return int(np.round(radius))
+
+
+def unmasked_prediction_selection(np_mask, x, y, radius, img_row_size):
+    """
+    Determine which predicted centroids fall outside the detector mask,
+    dilated by the given radius.
+
+    If np_mask has no bad (False) pixels at all -- e.g. no external mask
+    file was supplied -- a genuine 1px border is marked as invalid around
+    the detector edge, and the dilation radius is reduced by 1 to
+    compensate for that added border. This is needed because
+    skimage.morphology.isotropic_dilation relies on
+    scipy.ndimage.distance_transform_edt, which has no real background
+    reference point when there are no bad pixels at all, and would
+    otherwise spuriously mask a small region near pixel (0, 0).
+
+    Args:
+        np_mask (np.ndarray): Boolean detector mask with shape (n_rows,
+            n_cols); True for valid pixels.
+        x (np.ndarray): Integer pixel x-coordinates of predicted centroids.
+        y (np.ndarray): Integer pixel y-coordinates of predicted centroids.
+        radius (int): Radius in pixels to dilate the detector mask by.
+        img_row_size (int): Number of pixels per detector row, used to
+            flatten (x, y) coordinates into the flattened mask.
+
+    Returns:
+        np.ndarray: Boolean array, True for centroids to keep.
+    """
+    bad_pixels = ~np_mask
+
+    dilation_radius = radius
+    if not bad_pixels.any():
+        bad_pixels[0, :] = True
+        bad_pixels[-1, :] = True
+        bad_pixels[:, 0] = True
+        bad_pixels[:, -1] = True
+        dilation_radius = max(radius - 1, 0)
+
+    expanded_mask = ~isotropic_dilation(bad_pixels, dilation_radius)
+    expanded_mask_flat = expanded_mask.flatten()
+    return expanded_mask_flat[x + img_row_size * y]
+
+
 def filter_masked_predictions(preds, expts, integration_radius):
     """
     Remove predicted spots landing in masked areas of the detector.
@@ -213,18 +273,11 @@ def filter_masked_predictions(preds, expts, integration_radius):
 
         # Remove predictions in masked areas
         img_row_size = experiment.detector.to_dict()["panels"][0]["image_size"][1]
-        sel = np.full(len(x), True)
 
         # Get circular filter to extend pixels.mask
         radius = integration_radius
         if radius is None:
-            # Estimate radius from nearest-neighbor centroid spacing,
-            # matching the default behavior of IntegratorBase.
-            centroids = np.column_stack([x, y])
-            dmat = squareform(pdist(centroids))
-            closest_spot_dist = np.sort(dmat, axis=0)[1]
-            radius = 0.5 * np.percentile(closest_spot_dist, 20)
-            radius = int(np.round(radius))
+            radius = estimate_integration_radius(x, y)
         logger.info(f"Image {img_num}: computed integration radius = {radius} px.")
 
         # Get image data
@@ -234,29 +287,8 @@ def filter_masked_predictions(preds, expts, integration_radius):
 
         # Reshape mask
         np_mask = np.array(mask).reshape(img_shape)
-        bad_pixels = ~np_mask
 
-        # Without an external mask file, no pixels are marked bad, and
-        # distance_transform_edt has no real background reference point in
-        # that case, causing isotropic_dilation to spuriously mask a small
-        # region near pixel (0, 0). Mark a 1px border around the detector
-        # edge as invalid to give it a real reference, and shrink the
-        # dilation radius by 1 to compensate for that added border.
-        dilation_radius = radius
-        if not bad_pixels.any():
-            bad_pixels[0, :] = True
-            bad_pixels[-1, :] = True
-            bad_pixels[:, 0] = True
-            bad_pixels[:, -1] = True
-            dilation_radius = max(radius - 1, 0)
-
-        # Expand mask
-        expanded_mask = ~isotropic_dilation(bad_pixels, dilation_radius)
-        expanded_mask_flat = expanded_mask.flatten()
-
-        for i in range(len(preds)):
-            if not expanded_mask_flat[x[i] + img_row_size * y[i]]:
-                sel[i] = False
+        sel = unmasked_prediction_selection(np_mask, x, y, radius, img_row_size)
         preds = preds.select(flex.bool(sel))
     except Exception as e:
         logger.warning(
