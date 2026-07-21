@@ -17,8 +17,7 @@ import reciprocalspaceship as rs
 from cctbx import sgtbx
 from dials.array_family import flex
 from dials.util import show_mail_handle_errors
-from dials.util.options import (ArgumentParser,
-                                reflections_and_experiments_from_files)
+from dials.util.options import ArgumentParser, reflections_and_experiments_from_files
 
 from laue_dials.algorithms.integration import Integrator
 from laue_dials.utils.version import laue_version
@@ -69,6 +68,10 @@ nproc = 1
 isigi_cutoff = 2.0
   .type = float
   .help = "I/SIGI threshold to use for marking strong spots."
+
+integration_radius = None
+  .type = int(value_min=0)
+  .help = "Radius in pixels used for the integration window around each predicted centroid. Defaults to a dynamically-computed radius (0.5 * the 20th percentile of nearest-neighbor centroid distances). Provide the same value used for laue.predict's integration_radius parameter to ensure consistent integration windows."
 """,
     process_includes=True,
 )
@@ -90,7 +93,7 @@ def get_refls_image(refls, img_id):
     return refls.select(refls["id"] == img_id)
 
 
-def integrate_image(img_set, refls, isigi_cutoff):
+def integrate_image(img_set, refls, isigi_cutoff, integration_radius):
     """
     Integrate predicted spots on an image.
 
@@ -98,6 +101,8 @@ def integrate_image(img_set, refls, isigi_cutoff):
         img_set (dxtbx_imageset_ext.Imageset): Image set.
         refls (dials.array_family.flex.reflection_table): Reflection table.
         isigi_cutoff (float): I/SIGI threshold.
+        integration_radius (int): Radius in pixels for the integration window.
+            If None, a radius is estimated from the spacing of the centroids.
 
     Returns:
         flex.reflection_table: Updated reflection table.
@@ -109,7 +114,10 @@ def integrate_image(img_set, refls, isigi_cutoff):
     # Integrate image
     all_spots = refls["xyzcal.px"].as_numpy_array()[:, :2].astype("float32")
     pixels = img_set.get_raw_data(0)[0].as_numpy_array().astype("float32")
-    integrator = Integrator(pixels, all_spots)
+    integrator = Integrator(pixels, all_spots, radius=integration_radius)
+    logger.info(
+        f"Image {img_num}: computed integration radius = {integrator.radius} px."
+    )
     try:
         integrator.fit()
     except RuntimeError as e:
@@ -226,7 +234,14 @@ def run(args=None, *, phil=working_phil):
             len(tables),
         )
         return
-    inputs = list(zip(imagesets, tables, repeat(params.isigi_cutoff)))
+    inputs = list(
+        zip(
+            imagesets,
+            tables,
+            repeat(params.isigi_cutoff),
+            repeat(params.integration_radius),
+        )
+    )
 
     # Get initial time for process
     start_time = time.time()
