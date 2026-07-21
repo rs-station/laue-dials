@@ -234,9 +234,24 @@ def filter_masked_predictions(preds, expts, integration_radius):
 
         # Reshape mask
         np_mask = np.array(mask).reshape(img_shape)
+        bad_pixels = ~np_mask
+
+        # Without an external mask file, no pixels are marked bad, and
+        # distance_transform_edt has no real background reference point in
+        # that case, causing isotropic_dilation to spuriously mask a small
+        # region near pixel (0, 0). Mark a 1px border around the detector
+        # edge as invalid to give it a real reference, and shrink the
+        # dilation radius by 1 to compensate for that added border.
+        dilation_radius = radius
+        if not bad_pixels.any():
+            bad_pixels[0, :] = True
+            bad_pixels[-1, :] = True
+            bad_pixels[:, 0] = True
+            bad_pixels[:, -1] = True
+            dilation_radius = max(radius - 1, 0)
 
         # Expand mask
-        expanded_mask = ~isotropic_dilation(~np_mask, radius)
+        expanded_mask = ~isotropic_dilation(bad_pixels, dilation_radius)
         expanded_mask_flat = expanded_mask.flatten()
 
         for i in range(len(preds)):
