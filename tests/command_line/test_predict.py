@@ -1,9 +1,7 @@
 import numpy as np
 
-from laue_dials.command_line.predict import (
-    estimate_integration_radius,
-    unmasked_prediction_selection,
-)
+from laue_dials.command_line.predict import (estimate_integration_radius,
+                                             unmasked_prediction_selection)
 
 
 def test_unmasked_prediction_selection_no_mask_buffers_all_edges():
