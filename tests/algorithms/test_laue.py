@@ -5,9 +5,14 @@ import pytest
 from dials.array_family.flex import reflection_table
 from dxtbx.model import ExperimentList
 
-from laue_dials.algorithms.laue import (LaueAssigner, LaueBase, LauePredictor,
-                                        gen_beam_models, remove_beam_models,
-                                        store_wavelengths)
+from laue_dials.algorithms.laue import (
+    LaueAssigner,
+    LaueBase,
+    LauePredictor,
+    gen_beam_models,
+    remove_beam_models,
+    store_wavelengths,
+)
 
 
 @pytest.fixture

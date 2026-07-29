@@ -16,8 +16,7 @@ from dials.algorithms.spot_prediction import ray_intersection
 from dials.array_family import flex
 from dials.array_family.flex import reflection_table
 from dials.util import show_mail_handle_errors
-from dials.util.options import (ArgumentParser,
-                                reflections_and_experiments_from_files)
+from dials.util.options import ArgumentParser, reflections_and_experiments_from_files
 from dxtbx.model import ExperimentList
 from scipy.spatial.distance import pdist, squareform
 from skimage.morphology import isotropic_dilation
