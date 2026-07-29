@@ -16,11 +16,8 @@ from dials.algorithms.spot_prediction import ray_intersection
 from dials.array_family import flex
 from dials.array_family.flex import reflection_table
 from dials.util import show_mail_handle_errors
-from dials.util.options import (ArgumentParser,
-                                reflections_and_experiments_from_files)
+from dials.util.options import ArgumentParser, reflections_and_experiments_from_files
 from dxtbx.model import ExperimentList
-from scipy.spatial.distance import pdist, squareform
-from skimage.morphology import isotropic_dilation
 
 from laue_dials.algorithms.outliers import gen_kde
 from laue_dials.utils.version import laue_version
@@ -78,10 +75,6 @@ reciprocal_grid {
 cutoff_log_probability = 0.
   .type = float
   .help = "The cutoff threshold for removing unlikely reflections"
-
-integration_radius = None
-  .type = int(value_min=0)
-  .help = "Radius in pixels used to dilate the detector mask when filtering predictions near masked regions. Defaults to the same dynamically-computed radius used by the integrator (0.5 * the 20th percentile of nearest-neighbor centroid distances)."
 """,
     process_includes=True,
 )
@@ -181,78 +174,22 @@ def predict_spots(lam_min, lam_max, d_min, refls, expts):
     return final_preds
 
 
-def estimate_integration_radius(x, y):
+def filter_masked_predictions(preds, expts):
     """
-    Estimate a default mask-dilation radius from the spacing of predicted
-    centroids, matching the default radius formula used by IntegratorBase.
+    Remove predicted spots whose centroid lands directly on a masked (bad)
+    pixel of the detector.
 
-    Args:
-        x (np.ndarray): Integer pixel x-coordinates of predicted centroids.
-        y (np.ndarray): Integer pixel y-coordinates of predicted centroids.
-
-    Returns:
-        int: Estimated radius in pixels.
-    """
-    centroids = np.column_stack([x, y])
-    dmat = squareform(pdist(centroids))
-    closest_spot_dist = np.sort(dmat, axis=0)[1]
-    radius = 0.5 * np.percentile(closest_spot_dist, 20)
-    return int(np.round(radius))
-
-
-def unmasked_prediction_selection(np_mask, x, y, radius, img_row_size):
-    """
-    Determine which predicted centroids fall outside the detector mask,
-    dilated by the given radius.
-
-    If np_mask has no bad (False) pixels at all -- e.g. no external mask
-    file was supplied -- a genuine 1px border is marked as invalid around
-    the detector edge, and the dilation radius is reduced by 1 to
-    compensate for that added border. This is needed because
-    skimage.morphology.isotropic_dilation relies on
-    scipy.ndimage.distance_transform_edt, which has no real background
-    reference point when there are no bad pixels at all, and would
-    otherwise spuriously mask a small region near pixel (0, 0).
-
-    Args:
-        np_mask (np.ndarray): Boolean detector mask with shape (n_rows,
-            n_cols); True for valid pixels.
-        x (np.ndarray): Integer pixel x-coordinates of predicted centroids.
-        y (np.ndarray): Integer pixel y-coordinates of predicted centroids.
-        radius (int): Radius in pixels to dilate the detector mask by.
-        img_row_size (int): Number of pixels per detector row, used to
-            flatten (x, y) coordinates into the flattened mask.
-
-    Returns:
-        np.ndarray: Boolean array, True for centroids to keep.
-    """
-    bad_pixels = ~np_mask
-
-    dilation_radius = radius
-    if not bad_pixels.any():
-        bad_pixels[0, :] = True
-        bad_pixels[-1, :] = True
-        bad_pixels[:, 0] = True
-        bad_pixels[:, -1] = True
-        dilation_radius = max(radius - 1, 0)
-
-    expanded_mask = ~isotropic_dilation(bad_pixels, dilation_radius)
-    expanded_mask_flat = expanded_mask.flatten()
-    return expanded_mask_flat[x + img_row_size * y]
-
-
-def filter_masked_predictions(preds, expts, integration_radius):
-    """
-    Remove predicted spots landing in masked areas of the detector.
+    This is the radius-independent mask filter: a prediction sitting in a
+    masked region is invalid regardless of the integration window, so it is
+    dropped here. The additional radius-dependent removal -- discarding
+    predictions whose integration window would overlap the mask once it is
+    dilated -- is applied later by ``laue.integrate``, which owns the
+    integration radius.
 
     Args:
         preds (dials.array_family.flex.reflection_table): Predictions for a
             single image, with xyzcal.px populated.
         expts (dxtbx.model.experiment_list.ExperimentList): The experiment list.
-        integration_radius (int): Radius in pixels to dilate the detector
-            mask by. If None, a radius is estimated from the spacing of the
-            predicted centroids, matching the default behavior of
-            IntegratorBase.
 
     Returns:
         dials.array_family.flex.reflection_table: Filtered reflection table.
@@ -262,34 +199,22 @@ def filter_masked_predictions(preds, expts, integration_radius):
     try:
         experiment = expts[0]
 
-        # Get mask
+        # Get mask (True = valid pixel)
         mask = experiment.imageset.get_mask(0)[0]
 
-        # Get predicted centroids
+        # Get predicted centroids as integer pixels
         x, y, _ = preds["xyzcal.px"].parts()
-
-        # Convert centroids to integer pixels
         x = np.asarray(flex.floor(x).iround())
         y = np.asarray(flex.floor(y).iround())
 
-        # Remove predictions in masked areas
-        img_row_size = experiment.detector.to_dict()["panels"][0]["image_size"][1]
+        # Reshape mask to the image and keep only centroids on valid pixels.
+        # img_row_size is the number of columns (fast axis) for row-major
+        # flattening of the (n_rows, n_cols) mask.
+        pixels = experiment.imageset.get_raw_data(0)[0].as_numpy_array()
+        np_mask = np.array(mask).reshape(pixels.shape)
+        img_row_size = pixels.shape[1]
 
-        # Get circular filter to extend pixels.mask
-        radius = integration_radius
-        if radius is None:
-            radius = estimate_integration_radius(x, y)
-        logger.info(f"Image {img_num}: computed integration radius = {radius} px.")
-
-        # Get image data
-        img_set = experiment.imageset
-        pixels = img_set.get_raw_data(0)[0].as_numpy_array().astype("float32")
-        img_shape = pixels.shape
-
-        # Reshape mask
-        np_mask = np.array(mask).reshape(img_shape)
-
-        sel = unmasked_prediction_selection(np_mask, x, y, radius, img_row_size)
+        sel = np_mask.flatten()[x + img_row_size * y]
         preds = preds.select(flex.bool(sel))
     except Exception as e:
         logger.warning(
@@ -456,10 +381,11 @@ def run(args=None, *, phil=working_phil):
     y = y / expt.detector.to_dict()["panels"][0]["pixel_size"][1]
     final_predictions["xyzcal.px"] = flex.vec3_double(x, y, z)
 
-    # Remove predictions in masked areas
-    logger.info("Filtering predictions in masked regions.")
+    # Remove predictions landing directly on masked pixels (radius-independent;
+    # the dilation buffer is applied later by laue.integrate).
+    logger.info("Filtering predictions on masked pixels.")
     preds_arr = [final_predictions.select(final_predictions["id"] == i) for i in ids]
-    mask_inputs = list(zip(preds_arr, expts_arr, repeat(params.integration_radius)))
+    mask_inputs = list(zip(preds_arr, expts_arr))
     with Pool(processes=num_processes) as pool:
         mask_output = pool.starmap(filter_masked_predictions, mask_inputs, chunksize=1)
     final_predictions = reflection_table()

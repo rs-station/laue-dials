@@ -1,7 +1,13 @@
 import numpy as np
 import pytest
 
-from laue_dials.algorithms.integration import Integrator, cov, mvn_log_pdf
+from laue_dials.algorithms.integration import (
+    Integrator,
+    cov,
+    estimate_integration_radius,
+    mvn_log_pdf,
+    unmasked_prediction_selection,
+)
 
 
 # ---------------------------------------------------------------------------
@@ -294,3 +300,101 @@ def test_weight_clamping_is_nonnegative_for_negative_over_negative():
 
     assert buggy[0] > 0  # the bug the fix guards against
     assert fixed[0] == 0
+
+
+# ---------------------------------------------------------------------------
+# Mask-dilation / radius-estimation helpers (used by laue.integrate)
+# ---------------------------------------------------------------------------
+def test_unmasked_prediction_selection_no_mask_buffers_all_edges():
+    """
+    With no bad pixels marked (i.e. no external mask file supplied),
+    predictions near any detector edge should be excluded by a buffer of
+    width `radius`, not just near pixel (0, 0).
+    """
+    w = h = 100
+    np_mask = np.ones((h, w), dtype=bool)  # No bad pixels: simulates no mask file
+    radius = 5
+
+    points = {
+        "left": (2, h // 2),
+        "right": (w - 3, h // 2),
+        "top": (w // 2, 2),
+        "bottom": (w // 2, h - 3),
+        "top_left_corner": (2, 2),
+        "bottom_right_corner": (w - 3, h - 3),
+        "interior": (w // 2, h // 2),
+    }
+    x = np.array([p[0] for p in points.values()])
+    y = np.array([p[1] for p in points.values()])
+
+    sel = unmasked_prediction_selection(np_mask, x, y, radius, img_row_size=w)
+    kept = dict(zip(points.keys(), sel))
+
+    for name, is_kept in kept.items():
+        if name == "interior":
+            assert is_kept, f"{name} should be kept"
+        else:
+            assert not is_kept, f"{name} should be removed"
+
+
+def test_unmasked_prediction_selection_dilates_around_real_mask():
+    """
+    A real masked (bad) region should still be dilated by the requested
+    radius, excluding nearby predictions while keeping distant ones.
+    """
+    w = h = 100
+    np_mask = np.ones((h, w), dtype=bool)
+    np_mask[40:60, 40:60] = False  # Bad region in the middle of the detector
+    radius = 5
+
+    points = {
+        "near_bad_region": (35, 50),  # Exactly `radius` px from the bad region
+        "far_from_bad_region": (10, 10),
+        "inside_bad_region": (50, 50),
+    }
+    x = np.array([p[0] for p in points.values()])
+    y = np.array([p[1] for p in points.values()])
+
+    sel = unmasked_prediction_selection(np_mask, x, y, radius, img_row_size=w)
+    kept = dict(zip(points.keys(), sel))
+
+    assert kept["far_from_bad_region"]
+    assert not kept["inside_bad_region"]
+    assert not kept["near_bad_region"]
+
+
+def test_unmasked_prediction_selection_removes_on_mask_centroid_at_zero_radius():
+    """
+    A centroid sitting on a masked pixel must be removed for any radius,
+    including radius == 0 (no dilation): dilation only grows the bad region,
+    so on-mask centroids are never spared.
+    """
+    w = h = 40
+    np_mask = np.ones((h, w), dtype=bool)
+    np_mask[20, 20] = False  # single bad pixel
+
+    x = np.array([20, 10])
+    y = np.array([20, 10])
+    sel = unmasked_prediction_selection(np_mask, x, y, radius=0, img_row_size=w)
+
+    assert not sel[0]  # on the masked pixel -> removed
+    assert sel[1]  # far away -> kept
+
+
+def test_estimate_integration_radius_matches_formula():
+    """
+    estimate_integration_radius should match the nearest-neighbor spacing
+    formula used by IntegratorBase's default radius.
+    """
+    from scipy.spatial.distance import pdist, squareform
+
+    rng = np.random.default_rng(0)
+    x = rng.uniform(0, 1000, size=200)
+    y = rng.uniform(0, 1000, size=200)
+
+    centroids = np.column_stack([x, y])
+    dmat = squareform(pdist(centroids))
+    closest_spot_dist = np.sort(dmat, axis=0)[1]
+    expected = int(np.round(0.5 * np.percentile(closest_spot_dist, 20)))
+
+    assert estimate_integration_radius(centroids) == expected

@@ -18,10 +18,7 @@ class IntegratorBase:
         self.pixels = pixels
         self.epsilon = epsilon
         if radius is None:
-            dmat = squareform(pdist(centroids))
-            closest_spot_dist = np.sort(dmat, axis=0)[1]
-            radius = 0.5 * np.percentile(closest_spot_dist, 20)
-            radius = int(np.round(radius))
+            radius = estimate_integration_radius(centroids)
         window = np.mgrid[-radius : radius + 1, -radius : radius + 1].reshape((2, -1)).T
         r = np.sqrt(np.square(window[:, 0]) + np.square(window[:, 1]))
         self.radius = radius
@@ -296,6 +293,70 @@ class Integrator(IntegratorBase):
         SigI = v * w
         SigI = np.sqrt(np.sum(SigI, axis=-1))
         self.uncertainty = SigI
+
+
+def estimate_integration_radius(centroids):
+    """
+    Estimate the default integration radius from the spacing of spot centroids.
+
+    The radius is half the 20th percentile of nearest-neighbor centroid
+    distances, rounded to the nearest integer. The same radius is used both for
+    the integration window and for dilating the detector mask when discarding
+    predictions that fall in masked regions, so the two stay consistent.
+
+    Args:
+        centroids (np.ndarray): (n, 2) array of centroid pixel coordinates.
+
+    Returns:
+        int: Estimated radius in pixels.
+    """
+    dmat = squareform(pdist(centroids))
+    closest_spot_dist = np.sort(dmat, axis=0)[1]
+    radius = 0.5 * np.percentile(closest_spot_dist, 20)
+    return int(np.round(radius))
+
+
+def unmasked_prediction_selection(np_mask, x, y, radius, img_row_size):
+    """
+    Determine which predicted centroids fall outside the detector mask,
+    dilated by the given radius.
+
+    If np_mask has no bad (False) pixels at all -- e.g. no external mask
+    file was supplied -- a genuine 1px border is marked as invalid around
+    the detector edge, and the dilation radius is reduced by 1 to
+    compensate for that added border. This is needed because
+    skimage.morphology.isotropic_dilation relies on
+    scipy.ndimage.distance_transform_edt, which has no real background
+    reference point when there are no bad pixels at all, and would
+    otherwise spuriously mask a small region near pixel (0, 0).
+
+    Args:
+        np_mask (np.ndarray): Boolean detector mask with shape (n_rows,
+            n_cols); True for valid pixels.
+        x (np.ndarray): Integer pixel x-coordinates of predicted centroids.
+        y (np.ndarray): Integer pixel y-coordinates of predicted centroids.
+        radius (int): Radius in pixels to dilate the detector mask by.
+        img_row_size (int): Number of pixels per detector row, used to
+            flatten (x, y) coordinates into the flattened mask.
+
+    Returns:
+        np.ndarray: Boolean array, True for centroids to keep.
+    """
+    from skimage.morphology import isotropic_dilation
+
+    bad_pixels = ~np_mask
+
+    dilation_radius = radius
+    if not bad_pixels.any():
+        bad_pixels[0, :] = True
+        bad_pixels[-1, :] = True
+        bad_pixels[:, 0] = True
+        bad_pixels[:, -1] = True
+        dilation_radius = max(radius - 1, 0)
+
+    expanded_mask = ~isotropic_dilation(bad_pixels, dilation_radius)
+    expanded_mask_flat = expanded_mask.flatten()
+    return expanded_mask_flat[x + img_row_size * y]
 
 
 def cov(m, aweights=None, return_mean=False, ddof=0):

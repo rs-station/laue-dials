@@ -17,10 +17,13 @@ import reciprocalspaceship as rs
 from cctbx import sgtbx
 from dials.array_family import flex
 from dials.util import show_mail_handle_errors
-from dials.util.options import (ArgumentParser,
-                                reflections_and_experiments_from_files)
+from dials.util.options import ArgumentParser, reflections_and_experiments_from_files
 
-from laue_dials.algorithms.integration import Integrator
+from laue_dials.algorithms.integration import (
+    Integrator,
+    estimate_integration_radius,
+    unmasked_prediction_selection,
+)
 from laue_dials.utils.version import laue_version
 
 logger = logging.getLogger("laue-dials.command_line.integrate")
@@ -72,7 +75,7 @@ isigi_cutoff = 2.0
 
 integration_radius = None
   .type = int(value_min=0)
-  .help = "Radius in pixels used for the integration window around each predicted centroid. Defaults to a dynamically-computed radius (0.5 * the 20th percentile of nearest-neighbor centroid distances). Provide the same value used for laue.predict's integration_radius parameter to ensure consistent integration windows."
+  .help = "Radius in pixels used both for the integration window around each predicted centroid and for dilating the detector mask when discarding predictions that fall in masked regions. Defaults to a dynamically-computed radius (0.5 * the 20th percentile of nearest-neighbor centroid distances)."
 """,
     process_includes=True,
 )
@@ -98,12 +101,20 @@ def integrate_image(img_set, refls, isigi_cutoff, integration_radius):
     """
     Integrate predicted spots on an image.
 
+    The integration radius is estimated once from the full predicted set (or
+    taken from ``integration_radius`` if supplied) and reused both to dilate the
+    detector mask -- discarding predictions whose integration window would
+    overlap masked pixels -- and as the integration window itself. Using a
+    single radius for both keeps the dilation and the window self-consistent, so
+    no surviving centroid's window ever reaches a masked pixel.
+
     Args:
         img_set (dxtbx_imageset_ext.Imageset): Image set.
         refls (dials.array_family.flex.reflection_table): Reflection table.
         isigi_cutoff (float): I/SIGI threshold.
-        integration_radius (int): Radius in pixels for the integration window.
-            If None, a radius is estimated from the spacing of the centroids.
+        integration_radius (int): Radius in pixels for the integration window
+            and mask dilation. If None, a radius is estimated from the spacing
+            of the centroids.
 
     Returns:
         flex.reflection_table: Updated reflection table.
@@ -112,13 +123,40 @@ def integrate_image(img_set, refls, isigi_cutoff, integration_radius):
     logger.info(f"Integrating image {img_num}.")
     proctime = time.time()
 
-    # Integrate image
     all_spots = refls["xyzcal.px"].as_numpy_array()[:, :2].astype("float32")
     pixels = img_set.get_raw_data(0)[0].as_numpy_array().astype("float32")
-    integrator = Integrator(pixels, all_spots, radius=integration_radius)
-    logger.info(
-        f"Image {img_num}: computed integration radius = {integrator.radius} px."
-    )
+
+    # Estimate the radius once, from the full predicted set, then reuse it for
+    # both the mask dilation and the integration window.
+    radius = integration_radius
+    if radius is None:
+        radius = estimate_integration_radius(all_spots)
+    logger.info(f"Image {img_num}: computed integration radius = {radius} px.")
+
+    # Discard predictions whose integration window would overlap the detector
+    # mask, dilated by that same radius.
+    try:
+        mask = np.array(img_set.get_mask(0)[0]).reshape(pixels.shape)
+        x = np.floor(all_spots[:, 0]).astype(int)
+        y = np.floor(all_spots[:, 1]).astype(int)
+        sel = unmasked_prediction_selection(mask, x, y, radius, pixels.shape[1])
+        refls = refls.select(flex.bool(sel))
+        all_spots = all_spots[sel]
+    except Exception as e:
+        logger.warning(
+            "Image %s: could not apply detector mask (%s); "
+            "integrating all predictions.",
+            img_num,
+            e,
+        )
+
+    if len(all_spots) == 0:
+        logger.warning(
+            "Image %s: no predictions remain after masking. Skipping.", img_num
+        )
+        return flex.reflection_table()
+
+    integrator = Integrator(pixels, all_spots, radius=radius)
     try:
         integrator.fit()
     except RuntimeError as e:
