@@ -35,12 +35,24 @@ reflection table, and uses those to integrate intensities in the data set.
 The output is an MTZ file containing integrated intensities suitable for
 merging and scaling.
 
-The algorithm applied here is a variable elliptical summation algorithm
-inspired by the VariableElliptical mode in Precognition. Elliptical
-profiles are modeled for each strong reflection, with weak reflections
-using an average of the k nearest strong spots, and then the pixel
-intensities within are summed to generate integrated intensities
-per reflection.
+The algorithm applied here is a variable elliptical profile fitting
+algorithm inspired by the VariableElliptical mode in Precognition. Each
+predicted centroid is given a circular window of pixels, and the counts in
+that window are modeled as an elliptical two-dimensional Gaussian profile
+on a flat background, assuming Poisson noise.
+
+Profile shapes are estimated jointly with the background and the
+intensities over a small number of iterations. The shape for every
+reflection is pooled from the pixels of its k nearest strong spots, so
+weak reflections inherit a well-determined profile from their neighbors
+rather than fitting noise. Intensities and their uncertainties are then
+obtained by profile fitting, weighting each pixel by its expected
+contribution, rather than by summing counts inside a mask.
+
+Unless integration_radius is set, the window radius is estimated from the
+spacing of the predicted centroids. That same radius is used to dilate the
+detector mask, so predictions whose window would overlap a bad pixel are
+discarded before integration.
 
 Examples:
 
