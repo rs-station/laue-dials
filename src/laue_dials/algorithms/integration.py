@@ -6,7 +6,6 @@ import logging
 
 import numpy as np
 from scipy.spatial import KDTree
-from scipy.spatial.distance import pdist, squareform
 
 logger = logging.getLogger("laue-dials.algorithms.integration")
 
@@ -310,9 +309,12 @@ def estimate_integration_radius(centroids):
     Returns:
         int: Estimated radius in pixels.
     """
-    dmat = squareform(pdist(centroids))
-    closest_spot_dist = np.sort(dmat, axis=0)[1]
-    radius = 0.5 * np.percentile(closest_spot_dist, 20)
+    # Query k=2 because the nearest result is the point itself, at distance
+    # zero. A KDTree prunes to the nearest neighbor directly, where a full
+    # pairwise distance matrix would be O(n^2) in both time and memory --
+    # hundreds of MB for a densely predicted image.
+    nn_dist = KDTree(centroids).query(centroids, k=2)[0][:, 1]
+    radius = 0.5 * np.percentile(nn_dist, 20)
     return int(np.round(radius))
 
 
