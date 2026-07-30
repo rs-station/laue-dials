@@ -42,8 +42,8 @@ that window are modeled as an elliptical two-dimensional Gaussian profile
 on a flat background, assuming Poisson noise.
 
 Profile shapes are estimated jointly with the background and the
-intensities over a small number of iterations. The shape for every
-reflection is pooled from the pixels of its k nearest strong spots, so
+intensities, over at most maxiter iterations. The shape for every
+reflection is pooled from the pixels of its knn nearest strong spots, so
 weak reflections inherit a well-determined profile from their neighbors
 rather than fitting noise. Intensities and their uncertainties are then
 obtained by profile fitting, weighting each pixel by its expected
@@ -87,6 +87,14 @@ isigi_cutoff = 3.0
 integration_radius = None
   .type = int(value_min=0)
   .help = "Radius in pixels used both for the integration window around each predicted centroid and for dilating the detector mask when discarding predictions that fall in masked regions. Defaults to a dynamically-computed radius (0.5 * the 20th percentile of nearest-neighbor centroid distances)."
+
+knn = 5
+  .type = int(value_min=1)
+  .help = "Number of nearest strong spots whose pixels are pooled to estimate the elliptical profile of each reflection. Larger values give steadier profiles but blur genuine variation in spot shape across the detector. Reduced automatically if an image has fewer strong spots than this."
+
+maxiter = 2
+  .type = int(value_min=1)
+  .help = "Maximum number of profile-fitting iterations. Each iteration re-estimates the background, profiles, and intensities, then re-marks strong spots. Fitting stops early if the Poisson log-likelihood stops improving."
 """,
     process_includes=True,
 )
@@ -108,7 +116,7 @@ def get_refls_image(refls, img_id):
     return refls.select(refls["id"] == img_id)
 
 
-def integrate_image(img_set, refls, isigi_cutoff, integration_radius):
+def integrate_image(img_set, refls, isigi_cutoff, integration_radius, knn, maxiter):
     """
     Integrate predicted spots on an image.
 
@@ -126,6 +134,9 @@ def integrate_image(img_set, refls, isigi_cutoff, integration_radius):
         integration_radius (int): Radius in pixels for the integration window
             and mask dilation. If None, a radius is estimated from the spacing
             of the centroids.
+        knn (int): Number of nearest strong spots pooled to estimate each
+            reflection's profile.
+        maxiter (int): Maximum number of profile-fitting iterations.
 
     Returns:
         flex.reflection_table: Updated reflection table.
@@ -167,9 +178,11 @@ def integrate_image(img_set, refls, isigi_cutoff, integration_radius):
         )
         return flex.reflection_table()
 
-    integrator = Integrator(pixels, all_spots, radius=radius, isigi_cutoff=isigi_cutoff)
+    integrator = Integrator(
+        pixels, all_spots, radius=radius, k=knn, isigi_cutoff=isigi_cutoff
+    )
     try:
-        integrator.fit()
+        integrator.fit(maxiter=maxiter)
     except RuntimeError as e:
         logger.warning("Image %s: %s Skipping.", img_num, e)
         return flex.reflection_table()
@@ -290,6 +303,8 @@ def run(args=None, *, phil=working_phil):
             tables,
             repeat(params.isigi_cutoff),
             repeat(params.integration_radius),
+            repeat(params.knn),
+            repeat(params.maxiter),
         )
     )
 

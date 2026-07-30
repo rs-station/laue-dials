@@ -27,18 +27,25 @@ class FakeImageSet:
 
 
 class RecordingIntegrator:
-    """Captures the kwargs it was constructed with and returns dummy results."""
+    """Captures the arguments it was called with and returns dummy results."""
 
     calls = []
 
-    def __init__(self, pixels, centroids, radius=None, isigi_cutoff=None, **kwargs):
-        RecordingIntegrator.calls.append(
-            {"radius": radius, "isigi_cutoff": isigi_cutoff, "n": len(centroids)}
-        )
+    def __init__(
+        self, pixels, centroids, radius=None, k=None, isigi_cutoff=None, **kwargs
+    ):
+        self.record = {
+            "radius": radius,
+            "k": k,
+            "isigi_cutoff": isigi_cutoff,
+            "maxiter": None,
+            "n": len(centroids),
+        }
+        RecordingIntegrator.calls.append(self.record)
         self.n = len(centroids)
 
-    def fit(self):
-        pass
+    def fit(self, maxiter=None):
+        self.record["maxiter"] = maxiter
 
     @property
     def intensity(self):
@@ -71,12 +78,24 @@ def refls_and_imageset():
     return refls, FakeImageSet(pixels)
 
 
-def test_isigi_cutoff_is_forwarded_to_integrator(refls_and_imageset, monkeypatch):
+@pytest.mark.parametrize(
+    "phil_name, phil_value, recorded_name",
+    [
+        ("isigi_cutoff", 4.5, "isigi_cutoff"),
+        ("integration_radius", 7, "radius"),
+        ("knn", 9, "k"),
+        ("maxiter", 6, "maxiter"),
+    ],
+)
+def test_phil_parameters_reach_the_integrator(
+    refls_and_imageset, monkeypatch, phil_name, phil_value, recorded_name
+):
     """
-    The isigi_cutoff PHIL parameter must reach the Integrator.
+    Every tuning parameter integrate_image accepts must reach the Integrator.
 
-    It was previously accepted by integrate_image and then dropped, so the
-    class default silently overrode whatever the user asked for.
+    isigi_cutoff was previously accepted and then dropped at the construction
+    site, so the class default silently overrode whatever the user asked for.
+    These assertions pin the whole set against that class of regression.
     """
     refls, img_set = refls_and_imageset
     RecordingIntegrator.calls = []
@@ -84,20 +103,14 @@ def test_isigi_cutoff_is_forwarded_to_integrator(refls_and_imageset, monkeypatch
         "laue_dials.command_line.integrate.Integrator", RecordingIntegrator
     )
 
-    integrate_image(img_set, refls, isigi_cutoff=4.5, integration_radius=4)
+    kwargs = {
+        "isigi_cutoff": 2.0,
+        "integration_radius": 4,
+        "knn": 5,
+        "maxiter": 2,
+        phil_name: phil_value,
+    }
+    integrate_image(img_set, refls, **kwargs)
 
     assert len(RecordingIntegrator.calls) == 1
-    assert RecordingIntegrator.calls[0]["isigi_cutoff"] == 4.5
-
-
-def test_integration_radius_is_forwarded_to_integrator(refls_and_imageset, monkeypatch):
-    """An explicit integration_radius is used rather than an estimated one."""
-    refls, img_set = refls_and_imageset
-    RecordingIntegrator.calls = []
-    monkeypatch.setattr(
-        "laue_dials.command_line.integrate.Integrator", RecordingIntegrator
-    )
-
-    integrate_image(img_set, refls, isigi_cutoff=2.0, integration_radius=7)
-
-    assert RecordingIntegrator.calls[0]["radius"] == 7
+    assert RecordingIntegrator.calls[0][recorded_name] == phil_value
