@@ -115,9 +115,6 @@ def predict_spots(lam_min, lam_max, d_min, refls, expts):
             cryst.get_space_group().type().universal_hermann_mauguin_symbol()
         )
 
-        # Get mask
-        mask = experiment.imageset.get_mask(0)[0]
-
         # Get beam vector
         s0 = np.array(experiment.beam.get_s0())
 
@@ -165,31 +162,9 @@ def predict_spots(lam_min, lam_max, d_min, refls, expts):
         # Get which reflections intersect detector
         intersects = ray_intersection(experiment.detector, preds)
         preds = preds.select(intersects)
-        new_lams = new_lams[intersects]
-
-        # Get predicted centroids
-        x, y, _ = preds["xyzcal.mm"].parts()
-
-        # Convert to pixel units
-        px_size = experiment.detector.to_dict()["panels"][0]["pixel_size"]
-        x = x / px_size[0]
-        y = y / px_size[1]
-
-        # Convert centroids to integer pixels
-        x = np.asarray(flex.floor(x).iround())
-        y = np.asarray(flex.floor(y).iround())
-
-        # Remove predictions in masked areas
-        img_row_size = experiment.detector.to_dict()["panels"][0]["image_size"][1]
-        sel = np.full(len(x), True)
-        for i in range(len(preds)):
-            if not mask[x[i] + img_row_size * y[i]]:
-                sel[i] = False
-        preds = preds.select(flex.bool(sel))
-        new_lams = new_lams[sel]
-    except:
+    except Exception as e:
         logger.warning(
-            f"WARNING: Could not predict reflections for experiment {img_num}. Image skipped."
+            f"WARNING: Could not predict reflections for experiment {img_num}. Image skipped. Error: {e}."
         )
         return reflection_table()  # Return empty on failure
 
@@ -198,6 +173,57 @@ def predict_spots(lam_min, lam_max, d_min, refls, expts):
 
     # Return predicted refls
     return final_preds
+
+
+def filter_masked_predictions(preds, expts):
+    """
+    Remove predicted spots whose centroid lands directly on a masked (bad)
+    pixel of the detector.
+
+    This is the radius-independent mask filter: a prediction sitting in a
+    masked region is invalid regardless of the integration window, so it is
+    dropped here. The additional radius-dependent removal -- discarding
+    predictions whose integration window would overlap the mask once it is
+    dilated -- is applied later by ``laue.integrate``, which owns the
+    integration radius.
+
+    Args:
+        preds (dials.array_family.flex.reflection_table): Predictions for a
+            single image, with xyzcal.px populated.
+        expts (dxtbx.model.experiment_list.ExperimentList): The experiment list.
+
+    Returns:
+        dials.array_family.flex.reflection_table: Filtered reflection table.
+    """
+    img_num = preds["id"][0]
+
+    try:
+        experiment = expts[0]
+
+        # Get mask (True = valid pixel)
+        mask = experiment.imageset.get_mask(0)[0]
+
+        # Get predicted centroids as integer pixels
+        x, y, _ = preds["xyzcal.px"].parts()
+        x = np.asarray(flex.floor(x).iround())
+        y = np.asarray(flex.floor(y).iround())
+
+        # Reshape mask to the image and keep only centroids on valid pixels.
+        # img_row_size is the number of columns (fast axis) for row-major
+        # flattening of the (n_rows, n_cols) mask.
+        pixels = experiment.imageset.get_raw_data(0)[0].as_numpy_array()
+        np_mask = np.array(mask).reshape(pixels.shape)
+        img_row_size = pixels.shape[1]
+
+        sel = np_mask.flatten()[x + img_row_size * y]
+        preds = preds.select(flex.bool(sel))
+    except Exception as e:
+        logger.warning(
+            f"WARNING: Could not mask-filter predictions for experiment {img_num}. Image skipped. Error: {e}."
+        )
+        return reflection_table()  # Return empty on failure
+
+    return preds
 
 
 @show_mail_handle_errors()
@@ -348,6 +374,25 @@ def run(args=None, *, phil=working_phil):
     sel = np.log(probs) >= cutoff_log
     final_predictions = predicted_reflections.select(flex.bool(sel))
 
+    # Populate 'px' variety of predicted centroids
+    # Based on flat rectangular detector
+    x, y, z = final_predictions["xyzcal.mm"].parts()
+    expt = experiments[0]  # assuming shared detector models
+    x = x / expt.detector.to_dict()["panels"][0]["pixel_size"][0]
+    y = y / expt.detector.to_dict()["panels"][0]["pixel_size"][1]
+    final_predictions["xyzcal.px"] = flex.vec3_double(x, y, z)
+
+    # Remove predictions landing directly on masked pixels (radius-independent;
+    # the dilation buffer is applied later by laue.integrate).
+    logger.info("Filtering predictions on masked pixels.")
+    preds_arr = [final_predictions.select(final_predictions["id"] == i) for i in ids]
+    mask_inputs = list(zip(preds_arr, expts_arr))
+    with Pool(processes=num_processes) as pool:
+        mask_output = pool.starmap(filter_masked_predictions, mask_inputs, chunksize=1)
+    final_predictions = reflection_table()
+    for table in mask_output:
+        final_predictions.extend(table)
+
     # Mark strong spots
     logger.info("Marking strong predictions")
     idpred, idstrong = final_predictions.match_by_hkle(reflections)
@@ -375,14 +420,6 @@ def run(args=None, *, phil=working_phil):
         final_predictions["xyzobs.px.variance"][idpred[i]] = reflections[
             "xyzobs.px.variance"
         ][idstrong[i]]
-
-    # Populate 'px' variety of predicted centroids
-    # Based on flat rectangular detector
-    x, y, z = final_predictions["xyzcal.mm"].parts()
-    expt = experiments[0]  # assuming shared detector models
-    x = x / expt.detector.to_dict()["panels"][0]["pixel_size"][0]
-    y = y / expt.detector.to_dict()["panels"][0]["pixel_size"][1]
-    final_predictions["xyzcal.px"] = flex.vec3_double(x, y, z)
 
     # Save reflections
     logger.info("Saving predicted reflections to %s", params.output.reflections)

@@ -20,7 +20,9 @@ from dials.util import show_mail_handle_errors
 from dials.util.options import (ArgumentParser,
                                 reflections_and_experiments_from_files)
 
-from laue_dials.algorithms.integration import SegmentedImage
+from laue_dials.algorithms.integration import (Integrator,
+                                               estimate_integration_radius,
+                                               unmasked_prediction_selection)
 from laue_dials.utils.version import laue_version
 
 logger = logging.getLogger("laue-dials.command_line.integrate")
@@ -33,12 +35,24 @@ reflection table, and uses those to integrate intensities in the data set.
 The output is an MTZ file containing integrated intensities suitable for
 merging and scaling.
 
-The algorithm applied here is a variable elliptical summation algorithm
-inspired by the VariableElliptical mode in Precognition. Elliptical
-profiles are modeled for each strong reflection, with weak reflections
-using an average of the k nearest strong spots, and then the pixel
-intensities within are summed to generate integrated intensities
-per reflection.
+The algorithm applied here is a variable elliptical profile fitting
+algorithm inspired by the VariableElliptical mode in Precognition. Each
+predicted centroid is given a circular window of pixels, and the counts in
+that window are modeled as an elliptical two-dimensional Gaussian profile
+on a flat background, assuming Poisson noise.
+
+Profile shapes are estimated jointly with the background and the
+intensities, over at most maxiter iterations. The shape for every
+reflection is pooled from the pixels of its knn nearest strong spots, so
+weak reflections inherit a well-determined profile from their neighbors
+rather than fitting noise. Intensities and their uncertainties are then
+obtained by profile fitting, weighting each pixel by its expected
+contribution, rather than by summing counts inside a mask.
+
+Unless integration_radius is set, the window radius is estimated from the
+spacing of the predicted centroids. That same radius is used to dilate the
+detector mask, so predictions whose window would overlap a bad pixel are
+discarded before integration.
 
 Examples:
 
@@ -53,6 +67,10 @@ output {
     .type = str
     .help = "The output MTZ filename."
 
+  reflections = None
+    .type = str
+    .help = "The output reflection table filename. None will output no reflection table."
+
   log = 'laue.integrate.log'
     .type = str
     .help = "The log filename."
@@ -62,9 +80,21 @@ nproc = 1
   .type = int
   .help = "Number of parallel integrations to do"
 
-isigi_cutoff = 2.0
+isigi_cutoff = 3.0
   .type = float
   .help = "I/SIGI threshold to use for marking strong spots."
+
+integration_radius = None
+  .type = int(value_min=0)
+  .help = "Radius in pixels used both for the integration window around each predicted centroid and for dilating the detector mask when discarding predictions that fall in masked regions. Defaults to a dynamically-computed radius (0.5 * the 20th percentile of nearest-neighbor centroid distances)."
+
+knn = 5
+  .type = int(value_min=1)
+  .help = "Number of nearest strong spots whose pixels are pooled to estimate the elliptical profile of each reflection. Larger values give steadier profiles but blur genuine variation in spot shape across the detector. Reduced automatically if an image has fewer strong spots than this."
+
+maxiter = 2
+  .type = int(value_min=1)
+  .help = "Maximum number of profile-fitting iterations. Each iteration re-estimates the background, profiles, and intensities, then re-marks strong spots. Fitting stops early if the Poisson log-likelihood stops improving."
 """,
     process_includes=True,
 )
@@ -86,14 +116,27 @@ def get_refls_image(refls, img_id):
     return refls.select(refls["id"] == img_id)
 
 
-def integrate_image(img_set, refls, isigi_cutoff):
+def integrate_image(img_set, refls, isigi_cutoff, integration_radius, knn, maxiter):
     """
     Integrate predicted spots on an image.
+
+    The integration radius is estimated once from the full predicted set (or
+    taken from ``integration_radius`` if supplied) and reused both to dilate the
+    detector mask -- discarding predictions whose integration window would
+    overlap masked pixels -- and as the integration window itself. Using a
+    single radius for both keeps the dilation and the window self-consistent, so
+    no surviving centroid's window ever reaches a masked pixel.
 
     Args:
         img_set (dxtbx_imageset_ext.Imageset): Image set.
         refls (dials.array_family.flex.reflection_table): Reflection table.
         isigi_cutoff (float): I/SIGI threshold.
+        integration_radius (int): Radius in pixels for the integration window
+            and mask dilation. If None, a radius is estimated from the spacing
+            of the centroids.
+        knn (int): Number of nearest strong spots pooled to estimate each
+            reflection's profile.
+        maxiter (int): Maximum number of profile-fitting iterations.
 
     Returns:
         flex.reflection_table: Updated reflection table.
@@ -102,36 +145,59 @@ def integrate_image(img_set, refls, isigi_cutoff):
     logger.info(f"Integrating image {img_num}.")
     proctime = time.time()
 
-    # Make SegmentedImage
     all_spots = refls["xyzcal.px"].as_numpy_array()[:, :2].astype("float32")
     pixels = img_set.get_raw_data(0)[0].as_numpy_array().astype("float32")
-    sim = SegmentedImage(pixels, all_spots)
 
-    # Get integrated reflections only
-    refls = refls.select(flex.bool(sim.used_reflections))
+    # Estimate the radius once, from the full predicted set, then reuse it for
+    # both the mask dilation and the integration window.
+    radius = integration_radius
+    if radius is None:
+        radius = estimate_integration_radius(all_spots)
+    logger.info(f"Image {img_num}: computed integration radius = {radius} px.")
 
-    # Integrate reflections
-    sim.integrate(isigi_cutoff)
+    # Discard predictions whose integration window would overlap the detector
+    # mask, dilated by that same radius.
+    try:
+        mask = np.array(img_set.get_mask(0)[0]).reshape(pixels.shape)
+        x = np.floor(all_spots[:, 0]).astype(int)
+        y = np.floor(all_spots[:, 1]).astype(int)
+        sel = unmasked_prediction_selection(mask, x, y, radius, pixels.shape[1])
+        refls = refls.select(flex.bool(sel))
+        all_spots = all_spots[sel]
+    except Exception as e:
+        logger.warning(
+            "Image %s: could not apply detector mask (%s); "
+            "integrating all predictions.",
+            img_num,
+            e,
+        )
+
+    if len(all_spots) == 0:
+        logger.warning(
+            "Image %s: no predictions remain after masking. Skipping.", img_num
+        )
+        return flex.reflection_table()
+
+    integrator = Integrator(
+        pixels, all_spots, radius=radius, k=knn, isigi_cutoff=isigi_cutoff
+    )
+    try:
+        integrator.fit(maxiter=maxiter)
+    except RuntimeError as e:
+        logger.warning("Image %s: %s Skipping.", img_num, e)
+        return flex.reflection_table()
 
     # Update reflection data
-    i = np.zeros(len(refls))
-    sigi = np.zeros(len(refls))
-    bg = np.zeros(len(refls))
-    sigbg = np.zeros(len(refls))
-    profiles = sim.profiles.to_list()
-    for j in range(len(refls)):
-        prof = profiles[j]
-        if prof.success:
-            i[j] = prof.I
-            sigi[j] = prof.SigI
-            bg[j] = np.maximum((prof.background * prof.bg_mask), 0.0).sum()
-            sigbg[j] = np.sqrt(np.maximum((prof.background * prof.bg_mask), 0.0)).sum()
-    refls["intensity.sum.value"] = flex.double(i)
-    refls["intensity.sum.variance"] = flex.double(sigi**2)
-    refls["background.sum.value"] = flex.double(bg)
-    refls["background.sum.variance"] = flex.double(sigbg**2)
+    refls["intensity.sum.value"] = flex.double(integrator.intensity)
+    refls["intensity.sum.variance"] = flex.double(np.square(integrator.uncertainty))
+    refls["background.sum.value"] = flex.double(integrator.background.squeeze())
+    # For Poisson noise, variance equals the mean background count
+    refls["background.sum.variance"] = flex.double(integrator.background.squeeze())
     refls = refls.select(refls["intensity.sum.value"] != 0)
-    logger.info(f"Image {img_num} took {time.time() - proctime} seconds.")
+    refls = refls.select(refls["intensity.sum.variance"] > 0)
+    logger.info(
+        f"Image {img_num} took {time.time() - proctime} seconds to integrate {len(refls)} reflections."
+    )
     return refls  # Updated reflection table
 
 
@@ -222,7 +288,25 @@ def run(args=None, *, phil=working_phil):
     ids = list(np.unique(preds["id"]).astype(np.int32))
     get_refls = partial(get_refls_image, preds)
     tables = list(map(get_refls, ids))
-    inputs = list(zip(imagesets, tables, repeat(params.isigi_cutoff)))
+    if len(imagesets) != len(tables):
+        logger.error(
+            "Number of imagesets (%d) does not match the number of images with "
+            "predictions (%d). Check that the experiment and reflection files "
+            "correspond to the same dataset.",
+            len(imagesets),
+            len(tables),
+        )
+        return
+    inputs = list(
+        zip(
+            imagesets,
+            tables,
+            repeat(params.isigi_cutoff),
+            repeat(params.integration_radius),
+            repeat(params.knn),
+            repeat(params.maxiter),
+        )
+    )
 
     # Get initial time for process
     start_time = time.time()
@@ -243,6 +327,14 @@ def run(args=None, *, phil=working_phil):
     for refls in refls_arr:
         final_refls.extend(refls)
     refls = final_refls
+    if len(refls) == 0:
+        logger.error("No reflections were successfully integrated. Exiting.")
+        return
+    if params.output.reflections != None:
+        logger.info(
+            "Saving integrated reflection table to %s", params.output.reflections
+        )
+        refls.as_file(params.output.reflections)
 
     # Get data needed for MTZ file
     logger.info("Converting to MTZ format.")
