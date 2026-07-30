@@ -68,7 +68,7 @@ nproc = 1
   .type = int
   .help = "Number of parallel integrations to do"
 
-isigi_cutoff = 2.0
+isigi_cutoff = 3.0
   .type = float
   .help = "I/SIGI threshold to use for marking strong spots."
 
@@ -155,7 +155,7 @@ def integrate_image(img_set, refls, isigi_cutoff, integration_radius):
         )
         return flex.reflection_table()
 
-    integrator = Integrator(pixels, all_spots, radius=radius)
+    integrator = Integrator(pixels, all_spots, radius=radius, isigi_cutoff=isigi_cutoff)
     try:
         integrator.fit()
     except RuntimeError as e:
