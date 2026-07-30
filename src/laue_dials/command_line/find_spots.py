@@ -37,18 +37,15 @@ include scope dials.command_line.find_spots.phil_scope
     process_includes=True,
 )
 
-output_phil = libtbx.phil.parse(
-    """
+output_phil = libtbx.phil.parse("""
 output {
   log = 'laue.find_spots.log'
     .type = str
     .help = "The log filename."
 }
-"""
-)
+""")
 
-spotfinder_phil = libtbx.phil.parse(
-    """
+spotfinder_phil = libtbx.phil.parse("""
 spotfinder {
   force_2d = True
 }
@@ -56,8 +53,7 @@ spotfinder {
 output {
   shoeboxes = False
 }
-"""
-)
+""")
 
 working_phil = main_phil.fetch(sources=[output_phil, spotfinder_phil])
 
