@@ -395,3 +395,188 @@ def test_estimate_integration_radius_matches_formula():
     expected = int(np.round(0.5 * np.percentile(closest_spot_dist, 20)))
 
     assert estimate_integration_radius(centroids) == expected
+
+
+# ---------------------------------------------------------------------------
+# Multi-panel detectors
+# ---------------------------------------------------------------------------
+def make_panelled_image(
+    n_panels=6,
+    panel_width=50,
+    panel_height=300,
+    n_per_panel=10,
+    sigma=1.8,
+    background=100.0,
+    seed=0,
+    narrow_last=True,
+):
+    """
+    Build a set of narrow panels, each carrying Gaussian spots of known total
+    intensity, in the style of a segmented detector such as the LADI drum.
+
+    Returns:
+        tuple: (panels, centroids, panel_ids, shared, truth) where centroids
+            are panel-local (x, y), shared is the same points in a frame common
+            to every panel, and truth is the integrated intensity of each spot.
+    """
+    rng = np.random.default_rng(seed)
+    widths = [panel_width] * n_panels
+    if narrow_last:
+        widths[-1] = panel_width - 1
+
+    panels = [np.full((panel_height, w), background) for w in widths]
+    xs, ys, pids, truth = [], [], [], []
+    for p, w in enumerate(widths):
+        gy, gx = np.mgrid[0:panel_height, 0:w]
+        # deliberately include both panel edges
+        x = np.linspace(1.5, w - 1.5, n_per_panel)
+        y = np.sort(rng.uniform(20, panel_height - 20, n_per_panel))
+        intensity = rng.uniform(200.0, 4000.0, n_per_panel)
+        for xi, yi, Ii in zip(x, y, intensity):
+            panels[p] += (
+                Ii
+                * np.exp(-((gx - xi) ** 2 + (gy - yi) ** 2) / (2 * sigma**2))
+                / (2 * np.pi * sigma**2)
+            )
+            xs.append(xi)
+            ys.append(yi)
+            pids.append(p)
+            truth.append(Ii)
+
+    panels = [rng.poisson(p).astype("float32") for p in panels]
+    centroids = np.stack([xs, ys], axis=-1).astype("float32")
+    pids = np.array(pids)
+    shared = centroids.astype(float).copy()
+    shared[:, 0] += panel_width * pids
+    return panels, centroids, pids, shared, np.array(truth)
+
+
+def test_panel_local_coordinates_collapse_the_radius():
+    """
+    Panel-local centroids superimpose every panel at the same coordinates, so
+    the nearest-neighbor spacing -- and the radius derived from it -- collapses.
+    This is why the caller has to supply coordinates in a shared frame.
+    """
+    _, centroids, _, shared, _ = make_panelled_image()
+
+    assert estimate_integration_radius(centroids) < estimate_integration_radius(
+        shared
+    )
+
+
+def test_integrator_reads_each_reflection_from_its_own_panel():
+    """
+    With panel_ids supplied, intensities must track the truth. Integrating
+    everything against panel 0 -- what the code did before -- must not.
+    """
+    panels, centroids, pids, shared, truth = make_panelled_image()
+
+    integ = Integrator(
+        panels,
+        centroids,
+        panel_ids=pids,
+        neighbor_coords=shared,
+        radius=6,
+        k=5,
+        isigi_cutoff=1.0,
+    )
+    integ.fit(maxiter=4)
+    assert np.corrcoef(integ.intensity, truth)[0, 1] > 0.9
+
+    panel_zero = Integrator(panels[0], centroids, radius=6, k=5, isigi_cutoff=1.0)
+    panel_zero.fit(maxiter=4)
+    assert abs(np.corrcoef(panel_zero.intensity, truth)[0, 1]) < 0.5
+
+
+def test_pixels_beyond_the_panel_edge_are_excluded_not_clamped():
+    """
+    A window that overhangs a panel edge must not fold the edge pixel in
+    several times: those positions are clamped so the indexing stays legal, but
+    they carry no weight.
+    """
+    panels, centroids, pids, shared, truth = make_panelled_image()
+    radius = 6
+
+    kwargs = dict(
+        panel_ids=pids, neighbor_coords=shared, radius=radius, k=5, isigi_cutoff=1.0
+    )
+    integ = Integrator(panels, centroids, **kwargs)
+    clamped = Integrator(panels, centroids, **kwargs)
+    clamped.window_valid = np.ones_like(clamped.window_valid)
+
+    integ.fit(maxiter=4)
+    clamped.fit(maxiter=4)
+
+    width = panels[0].shape[1]
+    edge = (centroids[:, 0] < radius) | (centroids[:, 0] > width - 1 - radius)
+    assert edge.any()
+
+    r_excluded = np.corrcoef(integ.intensity[edge], truth[edge])[0, 1]
+    r_clamped = np.corrcoef(clamped.intensity[edge], truth[edge])[0, 1]
+    assert r_excluded > r_clamped
+
+    # every window pixel outside the panel must be marked invalid
+    assert not integ.window_valid[edge].all()
+
+
+def test_narrower_panel_padding_is_never_valid():
+    """Panels of unequal width are padded to a common shape; the padding is
+    not a pixel and must never be used."""
+    panels, centroids, pids, shared, truth = make_panelled_image()
+    integ = Integrator(
+        panels, centroids, panel_ids=pids, neighbor_coords=shared, radius=6
+    )
+
+    last = len(panels) - 1
+    assert panels[last].shape[1] < panels[0].shape[1]
+    assert not integ.panel_valid[last, :, panels[last].shape[1]:].any()
+
+
+def test_panel_masks_exclude_pixels_without_dropping_the_reflection():
+    """A bad-pixel block inside a window costs that window those pixels; the
+    reflection itself survives."""
+    panels, centroids, pids, shared, truth = make_panelled_image()
+    masks = [np.ones(p.shape, dtype=bool) for p in panels]
+
+    i0 = int(np.where(pids == 2)[0][0])
+    x, y = int(centroids[i0, 0]), int(centroids[i0, 1])
+    masks[2][y - 1:y + 2, x + 2:x + 5] = False
+
+    kwargs = dict(panel_ids=pids, neighbor_coords=shared, radius=6, k=5,
+                  isigi_cutoff=1.0)
+    plain = Integrator(panels, centroids, **kwargs)
+    masked = Integrator(panels, centroids, panel_masks=masks, **kwargs)
+
+    assert masked.window_valid[i0].sum() < plain.window_valid[i0].sum()
+    assert masked.n == plain.n
+
+    masked.fit(maxiter=4)
+    assert np.isfinite(masked.intensity).all()
+
+
+def test_single_panel_path_is_unchanged_by_the_panel_machinery():
+    """
+    A 2D pixel array must behave exactly as before: one panel, every window
+    pixel valid for interior spots, window_idx still (2, n, m) and in range.
+    """
+    pixels, centroids = make_synthetic_image(seed=4)
+    integ = Integrator(pixels, centroids, radius=5)
+
+    assert integ.n_panels == 1
+    assert integ.window_idx.shape == (2, len(centroids), integ.m)
+    assert integ.window_idx[0].min() >= 0
+    assert integ.window_idx[0].max() <= pixels.shape[0] - 1
+    assert integ.window_idx[1].min() >= 0
+    assert integ.window_idx[1].max() <= pixels.shape[1] - 1
+    assert (integ.panel_ids == 0).all()
+
+    integ.fit()
+    assert np.isfinite(integ.intensity).all()
+
+
+def test_panel_ids_must_match_the_pixel_data():
+    pixels, centroids = make_synthetic_image(seed=4)
+    with pytest.raises(ValueError):
+        Integrator(pixels, centroids, panel_ids=np.ones(len(centroids), dtype=int))
+    with pytest.raises(ValueError):
+        Integrator(pixels, centroids, panel_ids=np.zeros(len(centroids) + 1, dtype=int))
