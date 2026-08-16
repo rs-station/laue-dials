@@ -11,14 +11,133 @@ from scipy.spatial.distance import pdist, squareform
 logger = logging.getLogger("laue-dials.algorithms.integration")
 
 
+def stack_panels(pixels):
+    """
+    Normalize panel pixel data into a single (n_panels, rows, cols) array.
+
+    A 2D array is treated as a single panel, so the single-panel call
+    ``Integrator(pixels, centroids)`` is unchanged. A sequence of 2D arrays --
+    one per panel, as returned by ``imageset.get_raw_data()`` -- is padded to
+    the largest panel shape; the padding is marked invalid by
+    :func:`panel_validity` and never enters the fit.
+
+    Args:
+        pixels (np.ndarray or sequence of np.ndarray): Panel pixel data.
+
+    Returns:
+        tuple: ``(stack, shapes)``, the padded (n_panels, rows, cols) array and
+        the list of true (rows, cols) shapes.
+    """
+    if isinstance(pixels, np.ndarray) and pixels.ndim == 2:
+        return pixels[None, ...], [pixels.shape]
+    if isinstance(pixels, np.ndarray) and pixels.ndim == 3:
+        return pixels, [pixels.shape[1:]] * len(pixels)
+
+    arrays = [np.asarray(p) for p in pixels]
+    if len(arrays) == 0:
+        raise ValueError("no panel pixel data supplied")
+    if any(a.ndim != 2 for a in arrays):
+        raise ValueError("each panel must be a two-dimensional array of pixels")
+
+    shapes = [a.shape for a in arrays]
+    rows = max(s[0] for s in shapes)
+    cols = max(s[1] for s in shapes)
+    stack = np.zeros((len(arrays), rows, cols), dtype=arrays[0].dtype)
+    for i, a in enumerate(arrays):
+        stack[i, : a.shape[0], : a.shape[1]] = a
+    return stack, shapes
+
+
+def panel_validity(stack_shape, shapes, panel_masks=None):
+    """
+    Build the per-pixel validity array for a padded panel stack.
+
+    A pixel is valid if it lies inside its panel's true extent and is not
+    masked off by the detector mask.
+
+    Args:
+        stack_shape (tuple): Shape of the padded stack, (n_panels, rows, cols).
+        shapes (list): True (rows, cols) shape of each panel.
+        panel_masks (sequence, optional): One boolean mask per panel, True for
+            good pixels. Entries may be None. If omitted, every real pixel is
+            valid.
+
+    Returns:
+        np.ndarray: Boolean array with the shape of the padded stack.
+    """
+    n_panels, rows, cols = stack_shape
+    valid = np.zeros((n_panels, rows, cols), dtype=bool)
+    for i, (pr, pc) in enumerate(shapes):
+        valid[i, :pr, :pc] = True
+
+    if panel_masks is not None:
+        for i, mask in enumerate(panel_masks):
+            if mask is None:
+                continue
+            pr, pc = shapes[i]
+            valid[i, :pr, :pc] &= np.asarray(mask, dtype=bool).reshape(pr, pc)
+    return valid
+
+
 class IntegratorBase:
     def __init__(
-        self, pixels, centroids, radius=None, k=5, isigi_cutoff=3.0, epsilon=1e-6
+        self,
+        pixels,
+        centroids,
+        panel_ids=None,
+        panel_masks=None,
+        neighbor_coords=None,
+        radius=None,
+        k=5,
+        isigi_cutoff=3.0,
+        epsilon=1e-6,
     ):
-        self.pixels = pixels
+        """
+        Args:
+            pixels: Either a 2D pixel array (single panel) or a sequence of 2D
+                arrays, one per detector panel.
+            centroids (np.ndarray): (n, 2) predicted centroids as (x, y) in the
+                pixel coordinates of the panel each reflection lies on.
+            panel_ids (np.ndarray, optional): (n,) panel index per reflection.
+                Defaults to panel 0 for every reflection.
+            panel_masks (sequence, optional): One boolean detector mask per
+                panel, True for good pixels. Masked pixels are excluded from
+                the fit rather than dropping the reflection.
+            neighbor_coords (np.ndarray, optional): (n, 2) or (n, 3) centroid
+                coordinates in a frame shared by every panel, in pixel units.
+                Used only to estimate the integration radius and to find each
+                reflection's nearest strong neighbours. Panel-local pixel
+                coordinates cannot serve for either on a multi-panel detector:
+                every panel starts again at (0, 0), so the panels pile up on
+                top of one another, the nearest-neighbour distances collapse
+                and with them the estimated radius. Defaults to ``centroids``,
+                which is correct for a single panel.
+        """
+        self.pixels, self.panel_shapes = stack_panels(pixels)
+        self.n_panels = len(self.panel_shapes)
+        self.panel_valid = panel_validity(
+            self.pixels.shape, self.panel_shapes, panel_masks
+        )
+
+        centroids = np.asarray(centroids)
+        if panel_ids is None:
+            panel_ids = np.zeros(len(centroids), dtype=int)
+        panel_ids = np.asarray(panel_ids).astype(int)
+        if panel_ids.shape != (len(centroids),):
+            raise ValueError("panel_ids must have one entry per centroid")
+        if panel_ids.size and (
+            panel_ids.min() < 0 or panel_ids.max() >= self.n_panels
+        ):
+            raise ValueError("panel_ids refer to a panel with no pixel data")
+        self.panel_ids = panel_ids
+
+        if neighbor_coords is None:
+            neighbor_coords = centroids
+        self.neighbor_coords = np.asarray(neighbor_coords, dtype=float)
+
         self.epsilon = epsilon
         if radius is None:
-            radius = estimate_integration_radius(centroids)
+            radius = estimate_integration_radius(self.neighbor_coords)
         window = np.mgrid[-radius : radius + 1, -radius : radius + 1].reshape((2, -1)).T
         r = np.sqrt(np.square(window[:, 0]) + np.square(window[:, 1]))
         self.radius = radius
@@ -32,23 +151,51 @@ class IntegratorBase:
         self.profile_loc = self.centroids.copy()
         self.background = np.ones((self.n, 1))
 
-        self.window_idx = (
+        window_idx = (
             np.round(self.centroids).astype("int")[:, None, :]
             + self.window_mask[None, :, :]
         )
 
-        # Clamp each axis independently to image bounds
-        h, w = self.pixels.shape
-        self.window_idx[..., 0] = np.clip(self.window_idx[..., 0], 0, h - 1)
-        self.window_idx[..., 1] = np.clip(self.window_idx[..., 1], 0, w - 1)
+        # Clamp each axis independently to panel bounds, and remember which
+        # window pixels were actually inside. The clamped duplicates keep the
+        # indexing legal but must not enter the fit: on a segmented detector a
+        # large fraction of windows overhang a panel edge (on 50 px wedges with
+        # a 9 px radius, about 38% of them), and folding the edge pixel in
+        # several times biases both the background and the profile.
+        h, w = self.pixels.shape[1:]
+        in_bounds = (
+            (window_idx[..., 0] >= 0)
+            & (window_idx[..., 0] < h)
+            & (window_idx[..., 1] >= 0)
+            & (window_idx[..., 1] < w)
+        )
+        window_idx[..., 0] = np.clip(window_idx[..., 0], 0, h - 1)
+        window_idx[..., 1] = np.clip(window_idx[..., 1], 0, w - 1)
 
         # order is [xy, refl, pixel]
         # you can index like self.pixels[tuple(self.window_idx)] -> array[refl, pixel]
-        self.window_idx = self.window_idx.transpose(2, 0, 1)
+        self.window_idx = window_idx.transpose(2, 0, 1)
+        self.window_panel = np.broadcast_to(
+            self.panel_ids[:, None], self.window_idx.shape[1:]
+        )
+        self.window_valid = (
+            in_bounds
+            & self.panel_valid[
+                self.window_panel, self.window_idx[0], self.window_idx[1]
+            ]
+        )
         self.m = self.window_idx.shape[-1]
 
-        self.intensity = self.windows.mean(-1)
-        self.uncertainty = np.sqrt(self.windows.mean(-1))
+        n_valid = self.window_valid.sum(-1)
+        if (n_valid == 0).any():
+            raise ValueError(
+                f"{int((n_valid == 0).sum())} reflection(s) have no usable pixels "
+                "in their integration window; drop them before integrating."
+            )
+        self.n_valid = n_valid
+
+        self.intensity = (self.windows * self.window_valid).sum(-1) / n_valid
+        self.uncertainty = np.sqrt(np.maximum(self.intensity, 0.0))
 
         self.k = k
         self.isigi_cutoff = isigi_cutoff
@@ -56,7 +203,7 @@ class IntegratorBase:
 
     @property
     def windows(self):
-        return self.pixels[tuple(self.window_idx)]
+        return self.pixels[self.window_panel, self.window_idx[0], self.window_idx[1]]
 
     def fit(self, maxiter=2):
         obj = []
@@ -98,7 +245,12 @@ class IntegratorBase:
     def profile_values(self):
         from scipy.special import softmax
 
-        p = softmax(self.log_profile_values, axis=-1)
+        # Normalizing over the valid pixels only keeps sum(p) == 1 over the
+        # pixels that are actually used, which is what makes the profile-fitted
+        # intensity and its variance consistent, and gives p == 0 on every
+        # invalid pixel so they drop out of the weighted sums downstream.
+        log_p = np.where(self.window_valid, self.log_profile_values, -np.inf)
+        p = softmax(log_p, axis=-1)
         return p
 
     @property
@@ -175,7 +327,11 @@ class IntegratorBase:
         to something the same shape as refls.pixels
         """
         im = np.ones_like(self.pixels) * fill_value
-        np.add.at(im, tuple(self.window_idx), window_values)
+        np.add.at(
+            im,
+            (self.window_panel, self.window_idx[0], self.window_idx[1]),
+            window_values,
+        )
         return im
 
     def plot_image(self, pixels=None, autoscale=True, **kwargs):
@@ -183,7 +339,11 @@ class IntegratorBase:
         autoscale uses skimage.exposure.adjust_log
         """
         if pixels is None:
-            pixels = self.pixels
+            if self.n_panels > 1:
+                raise NotImplementedError(
+                    "plot_image draws a single panel; pass pixels=... to choose one"
+                )
+            pixels = self.pixels[0]
         from matplotlib import pyplot as plt
 
         if autoscale:
@@ -205,7 +365,7 @@ class Integrator(IntegratorBase):
         from scipy.stats import poisson
 
         w = -poisson.logpmf(self.windows, v)
-        return w
+        return np.where(self.window_valid, w, 0.0)
 
     @property
     def score(self):
@@ -231,8 +391,12 @@ class Integrator(IntegratorBase):
                 k_actual,
                 k,
             )
-        knn_idx = KDTree(self.centroids[self.strong]).query(
-            self.centroids, k=k_actual + 1
+        # Neighbours are found in the shared frame, so a reflection near a panel
+        # edge pools with the spots physically next to it on the adjacent panel
+        # rather than with whatever happens to sit at the same panel-local
+        # coordinates several panels away.
+        knn_idx = KDTree(self.neighbor_coords[self.strong]).query(
+            self.neighbor_coords, k=k_actual + 1
         )[1]
         # Strong spots have themselves as first result (distance 0); non-strong
         # spots are not in the tree so their first result is already a neighbor.
@@ -243,7 +407,7 @@ class Integrator(IntegratorBase):
 
     def estimate_background(self):
         c = self.windows
-        w = self.profile_dist
+        w = np.where(self.window_valid, self.profile_dist + self.epsilon, 0.0)
         I = self.intensity
 
         p = self.profile_values
@@ -259,6 +423,7 @@ class Integrator(IntegratorBase):
         p = np.exp(
             self.log_profile_values
         )  # normalized over all space, not the profile
+        p = np.where(self.window_valid, p, 0.0)
         num = np.maximum(0.0, (c - bg))
         den = np.maximum(self.epsilon, self.intensity)
         w = num / den[:, None] * p
@@ -287,6 +452,8 @@ class Integrator(IntegratorBase):
         b = self.background
         v = self.predict()
         p = self.profile_values
+        # p is zero on invalid pixels, so they contribute nothing to either sum
+        # and the weights stay normalized over the pixels that are used.
         w = p / v / np.sum(np.square(p) / v, axis=-1, keepdims=True)
         I = (c - b) * w
         self.intensity = I.sum(-1)
@@ -303,6 +470,10 @@ def estimate_integration_radius(centroids):
     distances, rounded to the nearest integer. The same radius is used both for
     the integration window and for dilating the detector mask when discarding
     predictions that fall in masked regions, so the two stay consistent.
+
+    The centroids must be in a frame shared by every panel. Panel-local pixel
+    coordinates superimpose the panels, which drives the nearest-neighbor
+    distances -- and the radius with them -- towards zero.
 
     Args:
         centroids (np.ndarray): (n, 2) array of centroid pixel coordinates.
