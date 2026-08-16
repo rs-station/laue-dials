@@ -487,6 +487,110 @@ def estimate_integration_radius(centroids):
     return int(np.round(radius))
 
 
+def detector_global_pixels(detector, panel_ids, spots):
+    """
+    Map panel-local centroids onto a single detector-wide pixel grid.
+
+    ``xyzcal.px`` is panel-local: every panel starts again at (0, 0), so on a
+    multi-panel detector the panels are superimposed and the coordinates are
+    useless as scaling metadata -- on the LADI drum they pile 48 wedges on top
+    of one another. This lays the panels out on a common grid instead.
+
+    The panels are assumed to share a slow direction, which is what makes a
+    two-dimensional layout meaningful at all. Writing ``s`` for the mean slow
+    axis, each lab-frame point is split into its component along ``s`` (the
+    slow coordinate) and its azimuth about ``s`` (the fast coordinate,
+    converted to a distance with the mean panel radius). For a curved detector
+    that is the unrolled arc length; for a flat one it is a smooth monotonic
+    function of the fast coordinate. The branch cut is placed in the largest
+    angular gap between panels, so a detector wrapping past 180 degrees -- the
+    LADI drum covers about 304 -- does not wrap around on itself. The origin is
+    the corner of the panel at the low end of both coordinates, so the result
+    is non-negative and depends only on the detector model.
+
+    Args:
+        detector: dxtbx detector model, or any sequence of panels supporting
+            get_slow_axis, get_origin, get_pixel_size, get_image_size and
+            get_pixel_lab_coord.
+        panel_ids (np.ndarray): (n,) panel index per centroid.
+        spots (np.ndarray): (n, 2) panel-local centroids in pixels.
+
+    Returns:
+        np.ndarray or None: (n, 2) centroids on the detector-wide grid, in
+        pixels. A single-panel detector is returned unchanged. None if the
+        panels have no common slow direction, or if they close a full circle
+        and so leave no gap to cut at.
+    """
+    spots = np.asarray(spots, dtype=float)[:, :2]
+    panel_ids = np.asarray(panel_ids).astype(int)
+    if len(detector) < 2:
+        return spots.copy()
+
+    slow = np.array([p.get_slow_axis() for p in detector], dtype=float)
+    s = slow.mean(axis=0)
+    norm = np.linalg.norm(s)
+    if norm < 1e-9:
+        return None
+    s = s / norm
+
+    px = np.array([p.get_pixel_size() for p in detector], dtype=float)
+    qx, qy = float(px[:, 0].mean()), float(px[:, 1].mean())
+    size = np.array([p.get_image_size() for p in detector], dtype=float)
+
+    centres = np.array(
+        [p.get_pixel_lab_coord((w / 2.0, h / 2.0)) for p, (w, h) in zip(detector, size)],
+        dtype=float,
+    )
+    cq = centres - np.outer(centres @ s, s)
+    radii = np.linalg.norm(cq, axis=1)
+    radius = float(radii.mean())
+    if radius < 1e-9:
+        return None
+
+    e1 = cq[0] / radii[0]
+    e2 = np.cross(s, e1)
+    e2 = e2 / np.linalg.norm(e2)
+    # Orient the azimuth so that it increases along the panels' fast axis, i.e.
+    # in the same direction as the panel-local x of xyzcal.px. Without this the
+    # sign is whichever way round np.cross happens to come out, and the global
+    # coordinate can run backwards against the local one.
+    fast = np.array(detector[0].get_fast_axis(), dtype=float)
+    if np.dot(fast - np.dot(fast, s) * s, e2) < 0:
+        e2 = -e2
+
+    theta_panel = np.arctan2(cq @ e2, cq @ e1)
+
+    # Put the branch cut in the widest angular gap between panels, so the
+    # occupied arc is contiguous however far round it goes.
+    order = np.argsort(theta_panel)
+    ordered = theta_panel[order]
+    gaps = np.diff(np.append(ordered, ordered[0] + 2 * np.pi))
+    widest = int(np.argmax(gaps))
+    if gaps[widest] <= 0:
+        return None
+    cut = ordered[widest] + 0.5 * gaps[widest]
+
+    lab = np.array(
+        [
+            detector[int(p)].get_pixel_lab_coord((float(x), float(y)))
+            for p, (x, y) in zip(panel_ids, spots)
+        ],
+        dtype=float,
+    )
+    along = lab @ s
+    q = lab - np.outer(along, s)
+    theta = np.mod(np.arctan2(q @ e2, q @ e1) - cut, 2 * np.pi)
+
+    # Anchor on the detector, not on the reflections, so repeated runs and
+    # different images of the same detector share one coordinate system.
+    theta_ref = np.mod(theta_panel - cut, 2 * np.pi) - 0.5 * size[:, 0] * qx / radius
+    along_ref = np.array([np.dot(p.get_origin(), s) for p in detector], dtype=float)
+
+    x = radius * (theta - theta_ref.min()) / qx
+    y = (along - along_ref.min()) / qy
+    return np.column_stack([x, y])
+
+
 def unmasked_prediction_selection(np_mask, x, y, radius, img_row_size):
     """
     Determine which predicted centroids fall outside the detector mask,

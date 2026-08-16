@@ -21,6 +21,7 @@ from dials.util.options import (ArgumentParser,
                                 reflections_and_experiments_from_files)
 
 from laue_dials.algorithms.integration import (Integrator,
+                                               detector_global_pixels,
                                                estimate_integration_radius,
                                                unmasked_prediction_selection)
 from laue_dials.utils.version import laue_version
@@ -213,6 +214,61 @@ def unmasked_selection_per_panel(panel_masks, panel_ids, spots, radius):
             mask, x[on_panel], y[on_panel], radius, mask.shape[1]
         )
     return keep
+
+
+def mtz_centroids(expts, refls):
+    """
+    Predicted centroids for the MTZ, on one grid per experiment.
+
+    ``xyzcal.px`` is panel-local, so on a multi-panel detector every panel is
+    written on top of every other one: metadata keys like ``xcal,ycal`` then
+    describe 48 superimposed wedges rather than a position on the detector.
+    Where the detector has more than one panel the centroids are laid out on a
+    detector-wide grid instead. Single-panel detectors are untouched.
+
+    Args:
+        expts (dxtbx_model_ext.ExperimentList): Experiments.
+        refls (dials.array_family.flex.reflection_table): Integrated reflections.
+
+    Returns:
+        tuple: (xcal, ycal), each an array of length len(refls), in pixels.
+    """
+    xyz = refls["xyzcal.px"].as_numpy_array()
+    xcal, ycal = xyz[:, 0].copy(), xyz[:, 1].copy()
+
+    ids = refls["id"].as_numpy_array()
+    if "panel" in refls:
+        panel_ids = refls["panel"].as_numpy_array().astype(int)
+    else:
+        panel_ids = np.zeros(len(refls), dtype=int)
+
+    for expt_id in np.unique(ids):
+        try:
+            detector = expts[int(expt_id)].detector
+        except (IndexError, AttributeError):
+            logger.warning(
+                "No detector model for experiment %s; leaving its centroids "
+                "panel-local in the MTZ.", expt_id,
+            )
+            continue
+        if detector is None or len(detector) < 2:
+            continue
+        on = ids == expt_id
+        global_px = detector_global_pixels(detector, panel_ids[on], xyz[on, :2])
+        if global_px is None:
+            logger.warning(
+                "Experiment %s: the panels have no common slow direction, so "
+                "there is no detector-wide grid to write; leaving its "
+                "centroids panel-local in the MTZ.", expt_id,
+            )
+            continue
+        xcal[on] = global_px[:, 0]
+        ycal[on] = global_px[:, 1]
+        logger.info(
+            "Experiment %s: wrote xcal/ycal on the detector-wide grid "
+            "(%d panels).", expt_id, len(detector),
+        )
+    return xcal, ycal
 
 
 def integrate_image(img_set, refls, isigi_cutoff, integration_radius, knn, maxiter):
@@ -518,6 +574,8 @@ def run(args=None, *, phil=working_phil):
     symbol = sgtbx.space_group_symbols(sginfo.symbol_and_number().split("(")[0])
     spacegroup = gemmi.SpaceGroup(symbol.universal_hermann_mauguin())
 
+    xcal, ycal = mtz_centroids(expts, refls)
+
     # Generate rs.DataSet to write to MTZ
     data = rs.DataSet(
         {
@@ -527,8 +585,8 @@ def run(args=None, *, phil=working_phil):
             "BATCH": refls["id"].as_numpy_array() + 1,
             "I": refls["intensity.sum.value"].as_numpy_array(),
             "SIGI": refls["intensity.sum.variance"].as_numpy_array() ** 0.5,
-            "xcal": refls["xyzcal.px"].as_numpy_array()[:, 0],
-            "ycal": refls["xyzcal.px"].as_numpy_array()[:, 1],
+            "xcal": xcal,
+            "ycal": ycal,
             "wavelength": refls["wavelength"].as_numpy_array(),
             "BG": refls["background.sum.value"].as_numpy_array(),
             "SIGBG": refls["background.sum.variance"].as_numpy_array() ** 0.5,
