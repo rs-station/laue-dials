@@ -125,9 +125,7 @@ class IntegratorBase:
         panel_ids = np.asarray(panel_ids).astype(int)
         if panel_ids.shape != (len(centroids),):
             raise ValueError("panel_ids must have one entry per centroid")
-        if panel_ids.size and (
-            panel_ids.min() < 0 or panel_ids.max() >= self.n_panels
-        ):
+        if panel_ids.size and (panel_ids.min() < 0 or panel_ids.max() >= self.n_panels):
             raise ValueError("panel_ids refer to a panel with no pixel data")
         self.panel_ids = panel_ids
 
@@ -538,7 +536,10 @@ def detector_global_pixels(detector, panel_ids, spots):
     size = np.array([p.get_image_size() for p in detector], dtype=float)
 
     centres = np.array(
-        [p.get_pixel_lab_coord((w / 2.0, h / 2.0)) for p, (w, h) in zip(detector, size)],
+        [
+            p.get_pixel_lab_coord((w / 2.0, h / 2.0))
+            for p, (w, h) in zip(detector, size)
+        ],
         dtype=float,
     )
     cq = centres - np.outer(centres @ s, s)

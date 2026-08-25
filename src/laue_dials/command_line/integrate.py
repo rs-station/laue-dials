@@ -17,13 +17,14 @@ import reciprocalspaceship as rs
 from cctbx import sgtbx
 from dials.array_family import flex
 from dials.util import show_mail_handle_errors
-from dials.util.options import (ArgumentParser,
-                                reflections_and_experiments_from_files)
+from dials.util.options import ArgumentParser, reflections_and_experiments_from_files
 
-from laue_dials.algorithms.integration import (Integrator,
-                                               detector_global_pixels,
-                                               estimate_integration_radius,
-                                               unmasked_prediction_selection)
+from laue_dials.algorithms.integration import (
+    Integrator,
+    detector_global_pixels,
+    estimate_integration_radius,
+    unmasked_prediction_selection,
+)
 from laue_dials.utils.version import laue_version
 
 logger = logging.getLogger("laue-dials.command_line.integrate")
@@ -248,7 +249,8 @@ def mtz_centroids(expts, refls):
         except (IndexError, AttributeError):
             logger.warning(
                 "No detector model for experiment %s; leaving its centroids "
-                "panel-local in the MTZ.", expt_id,
+                "panel-local in the MTZ.",
+                expt_id,
             )
             continue
         if detector is None or len(detector) < 2:
@@ -259,14 +261,16 @@ def mtz_centroids(expts, refls):
             logger.warning(
                 "Experiment %s: the panels have no common slow direction, so "
                 "there is no detector-wide grid to write; leaving its "
-                "centroids panel-local in the MTZ.", expt_id,
+                "centroids panel-local in the MTZ.",
+                expt_id,
             )
             continue
         xcal[on] = global_px[:, 0]
         ycal[on] = global_px[:, 1]
         logger.info(
-            "Experiment %s: wrote xcal/ycal on the detector-wide grid "
-            "(%d panels).", expt_id, len(detector),
+            "Experiment %s: wrote xcal/ycal on the detector-wide grid " "(%d panels).",
+            expt_id,
+            len(detector),
         )
     return xcal, ycal
 

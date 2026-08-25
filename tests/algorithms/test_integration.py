@@ -1,11 +1,14 @@
 import numpy as np
 import pytest
 
-from laue_dials.algorithms.integration import (Integrator, cov,
-                                               detector_global_pixels,
-                                               estimate_integration_radius,
-                                               mvn_log_pdf,
-                                               unmasked_prediction_selection)
+from laue_dials.algorithms.integration import (
+    Integrator,
+    cov,
+    detector_global_pixels,
+    estimate_integration_radius,
+    mvn_log_pdf,
+    unmasked_prediction_selection,
+)
 
 
 # ---------------------------------------------------------------------------
@@ -460,9 +463,7 @@ def test_panel_local_coordinates_collapse_the_radius():
     """
     _, centroids, _, shared, _ = make_panelled_image()
 
-    assert estimate_integration_radius(centroids) < estimate_integration_radius(
-        shared
-    )
+    assert estimate_integration_radius(centroids) < estimate_integration_radius(shared)
 
 
 def test_integrator_reads_each_reflection_from_its_own_panel():
@@ -530,7 +531,7 @@ def test_narrower_panel_padding_is_never_valid():
 
     last = len(panels) - 1
     assert panels[last].shape[1] < panels[0].shape[1]
-    assert not integ.panel_valid[last, :, panels[last].shape[1]:].any()
+    assert not integ.panel_valid[last, :, panels[last].shape[1] :].any()
 
 
 def test_panel_masks_exclude_pixels_without_dropping_the_reflection():
@@ -541,10 +542,11 @@ def test_panel_masks_exclude_pixels_without_dropping_the_reflection():
 
     i0 = int(np.where(pids == 2)[0][0])
     x, y = int(centroids[i0, 0]), int(centroids[i0, 1])
-    masks[2][y - 1:y + 2, x + 2:x + 5] = False
+    masks[2][y - 1 : y + 2, x + 2 : x + 5] = False
 
-    kwargs = dict(panel_ids=pids, neighbor_coords=shared, radius=6, k=5,
-                  isigi_cutoff=1.0)
+    kwargs = dict(
+        panel_ids=pids, neighbor_coords=shared, radius=6, k=5, isigi_cutoff=1.0
+    )
     plain = Integrator(panels, centroids, **kwargs)
     masked = Integrator(panels, centroids, panel_masks=masks, **kwargs)
 
@@ -589,8 +591,9 @@ def test_panel_ids_must_match_the_pixel_data():
 class FakePanel:
     """The handful of dxtbx Panel methods detector_global_pixels needs."""
 
-    def __init__(self, fast, slow, origin, pixel_size=(0.25, 0.25),
-                 image_size=(50, 1800)):
+    def __init__(
+        self, fast, slow, origin, pixel_size=(0.25, 0.25), image_size=(50, 1800)
+    ):
         self._fast = np.asarray(fast, dtype=float)
         self._slow = np.asarray(slow, dtype=float)
         self._origin = np.asarray(origin, dtype=float)
@@ -632,10 +635,12 @@ def make_drum(n_panels=60, width=50, height=1800, radius=200.0, pixel=0.25):
         slow = (0.0, -1.0, 0.0)
         centre = (r_panel * np.sin(gamma), 0.0, r_panel * np.cos(gamma))
         half = 0.5 * width * pixel
-        origin = (centre[0] - half * fast[0], height * pixel, centre[2] - half * fast[2])
-        panels.append(
-            FakePanel(fast, slow, origin, (pixel, pixel), (width, height))
+        origin = (
+            centre[0] - half * fast[0],
+            height * pixel,
+            centre[2] - half * fast[2],
         )
+        panels.append(FakePanel(fast, slow, origin, (pixel, pixel), (width, height)))
     return panels
 
 
@@ -646,8 +651,9 @@ def make_tiled(n_fast=4, n_slow=3, width=100, height=80, pixel=0.1, distance=150
         for i in range(n_fast):
             origin = (i * width * pixel, -j * height * pixel, distance)
             panels.append(
-                FakePanel((1, 0, 0), (0, -1, 0), origin, (pixel, pixel),
-                          (width, height))
+                FakePanel(
+                    (1, 0, 0), (0, -1, 0), origin, (pixel, pixel), (width, height)
+                )
             )
     return panels
 
@@ -669,15 +675,13 @@ def test_global_pixels_unrolls_a_drum_onto_plate_coordinates():
     panels = make_drum(n_panels=n_panels, width=width)
     rng = np.random.default_rng(0)
     panel_ids = rng.integers(0, n_panels, 500)
-    spots = np.column_stack([
-        rng.uniform(0, width, 500), rng.uniform(0, 1800, 500)
-    ])
+    spots = np.column_stack([rng.uniform(0, width, 500), rng.uniform(0, 1800, 500)])
 
     out = detector_global_pixels(panels, panel_ids, spots)
     unrolled = panel_ids * width + spots[:, 0]
 
     slope, intercept = np.polyfit(unrolled, out[:, 0], 1)
-    assert abs(slope - 1.0) < 1e-3        # chord vs arc over one wedge
+    assert abs(slope - 1.0) < 1e-3  # chord vs arc over one wedge
     assert abs(intercept) < 1e-2
     assert np.abs(out[:, 0] - np.polyval([slope, intercept], unrolled)).max() < 0.05
     assert np.allclose(out[:, 1], spots[:, 1], atol=1e-6)
@@ -697,15 +701,13 @@ def test_global_pixels_do_not_wrap_past_half_a_turn():
     The LADI drum covers about 304 degrees. A branch cut left at an arbitrary
     azimuth would fold the far end of the plate back onto the near end.
     """
-    width, n_panels = 50, 85          # 85 * 50 * 0.25 mm / 200 mm = 5.3 rad
+    width, n_panels = 50, 85  # 85 * 50 * 0.25 mm / 200 mm = 5.3 rad
     panels = make_drum(n_panels=n_panels, width=width)
     panel_ids = np.arange(n_panels)
-    spots = np.column_stack([
-        np.full(n_panels, width / 2.0), np.full(n_panels, 900.0)
-    ])
+    spots = np.column_stack([np.full(n_panels, width / 2.0), np.full(n_panels, 900.0)])
 
     x = detector_global_pixels(panels, panel_ids, spots)[:, 0]
-    assert (np.diff(x) > 0).all()                 # strictly increasing, no fold
+    assert (np.diff(x) > 0).all()  # strictly increasing, no fold
     assert x.max() - x.min() > 0.9 * n_panels * width
 
 
@@ -714,9 +716,9 @@ def test_global_pixels_lay_out_a_tiled_flat_detector():
     n_fast, n_slow, width, height = 4, 3, 100, 80
     panels = make_tiled(n_fast, n_slow, width, height)
     panel_ids = np.arange(len(panels))
-    spots = np.column_stack([
-        np.full(len(panels), width / 2.0), np.full(len(panels), height / 2.0)
-    ])
+    spots = np.column_stack(
+        [np.full(len(panels), width / 2.0), np.full(len(panels), height / 2.0)]
+    )
     out = detector_global_pixels(panels, panel_ids, spots)
 
     x = out[:, 0].reshape(n_slow, n_fast)
@@ -735,5 +737,6 @@ def test_global_pixels_need_a_common_slow_direction():
         FakePanel((1, 0, 0), (0, -1, 0), (0, 10, 100)),
         FakePanel((1, 0, 0), (0, 1, 0), (0, -10, 100)),
     ]
-    assert detector_global_pixels(panels, np.zeros(2, dtype=int),
-                                  np.zeros((2, 2))) is None
+    assert (
+        detector_global_pixels(panels, np.zeros(2, dtype=int), np.zeros((2, 2))) is None
+    )
