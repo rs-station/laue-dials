@@ -57,10 +57,23 @@ class IntegratorBase:
     def windows(self):
         return self.pixels[tuple(self.window_idx)]
 
-    def fit(self, maxiter=2):
-        obj = []
-        for i in range(maxiter):
-            obj.append(self.score)
+    def fit(self, maxiter=2, tol=1e-3):
+        """
+        Iteratively refine the background, profiles, and intensities.
+
+        The objective is evaluated after an iteration's updates have been
+        applied, so the value compared always describes the current state.
+        Fitting stops once an iteration fails to improve the objective by at
+        least ``tol`` in relative terms, which covers both a plateau and an
+        outright increase.
+
+        Args:
+            maxiter (int): Maximum number of iterations to run.
+            tol (float): Minimum relative improvement in the objective needed
+                to keep iterating. Defaults to 1e-3, i.e. 0.1 percent.
+        """
+        previous = None
+        for _ in range(maxiter):
             self.assign_knn()
             self.estimate_background()
             self.estimate_profiles()
@@ -68,10 +81,12 @@ class IntegratorBase:
             self.set_strong()
             if not self.strong.any():
                 raise RuntimeError("No strong spots remaining after integration.")
-            if len(obj) == 1:
-                continue
-            if obj[-1] > obj[-2]:
-                break
+            score = self.score
+            if previous is not None:
+                improvement = (previous - score) / max(abs(previous), self.epsilon)
+                if improvement < tol:
+                    break
+            previous = score
 
     def predict(self):
         p = self.profile_values

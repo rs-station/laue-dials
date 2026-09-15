@@ -1,10 +1,13 @@
 import numpy as np
 import pytest
 
-from laue_dials.algorithms.integration import (Integrator, cov,
-                                               estimate_integration_radius,
-                                               mvn_log_pdf,
-                                               unmasked_prediction_selection)
+from laue_dials.algorithms.integration import (
+    Integrator,
+    cov,
+    estimate_integration_radius,
+    mvn_log_pdf,
+    unmasked_prediction_selection,
+)
 
 
 # ---------------------------------------------------------------------------
@@ -395,3 +398,86 @@ def test_estimate_integration_radius_matches_formula():
     expected = int(np.round(0.5 * np.percentile(closest_spot_dist, 20)))
 
     assert estimate_integration_radius(centroids) == expected
+
+
+# ---------------------------------------------------------------------------
+# fit() stopping rule
+# ---------------------------------------------------------------------------
+def _counting_integrator(pixels, centroids, **kwargs):
+    """An Integrator that records how many times the update block ran."""
+
+    class Counting(Integrator):
+        def __init__(self, *a, **kw):
+            super().__init__(*a, **kw)
+            self.n_updates = 0
+
+        def integrate(self):
+            super().integrate()
+            self.n_updates += 1
+
+    return Counting(pixels, centroids, **kwargs)
+
+
+def test_fit_applies_exactly_maxiter_updates_when_never_converged():
+    """
+    With a tolerance that can never be satisfied from below, fit() should run
+    the full budget. This pins the loop bound independently of the stopping
+    rule, and would catch an off-by-one in how many updates get applied.
+    """
+    pixels, centroids = make_synthetic_image(seed=7)
+    integ = _counting_integrator(pixels, centroids)
+
+    integ.fit(maxiter=4, tol=-np.inf)
+
+    assert integ.n_updates == 4
+
+
+def test_fit_stops_once_improvement_falls_below_tol():
+    """
+    A tolerance of 100% relative improvement is unreachable, so the second
+    iteration must trip the stopping rule regardless of the data. fit() should
+    then stop well short of a large maxiter.
+    """
+    pixels, centroids = make_synthetic_image(seed=7)
+    integ = _counting_integrator(pixels, centroids)
+
+    integ.fit(maxiter=50, tol=1.0)
+
+    # One update to establish a baseline score, one more to compare against it.
+    assert integ.n_updates == 2
+
+
+def test_fit_does_not_apply_an_update_past_the_stopping_point():
+    """
+    The objective is evaluated after an iteration's updates are applied, so a
+    stalled iteration ends the loop immediately.
+
+    On this data the score is minimised after a single update and worsens
+    thereafter, so the second iteration must trip the rule and fit() must stop
+    holding two updates. The previous implementation scored the state *before*
+    updating, which detected the stall one iteration late and returned a third,
+    unwanted update.
+    """
+    pixels, centroids = make_synthetic_image(seed=7)
+    integ = _counting_integrator(pixels, centroids)
+
+    integ.fit(maxiter=3)
+
+    assert integ.n_updates == 2
+
+
+def test_fit_maxiter_one_matches_a_single_manual_update():
+    """A one-iteration fit is exactly one pass of the update block."""
+    pixels, centroids = make_synthetic_image(seed=7)
+    integ = Integrator(pixels, centroids)
+    integ.fit(maxiter=1)
+
+    again = Integrator(pixels, centroids)
+    again.assign_knn()
+    again.estimate_background()
+    again.estimate_profiles()
+    again.integrate()
+    again.set_strong()
+
+    assert np.isclose(integ.score, again.score)
+    assert np.allclose(integ.intensity, again.intensity)
