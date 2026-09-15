@@ -14,8 +14,7 @@ import numpy as np
 from dials.array_family import flex
 from dials.array_family.flex import reflection_table
 from dials.util import show_mail_handle_errors
-from dials.util.options import (ArgumentParser,
-                                reflections_and_experiments_from_files)
+from dials.util.options import ArgumentParser, reflections_and_experiments_from_files
 from dxtbx.model import MosaicCrystalSauter2014
 from dxtbx.model.experiment_list import Experiment, ExperimentList
 from libtbx.phil import parse
@@ -27,7 +26,8 @@ from laue_dials.utils.version import laue_version
 logger = logging.getLogger("laue.command_line.sequence_to_stills")
 
 # The phil scope
-phil_scope = parse("""
+phil_scope = parse(
+    """
 output {
   experiments = stills.expt
     .type = str
@@ -51,7 +51,8 @@ max_scan_points = None
   .type = int
   .expert_level = 2
   .help = Limit number of scan points
-""")
+"""
+)
 
 
 def sequence_to_stills(experiments, reflections, params):
