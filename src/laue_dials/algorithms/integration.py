@@ -148,8 +148,16 @@ class IntegratorBase:
         self.profile_loc = self.centroids.copy()
         self.background = np.ones((self.n, 1))
 
+        # Centre each window on the pixel that contains the centroid. Pixel
+        # index i spans [i, i+1) -- which is why `xy` adds 0.5 to recover the
+        # pixel centre -- so that pixel is floor(centroid), not
+        # round(centroid). Rounding put the window one pixel off whenever the
+        # centroid's fractional part was >= 0.5, i.e. for about half of all
+        # reflections, and disagreed with the mask-dilation filter in
+        # laue.integrate, which floors. That disagreement let a window reach a
+        # masked pixel the filter believed it had cleared.
         window_idx = (
-            np.round(self.centroids).astype("int")[:, None, :]
+            np.floor(self.centroids).astype("int")[:, None, :]
             + self.window_mask[None, :, :]
         )
 
