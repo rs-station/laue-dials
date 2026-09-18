@@ -126,23 +126,27 @@
     <span class="n">process_includes</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="n">output_phil</span> <span class="o">=</span> <span class="n">libtbx</span><span class="o">.</span><span class="n">phil</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s2">"""</span>
-<span class="s2">output {</span>
-<span class="s2">  log = 'laue.find_spots.log'</span>
-<span class="s2">    .type = str</span>
-<span class="s2">    .help = "The log filename."</span>
-<span class="s2">}</span>
-<span class="s2">"""</span><span class="p">)</span>
+<span class="n">output_phil</span> <span class="o">=</span> <span class="n">libtbx</span><span class="o">.</span><span class="n">phil</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">output {</span>
+<span class="sd">  log = 'laue.find_spots.log'</span>
+<span class="sd">    .type = str</span>
+<span class="sd">    .help = "The log filename."</span>
+<span class="sd">}</span>
+<span class="sd">"""</span>
+<span class="p">)</span>
 
-<span class="n">spotfinder_phil</span> <span class="o">=</span> <span class="n">libtbx</span><span class="o">.</span><span class="n">phil</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s2">"""</span>
-<span class="s2">spotfinder {</span>
-<span class="s2">  force_2d = True</span>
-<span class="s2">}</span>
+<span class="n">spotfinder_phil</span> <span class="o">=</span> <span class="n">libtbx</span><span class="o">.</span><span class="n">phil</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">spotfinder {</span>
+<span class="sd">  force_2d = True</span>
+<span class="sd">}</span>
 
-<span class="s2">output {</span>
-<span class="s2">  shoeboxes = False</span>
-<span class="s2">}</span>
-<span class="s2">"""</span><span class="p">)</span>
+<span class="sd">output {</span>
+<span class="sd">  shoeboxes = False</span>
+<span class="sd">}</span>
+<span class="sd">"""</span>
+<span class="p">)</span>
 
 <span class="n">working_phil</span> <span class="o">=</span> <span class="n">main_phil</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="n">sources</span><span class="o">=</span><span class="p">[</span><span class="n">output_phil</span><span class="p">,</span> <span class="n">spotfinder_phil</span><span class="p">])</span>
 

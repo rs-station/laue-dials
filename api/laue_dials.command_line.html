@@ -191,12 +191,15 @@
 <dt class="sig sig-object py" id="laue_dials.command_line.integrate.integrate_image">
 <span class="sig-prename descclassname"><span class="pre">laue_dials.command_line.integrate.</span></span><span class="sig-name descname"><span class="pre">integrate_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img_set</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">refls</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">isigi_cutoff</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">integration_radius</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">knn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxiter</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/command_line/integrate.html#integrate_image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.command_line.integrate.integrate_image" title="Link to this definition"></a></dt>
 <dd><p>Integrate predicted spots on an image.</p>
+<p>Every panel of the image is read, and each reflection is integrated from
+the panel it lies on. <code class="docutils literal notranslate"><span class="pre">xyzcal.px</span></code> is panel-local, so integrating the
+whole image against panel 0 – as this function used to – reads unrelated
+pixels for every reflection that is not on panel 0.</p>
 <p>The integration radius is estimated once from the full predicted set (or
-taken from <code class="docutils literal notranslate"><span class="pre">integration_radius</span></code> if supplied) and reused both to dilate the
-detector mask – discarding predictions whose integration window would
-overlap masked pixels – and as the integration window itself. Using a
-single radius for both keeps the dilation and the window self-consistent, so
-no surviving centroid’s window ever reaches a masked pixel.</p>
+taken from <code class="docutils literal notranslate"><span class="pre">integration_radius</span></code> if supplied) in a frame shared by all
+panels, and reused both to dilate the detector mask – discarding
+predictions whose integration window would overlap masked pixels – and as
+the integration window itself.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -221,6 +224,48 @@ reflection’s profile.</p></li>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="laue_dials.command_line.integrate.mtz_centroids">
+<span class="sig-prename descclassname"><span class="pre">laue_dials.command_line.integrate.</span></span><span class="sig-name descname"><span class="pre">mtz_centroids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">refls</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/command_line/integrate.html#mtz_centroids"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.command_line.integrate.mtz_centroids" title="Link to this definition"></a></dt>
+<dd><p>Predicted centroids for the MTZ, on one grid per experiment.</p>
+<p><code class="docutils literal notranslate"><span class="pre">xyzcal.px</span></code> is panel-local, so on a multi-panel detector every panel is
+written on top of every other one: metadata keys like <code class="docutils literal notranslate"><span class="pre">xcal,ycal</span></code> then
+describe 48 superimposed wedges rather than a position on the detector.
+Where the detector has more than one panel the centroids are laid out on a
+detector-wide grid instead. Single-panel detectors are untouched.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>expts</strong> (<em>dxtbx_model_ext.ExperimentList</em>) – Experiments.</p></li>
+<li><p><strong>refls</strong> (<em>dials.array_family.flex.reflection_table</em>) – Integrated reflections.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>(xcal, ycal), each an array of length len(refls), in pixels.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#tuple" title="(in Python v3.12)">tuple</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="laue_dials.command_line.integrate.panel_ids_for">
+<span class="sig-prename descclassname"><span class="pre">laue_dials.command_line.integrate.</span></span><span class="sig-name descname"><span class="pre">panel_ids_for</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">refls</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/command_line/integrate.html#panel_ids_for"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.command_line.integrate.panel_ids_for" title="Link to this definition"></a></dt>
+<dd><p>Panel index of every reflection, defaulting to panel 0.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>refls</strong> (<em>dials.array_family.flex.reflection_table</em>) – Reflection table.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Integer panel index per reflection.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="laue_dials.command_line.integrate.run">
 <span class="sig-prename descclassname"><span class="pre">laue_dials.command_line.integrate.</span></span><span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phil</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;libtbx.phil.scope</span> <span class="pre">object&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/command_line/integrate.html#run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.command_line.integrate.run" title="Link to this definition"></a></dt>
 <dd><p>Run the integration script with the specified command-line arguments.</p>
@@ -233,6 +278,64 @@ reflection’s profile.</p></li>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="laue_dials.command_line.integrate.shared_frame_centroids">
+<span class="sig-prename descclassname"><span class="pre">laue_dials.command_line.integrate.</span></span><span class="sig-name descname"><span class="pre">shared_frame_centroids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img_set</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">panel_ids</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spots</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/command_line/integrate.html#shared_frame_centroids"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.command_line.integrate.shared_frame_centroids" title="Link to this definition"></a></dt>
+<dd><p>Express predicted centroids in a frame shared by every panel, in pixels.</p>
+<p><code class="docutils literal notranslate"><span class="pre">xyzcal.px</span></code> is panel-local: every panel restarts at (0, 0). Distances
+between reflections on different panels are therefore meaningless, which
+matters twice over – for the automatic integration radius, and for finding
+each reflection’s nearest strong neighbours when pooling profiles. Mapping
+each centroid through its own panel into the laboratory frame and dividing
+by the pixel size restores a comparable set of coordinates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>img_set</strong> (<em>dxtbx_imageset_ext.Imageset</em>) – Image set.</p></li>
+<li><p><strong>panel_ids</strong> (<em>np.ndarray</em>) – Panel index per reflection.</p></li>
+<li><p><strong>spots</strong> (<em>np.ndarray</em>) – (n, 2) panel-local centroids in pixels.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>(n, 3) lab-frame centroids in pixel units, or None
+if the detector model is unavailable or the detector has one panel, in
+which case the panel-local coordinates are already shared.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="laue_dials.command_line.integrate.unmasked_selection_per_panel">
+<span class="sig-prename descclassname"><span class="pre">laue_dials.command_line.integrate.</span></span><span class="sig-name descname"><span class="pre">unmasked_selection_per_panel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">panel_masks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">panel_ids</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spots</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/command_line/integrate.html#unmasked_selection_per_panel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.command_line.integrate.unmasked_selection_per_panel" title="Link to this definition"></a></dt>
+<dd><p>Apply the mask dilation of <code class="xref py py-func docutils literal notranslate"><span class="pre">unmasked_prediction_selection()</span></code> panel by
+panel, using each panel’s own mask and row stride.</p>
+<p>Panels whose mask marks no bad pixels are left alone. The dilation’s
+no-mask fallback buffers every detector edge by <code class="docutils literal notranslate"><span class="pre">radius</span></code>, which on a
+segmented detector – the LADI drum is 85 wedges only 50 px wide – would
+throw away most of the predictions on grounds of geometry rather than data
+quality. Windows that overhang a panel edge are handled by the Integrator,
+which marks the pixels beyond the edge invalid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>panel_masks</strong> (<em>sequence</em>) – One boolean mask per panel, True for good pixels.</p></li>
+<li><p><strong>panel_ids</strong> (<em>np.ndarray</em>) – Panel index per reflection.</p></li>
+<li><p><strong>spots</strong> (<em>np.ndarray</em>) – (n, 2) panel-local centroids in pixels.</p></li>
+<li><p><strong>radius</strong> (<a class="reference external" href="https://docs.python.org/3.12/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – Dilation radius in pixels.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Boolean array, True for predictions to keep.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
 </dd>
 </dl>
 </dd></dl>

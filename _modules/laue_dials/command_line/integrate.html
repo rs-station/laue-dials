@@ -106,12 +106,14 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">cctbx</span><span class="w"> </span><span class="kn">import</span> <span class="n">sgtbx</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">dials.array_family</span><span class="w"> </span><span class="kn">import</span> <span class="n">flex</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">dials.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">show_mail_handle_errors</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">dials.util.options</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">ArgumentParser</span><span class="p">,</span>
-                                <span class="n">reflections_and_experiments_from_files</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dials.util.options</span><span class="w"> </span><span class="kn">import</span> <span class="n">ArgumentParser</span><span class="p">,</span> <span class="n">reflections_and_experiments_from_files</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">laue_dials.algorithms.integration</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">Integrator</span><span class="p">,</span>
-                                               <span class="n">estimate_integration_radius</span><span class="p">,</span>
-                                               <span class="n">unmasked_prediction_selection</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">laue_dials.algorithms.integration</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Integrator</span><span class="p">,</span>
+    <span class="n">detector_global_pixels</span><span class="p">,</span>
+    <span class="n">estimate_integration_radius</span><span class="p">,</span>
+    <span class="n">unmasked_prediction_selection</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">laue_dials.utils.version</span><span class="w"> </span><span class="kn">import</span> <span class="n">laue_version</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">"laue-dials.command_line.integrate"</span><span class="p">)</span>
@@ -190,6 +192,10 @@
 
 <span class="n">working_phil</span> <span class="o">=</span> <span class="n">phil_scope</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="n">sources</span><span class="o">=</span><span class="p">[</span><span class="n">phil_scope</span><span class="p">])</span>
 
+<span class="c1"># Minimum number of usable pixels a window must retain -- after the panel edge</span>
+<span class="c1"># and the detector mask have been accounted for -- to be worth fitting.</span>
+<span class="n">MIN_WINDOW_PIXELS</span> <span class="o">=</span> <span class="mi">6</span>
+
 
 <div class="viewcode-block" id="get_refls_image">
 <a class="viewcode-back" href="../../../api/laue_dials.command_line.html#laue_dials.command_line.integrate.get_refls_image">[docs]</a>
@@ -208,18 +214,187 @@
 
 
 
+<div class="viewcode-block" id="panel_ids_for">
+<a class="viewcode-back" href="../../../api/laue_dials.command_line.html#laue_dials.command_line.integrate.panel_ids_for">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">panel_ids_for</span><span class="p">(</span><span class="n">refls</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Panel index of every reflection, defaulting to panel 0.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        refls (dials.array_family.flex.reflection_table): Reflection table.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        np.ndarray: Integer panel index per reflection.</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="s2">"panel"</span> <span class="ow">in</span> <span class="n">refls</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">refls</span><span class="p">[</span><span class="s2">"panel"</span><span class="p">]</span><span class="o">.</span><span class="n">as_numpy_array</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">refls</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="shared_frame_centroids">
+<a class="viewcode-back" href="../../../api/laue_dials.command_line.html#laue_dials.command_line.integrate.shared_frame_centroids">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">shared_frame_centroids</span><span class="p">(</span><span class="n">img_set</span><span class="p">,</span> <span class="n">panel_ids</span><span class="p">,</span> <span class="n">spots</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Express predicted centroids in a frame shared by every panel, in pixels.</span>
+
+<span class="sd">    ``xyzcal.px`` is panel-local: every panel restarts at (0, 0). Distances</span>
+<span class="sd">    between reflections on different panels are therefore meaningless, which</span>
+<span class="sd">    matters twice over -- for the automatic integration radius, and for finding</span>
+<span class="sd">    each reflection's nearest strong neighbours when pooling profiles. Mapping</span>
+<span class="sd">    each centroid through its own panel into the laboratory frame and dividing</span>
+<span class="sd">    by the pixel size restores a comparable set of coordinates.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        img_set (dxtbx_imageset_ext.Imageset): Image set.</span>
+<span class="sd">        panel_ids (np.ndarray): Panel index per reflection.</span>
+<span class="sd">        spots (np.ndarray): (n, 2) panel-local centroids in pixels.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        np.ndarray or None: (n, 3) lab-frame centroids in pixel units, or None</span>
+<span class="sd">        if the detector model is unavailable or the detector has one panel, in</span>
+<span class="sd">        which case the panel-local coordinates are already shared.</span>
+<span class="sd">    """</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">detector</span> <span class="o">=</span> <span class="n">img_set</span><span class="o">.</span><span class="n">get_detector</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">detector</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">detector</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">pixel_size</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">detector</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_pixel_size</span><span class="p">()))</span>
+        <span class="n">lab</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">detector</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">p</span><span class="p">)]</span><span class="o">.</span><span class="n">get_pixel_lab_coord</span><span class="p">((</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="n">y</span><span class="p">)))</span>
+                <span class="k">for</span> <span class="n">p</span><span class="p">,</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">panel_ids</span><span class="p">,</span> <span class="n">spots</span><span class="p">)</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="s2">"Could not map centroids into the laboratory frame (</span><span class="si">%s</span><span class="s2">); "</span>
+            <span class="s2">"falling back to panel-local coordinates."</span><span class="p">,</span>
+            <span class="n">e</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="n">lab</span> <span class="o">/</span> <span class="n">pixel_size</span></div>
+
+
+
+<div class="viewcode-block" id="unmasked_selection_per_panel">
+<a class="viewcode-back" href="../../../api/laue_dials.command_line.html#laue_dials.command_line.integrate.unmasked_selection_per_panel">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">unmasked_selection_per_panel</span><span class="p">(</span><span class="n">panel_masks</span><span class="p">,</span> <span class="n">panel_ids</span><span class="p">,</span> <span class="n">spots</span><span class="p">,</span> <span class="n">radius</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Apply the mask dilation of :func:`unmasked_prediction_selection` panel by</span>
+<span class="sd">    panel, using each panel's own mask and row stride.</span>
+
+<span class="sd">    Panels whose mask marks no bad pixels are left alone. The dilation's</span>
+<span class="sd">    no-mask fallback buffers every detector edge by ``radius``, which on a</span>
+<span class="sd">    segmented detector -- the LADI drum is 85 wedges only 50 px wide -- would</span>
+<span class="sd">    throw away most of the predictions on grounds of geometry rather than data</span>
+<span class="sd">    quality. Windows that overhang a panel edge are handled by the Integrator,</span>
+<span class="sd">    which marks the pixels beyond the edge invalid.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        panel_masks (sequence): One boolean mask per panel, True for good pixels.</span>
+<span class="sd">        panel_ids (np.ndarray): Panel index per reflection.</span>
+<span class="sd">        spots (np.ndarray): (n, 2) panel-local centroids in pixels.</span>
+<span class="sd">        radius (int): Dilation radius in pixels.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        np.ndarray: Boolean array, True for predictions to keep.</span>
+<span class="sd">    """</span>
+    <span class="n">keep</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">spots</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">spots</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">spots</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">panel_id</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">panel_ids</span><span class="p">):</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">panel_masks</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">panel_id</span><span class="p">)],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">mask</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+            <span class="k">continue</span>
+        <span class="n">on_panel</span> <span class="o">=</span> <span class="n">panel_ids</span> <span class="o">==</span> <span class="n">panel_id</span>
+        <span class="n">keep</span><span class="p">[</span><span class="n">on_panel</span><span class="p">]</span> <span class="o">=</span> <span class="n">unmasked_prediction_selection</span><span class="p">(</span>
+            <span class="n">mask</span><span class="p">,</span> <span class="n">x</span><span class="p">[</span><span class="n">on_panel</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">on_panel</span><span class="p">],</span> <span class="n">radius</span><span class="p">,</span> <span class="n">mask</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">keep</span></div>
+
+
+
+<div class="viewcode-block" id="mtz_centroids">
+<a class="viewcode-back" href="../../../api/laue_dials.command_line.html#laue_dials.command_line.integrate.mtz_centroids">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">mtz_centroids</span><span class="p">(</span><span class="n">expts</span><span class="p">,</span> <span class="n">refls</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Predicted centroids for the MTZ, on one grid per experiment.</span>
+
+<span class="sd">    ``xyzcal.px`` is panel-local, so on a multi-panel detector every panel is</span>
+<span class="sd">    written on top of every other one: metadata keys like ``xcal,ycal`` then</span>
+<span class="sd">    describe 48 superimposed wedges rather than a position on the detector.</span>
+<span class="sd">    Where the detector has more than one panel the centroids are laid out on a</span>
+<span class="sd">    detector-wide grid instead. Single-panel detectors are untouched.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        expts (dxtbx_model_ext.ExperimentList): Experiments.</span>
+<span class="sd">        refls (dials.array_family.flex.reflection_table): Integrated reflections.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: (xcal, ycal), each an array of length len(refls), in pixels.</span>
+<span class="sd">    """</span>
+    <span class="n">xyz</span> <span class="o">=</span> <span class="n">refls</span><span class="p">[</span><span class="s2">"xyzcal.px"</span><span class="p">]</span><span class="o">.</span><span class="n">as_numpy_array</span><span class="p">()</span>
+    <span class="n">xcal</span><span class="p">,</span> <span class="n">ycal</span> <span class="o">=</span> <span class="n">xyz</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">xyz</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="n">ids</span> <span class="o">=</span> <span class="n">refls</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]</span><span class="o">.</span><span class="n">as_numpy_array</span><span class="p">()</span>
+    <span class="k">if</span> <span class="s2">"panel"</span> <span class="ow">in</span> <span class="n">refls</span><span class="p">:</span>
+        <span class="n">panel_ids</span> <span class="o">=</span> <span class="n">refls</span><span class="p">[</span><span class="s2">"panel"</span><span class="p">]</span><span class="o">.</span><span class="n">as_numpy_array</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">panel_ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">refls</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">expt_id</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">ids</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">detector</span> <span class="o">=</span> <span class="n">expts</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">expt_id</span><span class="p">)]</span><span class="o">.</span><span class="n">detector</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">IndexError</span><span class="p">,</span> <span class="ne">AttributeError</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">"No detector model for experiment </span><span class="si">%s</span><span class="s2">; leaving its centroids "</span>
+                <span class="s2">"panel-local in the MTZ."</span><span class="p">,</span>
+                <span class="n">expt_id</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="n">detector</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">detector</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">on</span> <span class="o">=</span> <span class="n">ids</span> <span class="o">==</span> <span class="n">expt_id</span>
+        <span class="n">global_px</span> <span class="o">=</span> <span class="n">detector_global_pixels</span><span class="p">(</span><span class="n">detector</span><span class="p">,</span> <span class="n">panel_ids</span><span class="p">[</span><span class="n">on</span><span class="p">],</span> <span class="n">xyz</span><span class="p">[</span><span class="n">on</span><span class="p">,</span> <span class="p">:</span><span class="mi">2</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">global_px</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">"Experiment </span><span class="si">%s</span><span class="s2">: the panels have no common slow direction, so "</span>
+                <span class="s2">"there is no detector-wide grid to write; leaving its "</span>
+                <span class="s2">"centroids panel-local in the MTZ."</span><span class="p">,</span>
+                <span class="n">expt_id</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">continue</span>
+        <span class="n">xcal</span><span class="p">[</span><span class="n">on</span><span class="p">]</span> <span class="o">=</span> <span class="n">global_px</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">ycal</span><span class="p">[</span><span class="n">on</span><span class="p">]</span> <span class="o">=</span> <span class="n">global_px</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="s2">"Experiment </span><span class="si">%s</span><span class="s2">: wrote xcal/ycal on the detector-wide grid "</span> <span class="s2">"(</span><span class="si">%d</span><span class="s2"> panels)."</span><span class="p">,</span>
+            <span class="n">expt_id</span><span class="p">,</span>
+            <span class="nb">len</span><span class="p">(</span><span class="n">detector</span><span class="p">),</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">xcal</span><span class="p">,</span> <span class="n">ycal</span></div>
+
+
+
 <div class="viewcode-block" id="integrate_image">
 <a class="viewcode-back" href="../../../api/laue_dials.command_line.html#laue_dials.command_line.integrate.integrate_image">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">integrate_image</span><span class="p">(</span><span class="n">img_set</span><span class="p">,</span> <span class="n">refls</span><span class="p">,</span> <span class="n">isigi_cutoff</span><span class="p">,</span> <span class="n">integration_radius</span><span class="p">,</span> <span class="n">knn</span><span class="p">,</span> <span class="n">maxiter</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Integrate predicted spots on an image.</span>
 
+<span class="sd">    Every panel of the image is read, and each reflection is integrated from</span>
+<span class="sd">    the panel it lies on. ``xyzcal.px`` is panel-local, so integrating the</span>
+<span class="sd">    whole image against panel 0 -- as this function used to -- reads unrelated</span>
+<span class="sd">    pixels for every reflection that is not on panel 0.</span>
+
 <span class="sd">    The integration radius is estimated once from the full predicted set (or</span>
-<span class="sd">    taken from ``integration_radius`` if supplied) and reused both to dilate the</span>
-<span class="sd">    detector mask -- discarding predictions whose integration window would</span>
-<span class="sd">    overlap masked pixels -- and as the integration window itself. Using a</span>
-<span class="sd">    single radius for both keeps the dilation and the window self-consistent, so</span>
-<span class="sd">    no surviving centroid's window ever reaches a masked pixel.</span>
+<span class="sd">    taken from ``integration_radius`` if supplied) in a frame shared by all</span>
+<span class="sd">    panels, and reused both to dilate the detector mask -- discarding</span>
+<span class="sd">    predictions whose integration window would overlap masked pixels -- and as</span>
+<span class="sd">    the integration window itself.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        img_set (dxtbx_imageset_ext.Imageset): Image set.</span>
@@ -240,31 +415,64 @@
     <span class="n">proctime</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
 
     <span class="n">all_spots</span> <span class="o">=</span> <span class="n">refls</span><span class="p">[</span><span class="s2">"xyzcal.px"</span><span class="p">]</span><span class="o">.</span><span class="n">as_numpy_array</span><span class="p">()[:,</span> <span class="p">:</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">"float32"</span><span class="p">)</span>
-    <span class="n">pixels</span> <span class="o">=</span> <span class="n">img_set</span><span class="o">.</span><span class="n">get_raw_data</span><span class="p">(</span><span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">as_numpy_array</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">"float32"</span><span class="p">)</span>
+    <span class="n">panel_ids</span> <span class="o">=</span> <span class="n">panel_ids_for</span><span class="p">(</span><span class="n">refls</span><span class="p">)</span>
+
+    <span class="c1"># Pixel data for every panel, not just panel 0.</span>
+    <span class="n">panel_pixels</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">panel</span><span class="o">.</span><span class="n">as_numpy_array</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">"float32"</span><span class="p">)</span> <span class="k">for</span> <span class="n">panel</span> <span class="ow">in</span> <span class="n">img_set</span><span class="o">.</span><span class="n">get_raw_data</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="p">]</span>
+    <span class="k">if</span> <span class="n">panel_ids</span><span class="o">.</span><span class="n">size</span> <span class="ow">and</span> <span class="n">panel_ids</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">panel_pixels</span><span class="p">):</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+            <span class="s2">"Image </span><span class="si">%s</span><span class="s2">: reflections reference panel </span><span class="si">%d</span><span class="s2"> but the image has only "</span>
+            <span class="s2">"</span><span class="si">%d</span><span class="s2"> panel(s). Skipping."</span><span class="p">,</span>
+            <span class="n">img_num</span><span class="p">,</span>
+            <span class="nb">int</span><span class="p">(</span><span class="n">panel_ids</span><span class="o">.</span><span class="n">max</span><span class="p">()),</span>
+            <span class="nb">len</span><span class="p">(</span><span class="n">panel_pixels</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">flex</span><span class="o">.</span><span class="n">reflection_table</span><span class="p">()</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">panel_masks</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">pixels</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">mask</span><span class="p">,</span> <span class="n">pixels</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">img_set</span><span class="o">.</span><span class="n">get_mask</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">panel_pixels</span><span class="p">)</span>
+        <span class="p">]</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="s2">"Image </span><span class="si">%s</span><span class="s2">: could not read the detector mask (</span><span class="si">%s</span><span class="s2">); "</span>
+            <span class="s2">"treating every pixel as valid."</span><span class="p">,</span>
+            <span class="n">img_num</span><span class="p">,</span>
+            <span class="n">e</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">panel_masks</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="n">shared_coords</span> <span class="o">=</span> <span class="n">shared_frame_centroids</span><span class="p">(</span><span class="n">img_set</span><span class="p">,</span> <span class="n">panel_ids</span><span class="p">,</span> <span class="n">all_spots</span><span class="p">)</span>
+    <span class="n">neighbor_coords</span> <span class="o">=</span> <span class="n">all_spots</span> <span class="k">if</span> <span class="n">shared_coords</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">shared_coords</span>
 
     <span class="c1"># Estimate the radius once, from the full predicted set, then reuse it for</span>
     <span class="c1"># both the mask dilation and the integration window.</span>
     <span class="n">radius</span> <span class="o">=</span> <span class="n">integration_radius</span>
     <span class="k">if</span> <span class="n">radius</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">radius</span> <span class="o">=</span> <span class="n">estimate_integration_radius</span><span class="p">(</span><span class="n">all_spots</span><span class="p">)</span>
+        <span class="n">radius</span> <span class="o">=</span> <span class="n">estimate_integration_radius</span><span class="p">(</span><span class="n">neighbor_coords</span><span class="p">)</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Image </span><span class="si">{</span><span class="n">img_num</span><span class="si">}</span><span class="s2">: computed integration radius = </span><span class="si">{</span><span class="n">radius</span><span class="si">}</span><span class="s2"> px."</span><span class="p">)</span>
 
     <span class="c1"># Discard predictions whose integration window would overlap the detector</span>
     <span class="c1"># mask, dilated by that same radius.</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">img_set</span><span class="o">.</span><span class="n">get_mask</span><span class="p">(</span><span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">pixels</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">all_spots</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
-        <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">all_spots</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
-        <span class="n">sel</span> <span class="o">=</span> <span class="n">unmasked_prediction_selection</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">pixels</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-        <span class="n">refls</span> <span class="o">=</span> <span class="n">refls</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">flex</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="n">sel</span><span class="p">))</span>
-        <span class="n">all_spots</span> <span class="o">=</span> <span class="n">all_spots</span><span class="p">[</span><span class="n">sel</span><span class="p">]</span>
-    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-            <span class="s2">"Image </span><span class="si">%s</span><span class="s2">: could not apply detector mask (</span><span class="si">%s</span><span class="s2">); "</span>
-            <span class="s2">"integrating all predictions."</span><span class="p">,</span>
-            <span class="n">img_num</span><span class="p">,</span>
-            <span class="n">e</span><span class="p">,</span>
-        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">panel_masks</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">sel</span> <span class="o">=</span> <span class="n">unmasked_selection_per_panel</span><span class="p">(</span>
+                <span class="n">panel_masks</span><span class="p">,</span> <span class="n">panel_ids</span><span class="p">,</span> <span class="n">all_spots</span><span class="p">,</span> <span class="n">radius</span>
+            <span class="p">)</span>
+            <span class="n">refls</span> <span class="o">=</span> <span class="n">refls</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">flex</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="n">sel</span><span class="o">.</span><span class="n">tolist</span><span class="p">()))</span>
+            <span class="n">all_spots</span> <span class="o">=</span> <span class="n">all_spots</span><span class="p">[</span><span class="n">sel</span><span class="p">]</span>
+            <span class="n">panel_ids</span> <span class="o">=</span> <span class="n">panel_ids</span><span class="p">[</span><span class="n">sel</span><span class="p">]</span>
+            <span class="n">neighbor_coords</span> <span class="o">=</span> <span class="n">neighbor_coords</span><span class="p">[</span><span class="n">sel</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">"Image </span><span class="si">%s</span><span class="s2">: could not apply detector mask (</span><span class="si">%s</span><span class="s2">); "</span>
+                <span class="s2">"integrating all predictions."</span><span class="p">,</span>
+                <span class="n">img_num</span><span class="p">,</span>
+                <span class="n">e</span><span class="p">,</span>
+            <span class="p">)</span>
 
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_spots</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
@@ -273,8 +481,43 @@
         <span class="k">return</span> <span class="n">flex</span><span class="o">.</span><span class="n">reflection_table</span><span class="p">()</span>
 
     <span class="n">integrator</span> <span class="o">=</span> <span class="n">Integrator</span><span class="p">(</span>
-        <span class="n">pixels</span><span class="p">,</span> <span class="n">all_spots</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="n">radius</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">knn</span><span class="p">,</span> <span class="n">isigi_cutoff</span><span class="o">=</span><span class="n">isigi_cutoff</span>
+        <span class="n">panel_pixels</span><span class="p">,</span>
+        <span class="n">all_spots</span><span class="p">,</span>
+        <span class="n">panel_ids</span><span class="o">=</span><span class="n">panel_ids</span><span class="p">,</span>
+        <span class="n">panel_masks</span><span class="o">=</span><span class="n">panel_masks</span><span class="p">,</span>
+        <span class="n">neighbor_coords</span><span class="o">=</span><span class="n">neighbor_coords</span><span class="p">,</span>
+        <span class="n">radius</span><span class="o">=</span><span class="n">radius</span><span class="p">,</span>
+        <span class="n">k</span><span class="o">=</span><span class="n">knn</span><span class="p">,</span>
+        <span class="n">isigi_cutoff</span><span class="o">=</span><span class="n">isigi_cutoff</span><span class="p">,</span>
     <span class="p">)</span>
+
+    <span class="c1"># A window can be left with too few usable pixels -- against a panel edge,</span>
+    <span class="c1"># or over a masked region the dilation did not catch. Fitting a background,</span>
+    <span class="c1"># an ellipse and an intensity to a handful of pixels is not meaningful, so</span>
+    <span class="c1"># those reflections are dropped and the rest re-integrated without them.</span>
+    <span class="n">window_valid</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">integrator</span><span class="p">,</span> <span class="s2">"window_valid"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">window_valid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">enough</span> <span class="o">=</span> <span class="n">window_valid</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="nb">max</span><span class="p">(</span><span class="n">MIN_WINDOW_PIXELS</span><span class="p">,</span> <span class="mf">0.25</span> <span class="o">*</span> <span class="n">integrator</span><span class="o">.</span><span class="n">m</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">enough</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="s2">"Image </span><span class="si">%s</span><span class="s2">: dropping </span><span class="si">%d</span><span class="s2"> prediction(s) with too few usable pixels."</span><span class="p">,</span>
+                <span class="n">img_num</span><span class="p">,</span>
+                <span class="nb">int</span><span class="p">((</span><span class="o">~</span><span class="n">enough</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()),</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">enough</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+                <span class="k">return</span> <span class="n">flex</span><span class="o">.</span><span class="n">reflection_table</span><span class="p">()</span>
+            <span class="n">refls</span> <span class="o">=</span> <span class="n">refls</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">flex</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="n">enough</span><span class="o">.</span><span class="n">tolist</span><span class="p">()))</span>
+            <span class="n">integrator</span> <span class="o">=</span> <span class="n">Integrator</span><span class="p">(</span>
+                <span class="n">panel_pixels</span><span class="p">,</span>
+                <span class="n">all_spots</span><span class="p">[</span><span class="n">enough</span><span class="p">],</span>
+                <span class="n">panel_ids</span><span class="o">=</span><span class="n">panel_ids</span><span class="p">[</span><span class="n">enough</span><span class="p">],</span>
+                <span class="n">panel_masks</span><span class="o">=</span><span class="n">panel_masks</span><span class="p">,</span>
+                <span class="n">neighbor_coords</span><span class="o">=</span><span class="n">neighbor_coords</span><span class="p">[</span><span class="n">enough</span><span class="p">],</span>
+                <span class="n">radius</span><span class="o">=</span><span class="n">radius</span><span class="p">,</span>
+                <span class="n">k</span><span class="o">=</span><span class="n">knn</span><span class="p">,</span>
+                <span class="n">isigi_cutoff</span><span class="o">=</span><span class="n">isigi_cutoff</span><span class="p">,</span>
+            <span class="p">)</span>
+
     <span class="k">try</span><span class="p">:</span>
         <span class="n">integrator</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">maxiter</span><span class="o">=</span><span class="n">maxiter</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">RuntimeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
@@ -444,6 +687,8 @@
     <span class="n">symbol</span> <span class="o">=</span> <span class="n">sgtbx</span><span class="o">.</span><span class="n">space_group_symbols</span><span class="p">(</span><span class="n">sginfo</span><span class="o">.</span><span class="n">symbol_and_number</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"("</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
     <span class="n">spacegroup</span> <span class="o">=</span> <span class="n">gemmi</span><span class="o">.</span><span class="n">SpaceGroup</span><span class="p">(</span><span class="n">symbol</span><span class="o">.</span><span class="n">universal_hermann_mauguin</span><span class="p">())</span>
 
+    <span class="n">xcal</span><span class="p">,</span> <span class="n">ycal</span> <span class="o">=</span> <span class="n">mtz_centroids</span><span class="p">(</span><span class="n">expts</span><span class="p">,</span> <span class="n">refls</span><span class="p">)</span>
+
     <span class="c1"># Generate rs.DataSet to write to MTZ</span>
     <span class="n">data</span> <span class="o">=</span> <span class="n">rs</span><span class="o">.</span><span class="n">DataSet</span><span class="p">(</span>
         <span class="p">{</span>
@@ -453,8 +698,8 @@
             <span class="s2">"BATCH"</span><span class="p">:</span> <span class="n">refls</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]</span><span class="o">.</span><span class="n">as_numpy_array</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
             <span class="s2">"I"</span><span class="p">:</span> <span class="n">refls</span><span class="p">[</span><span class="s2">"intensity.sum.value"</span><span class="p">]</span><span class="o">.</span><span class="n">as_numpy_array</span><span class="p">(),</span>
             <span class="s2">"SIGI"</span><span class="p">:</span> <span class="n">refls</span><span class="p">[</span><span class="s2">"intensity.sum.variance"</span><span class="p">]</span><span class="o">.</span><span class="n">as_numpy_array</span><span class="p">()</span> <span class="o">**</span> <span class="mf">0.5</span><span class="p">,</span>
-            <span class="s2">"xcal"</span><span class="p">:</span> <span class="n">refls</span><span class="p">[</span><span class="s2">"xyzcal.px"</span><span class="p">]</span><span class="o">.</span><span class="n">as_numpy_array</span><span class="p">()[:,</span> <span class="mi">0</span><span class="p">],</span>
-            <span class="s2">"ycal"</span><span class="p">:</span> <span class="n">refls</span><span class="p">[</span><span class="s2">"xyzcal.px"</span><span class="p">]</span><span class="o">.</span><span class="n">as_numpy_array</span><span class="p">()[:,</span> <span class="mi">1</span><span class="p">],</span>
+            <span class="s2">"xcal"</span><span class="p">:</span> <span class="n">xcal</span><span class="p">,</span>
+            <span class="s2">"ycal"</span><span class="p">:</span> <span class="n">ycal</span><span class="p">,</span>
             <span class="s2">"wavelength"</span><span class="p">:</span> <span class="n">refls</span><span class="p">[</span><span class="s2">"wavelength"</span><span class="p">]</span><span class="o">.</span><span class="n">as_numpy_array</span><span class="p">(),</span>
             <span class="s2">"BG"</span><span class="p">:</span> <span class="n">refls</span><span class="p">[</span><span class="s2">"background.sum.value"</span><span class="p">]</span><span class="o">.</span><span class="n">as_numpy_array</span><span class="p">(),</span>
             <span class="s2">"SIGBG"</span><span class="p">:</span> <span class="n">refls</span><span class="p">[</span><span class="s2">"background.sum.variance"</span><span class="p">]</span><span class="o">.</span><span class="n">as_numpy_array</span><span class="p">()</span> <span class="o">**</span> <span class="mf">0.5</span><span class="p">,</span>

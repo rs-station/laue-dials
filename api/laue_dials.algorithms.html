@@ -279,7 +279,7 @@ rot_z (float): Euler angle around z-axis to generate rotation matrix.</p>
 <p>This file contains useful classes and functions for profiling and integration</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="laue_dials.algorithms.integration.Integrator">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">laue_dials.algorithms.integration.</span></span><span class="sig-name descname"><span class="pre">Integrator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pixels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">centroids</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">isigi_cutoff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsilon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-06</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/algorithms/integration.html#Integrator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.algorithms.integration.Integrator" title="Link to this definition"></a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">laue_dials.algorithms.integration.</span></span><span class="sig-name descname"><span class="pre">Integrator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pixels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">centroids</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">panel_ids</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">panel_masks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neighbor_coords</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">isigi_cutoff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsilon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-06</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/algorithms/integration.html#Integrator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.algorithms.integration.Integrator" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#laue_dials.algorithms.integration.IntegratorBase" title="laue_dials.algorithms.integration.IntegratorBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">IntegratorBase</span></code></a></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="laue_dials.algorithms.integration.Integrator.assign_knn">
@@ -322,7 +322,7 @@ rot_z (float): Euler angle around z-axis to generate rotation matrix.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="laue_dials.algorithms.integration.IntegratorBase">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">laue_dials.algorithms.integration.</span></span><span class="sig-name descname"><span class="pre">IntegratorBase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pixels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">centroids</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">isigi_cutoff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsilon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-06</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/algorithms/integration.html#IntegratorBase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.algorithms.integration.IntegratorBase" title="Link to this definition"></a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">laue_dials.algorithms.integration.</span></span><span class="sig-name descname"><span class="pre">IntegratorBase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pixels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">centroids</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">panel_ids</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">panel_masks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neighbor_coords</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">isigi_cutoff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsilon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-06</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/algorithms/integration.html#IntegratorBase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.algorithms.integration.IntegratorBase" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.12/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="laue_dials.algorithms.integration.IntegratorBase.fg_to_image">
@@ -416,6 +416,47 @@ to keep iterating. Defaults to 1e-3, i.e. 0.1 percent.</p></li>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="laue_dials.algorithms.integration.detector_global_pixels">
+<span class="sig-prename descclassname"><span class="pre">laue_dials.algorithms.integration.</span></span><span class="sig-name descname"><span class="pre">detector_global_pixels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">detector</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">panel_ids</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spots</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/algorithms/integration.html#detector_global_pixels"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.algorithms.integration.detector_global_pixels" title="Link to this definition"></a></dt>
+<dd><p>Map panel-local centroids onto a single detector-wide pixel grid.</p>
+<p><code class="docutils literal notranslate"><span class="pre">xyzcal.px</span></code> is panel-local: every panel starts again at (0, 0), so on a
+multi-panel detector the panels are superimposed and the coordinates are
+useless as scaling metadata – on the LADI drum they pile 48 wedges on top
+of one another. This lays the panels out on a common grid instead.</p>
+<p>The panels are assumed to share a slow direction, which is what makes a
+two-dimensional layout meaningful at all. Writing <code class="docutils literal notranslate"><span class="pre">s</span></code> for the mean slow
+axis, each lab-frame point is split into its component along <code class="docutils literal notranslate"><span class="pre">s</span></code> (the
+slow coordinate) and its azimuth about <code class="docutils literal notranslate"><span class="pre">s</span></code> (the fast coordinate,
+converted to a distance with the mean panel radius). For a curved detector
+that is the unrolled arc length; for a flat one it is a smooth monotonic
+function of the fast coordinate. The branch cut is placed in the largest
+angular gap between panels, so a detector wrapping past 180 degrees – the
+LADI drum covers about 304 – does not wrap around on itself. The origin is
+the corner of the panel at the low end of both coordinates, so the result
+is non-negative and depends only on the detector model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>detector</strong> – dxtbx detector model, or any sequence of panels supporting
+get_slow_axis, get_origin, get_pixel_size, get_image_size and
+get_pixel_lab_coord.</p></li>
+<li><p><strong>panel_ids</strong> (<em>np.ndarray</em>) – (n,) panel index per centroid.</p></li>
+<li><p><strong>spots</strong> (<em>np.ndarray</em>) – (n, 2) panel-local centroids in pixels.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>(n, 2) centroids on the detector-wide grid, in
+pixels. A single-panel detector is returned unchanged. None if the
+panels have no common slow direction, or if they close a full circle
+and so leave no gap to cut at.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="laue_dials.algorithms.integration.estimate_integration_radius">
 <span class="sig-prename descclassname"><span class="pre">laue_dials.algorithms.integration.</span></span><span class="sig-name descname"><span class="pre">estimate_integration_radius</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">centroids</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/algorithms/integration.html#estimate_integration_radius"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.algorithms.integration.estimate_integration_radius" title="Link to this definition"></a></dt>
 <dd><p>Estimate the default integration radius from the spacing of spot centroids.</p>
@@ -423,6 +464,9 @@ to keep iterating. Defaults to 1e-3, i.e. 0.1 percent.</p></li>
 distances, rounded to the nearest integer. The same radius is used both for
 the integration window and for dilating the detector mask when discarding
 predictions that fall in masked regions, so the two stay consistent.</p>
+<p>The centroids must be in a frame shared by every panel. Panel-local pixel
+coordinates superimpose the panels, which drives the nearest-neighbor
+distances – and the radius with them – towards zero.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>centroids</strong> (<em>np.ndarray</em>) – (n, 2) array of centroid pixel coordinates.</p>
@@ -440,6 +484,54 @@ predictions that fall in masked regions, so the two stay consistent.</p>
 <dt class="sig sig-object py" id="laue_dials.algorithms.integration.mvn_log_pdf">
 <span class="sig-prename descclassname"><span class="pre">laue_dials.algorithms.integration.</span></span><span class="sig-name descname"><span class="pre">mvn_log_pdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_zscore</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/algorithms/integration.html#mvn_log_pdf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.algorithms.integration.mvn_log_pdf" title="Link to this definition"></a></dt>
 <dd><p>a batched version of scipy.stats.multivariate_normal.log_pdf</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="laue_dials.algorithms.integration.panel_validity">
+<span class="sig-prename descclassname"><span class="pre">laue_dials.algorithms.integration.</span></span><span class="sig-name descname"><span class="pre">panel_validity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stack_shape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shapes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">panel_masks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/algorithms/integration.html#panel_validity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.algorithms.integration.panel_validity" title="Link to this definition"></a></dt>
+<dd><p>Build the per-pixel validity array for a padded panel stack.</p>
+<p>A pixel is valid if it lies inside its panel’s true extent and is not
+masked off by the detector mask.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>stack_shape</strong> (<a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#tuple" title="(in Python v3.12)"><em>tuple</em></a>) – Shape of the padded stack, (n_panels, rows, cols).</p></li>
+<li><p><strong>shapes</strong> (<a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – True (rows, cols) shape of each panel.</p></li>
+<li><p><strong>panel_masks</strong> (<em>sequence</em><em>, </em><em>optional</em>) – One boolean mask per panel, True for
+good pixels. Entries may be None. If omitted, every real pixel is
+valid.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Boolean array with the shape of the padded stack.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="laue_dials.algorithms.integration.stack_panels">
+<span class="sig-prename descclassname"><span class="pre">laue_dials.algorithms.integration.</span></span><span class="sig-name descname"><span class="pre">stack_panels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pixels</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/laue_dials/algorithms/integration.html#stack_panels"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#laue_dials.algorithms.integration.stack_panels" title="Link to this definition"></a></dt>
+<dd><p>Normalize panel pixel data into a single (n_panels, rows, cols) array.</p>
+<p>A 2D array is treated as a single panel, so the single-panel call
+<code class="docutils literal notranslate"><span class="pre">Integrator(pixels,</span> <span class="pre">centroids)</span></code> is unchanged. A sequence of 2D arrays –
+one per panel, as returned by <code class="docutils literal notranslate"><span class="pre">imageset.get_raw_data()</span></code> – is padded to
+the largest panel shape; the padding is marked invalid by
+<a class="reference internal" href="#laue_dials.algorithms.integration.panel_validity" title="laue_dials.algorithms.integration.panel_validity"><code class="xref py py-func docutils literal notranslate"><span class="pre">panel_validity()</span></code></a> and never enters the fit.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>pixels</strong> (<em>np.ndarray</em><em> or </em><em>sequence</em><em> of </em><em>np.ndarray</em>) – Panel pixel data.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">(stack,</span> <span class="pre">shapes)</span></code>, the padded (n_panels, rows, cols) array and
+the list of true (rows, cols) shapes.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#tuple" title="(in Python v3.12)">tuple</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">

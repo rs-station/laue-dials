@@ -98,11 +98,9 @@
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">libtbx.phil</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">dials.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">show_mail_handle_errors</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">dials.util.options</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">ArgumentParser</span><span class="p">,</span>
-                                <span class="n">reflections_and_experiments_from_files</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dials.util.options</span><span class="w"> </span><span class="kn">import</span> <span class="n">ArgumentParser</span><span class="p">,</span> <span class="n">reflections_and_experiments_from_files</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">laue_dials.algorithms.monochromatic</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">initial_index</span><span class="p">,</span>
-                                                 <span class="n">scan_varying_refine</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">laue_dials.algorithms.monochromatic</span><span class="w"> </span><span class="kn">import</span> <span class="n">initial_index</span><span class="p">,</span> <span class="n">scan_varying_refine</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">laue_dials.utils.version</span><span class="w"> </span><span class="kn">import</span> <span class="n">laue_version</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">"laue-dials.command_line.index"</span><span class="p">)</span>
@@ -175,74 +173,78 @@
     <span class="n">process_includes</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="n">indexer_phil</span> <span class="o">=</span> <span class="n">libtbx</span><span class="o">.</span><span class="n">phil</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s2">"""</span>
-<span class="s2">indexer {</span>
-<span class="s2">  indexing {</span>
-<span class="s2">    refinement_procotol {</span>
-<span class="s2">      mode = repredict_only</span>
-<span class="s2">    }</span>
-<span class="s2">  }</span>
+<span class="n">indexer_phil</span> <span class="o">=</span> <span class="n">libtbx</span><span class="o">.</span><span class="n">phil</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">indexer {</span>
+<span class="sd">  indexing {</span>
+<span class="sd">    refinement_procotol {</span>
+<span class="sd">      mode = repredict_only</span>
+<span class="sd">    }</span>
+<span class="sd">  }</span>
 
-<span class="s2">  refinement {</span>
-<span class="s2">    parameterisation {</span>
-<span class="s2">      beam {</span>
-<span class="s2">        fix = *all in_spindle_plane out_spindle_plane wavelength</span>
-<span class="s2">      }</span>
+<span class="sd">  refinement {</span>
+<span class="sd">    parameterisation {</span>
+<span class="sd">      beam {</span>
+<span class="sd">        fix = *all in_spindle_plane out_spindle_plane wavelength</span>
+<span class="sd">      }</span>
 
-<span class="s2">      detector {</span>
-<span class="s2">        fix = *all position orientation distance</span>
-<span class="s2">      }</span>
+<span class="sd">      detector {</span>
+<span class="sd">        fix = *all position orientation distance</span>
+<span class="sd">      }</span>
 
-<span class="s2">      goniometer {</span>
-<span class="s2">        fix = *all in_beam_plane out_beam_plane</span>
-<span class="s2">      }</span>
-<span class="s2">    }</span>
+<span class="sd">      goniometer {</span>
+<span class="sd">        fix = *all in_beam_plane out_beam_plane</span>
+<span class="sd">      }</span>
+<span class="sd">    }</span>
 
-<span class="s2">    reflections {</span>
-<span class="s2">      outlier {</span>
-<span class="s2">        algorithm = null auto mcd *tukey sauter_poon</span>
+<span class="sd">    reflections {</span>
+<span class="sd">      outlier {</span>
+<span class="sd">        algorithm = null auto mcd *tukey sauter_poon</span>
 
-<span class="s2">        tukey {</span>
-<span class="s2">          iqr_multiplier = 0.</span>
-<span class="s2">        }</span>
+<span class="sd">        tukey {</span>
+<span class="sd">          iqr_multiplier = 0.</span>
+<span class="sd">        }</span>
 
-<span class="s2">        minimum_number_of_reflections = 1</span>
-<span class="s2">      }</span>
-<span class="s2">    }</span>
-<span class="s2">  }</span>
-<span class="s2">}</span>
-<span class="s2">"""</span><span class="p">)</span>
+<span class="sd">        minimum_number_of_reflections = 1</span>
+<span class="sd">      }</span>
+<span class="sd">    }</span>
+<span class="sd">  }</span>
+<span class="sd">}</span>
+<span class="sd">"""</span>
+<span class="p">)</span>
 
-<span class="n">refiner_phil</span> <span class="o">=</span> <span class="n">libtbx</span><span class="o">.</span><span class="n">phil</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s2">"""</span>
-<span class="s2">refiner {</span>
-<span class="s2">  refinement {</span>
-<span class="s2">    parameterisation {</span>
-<span class="s2">      goniometer {</span>
-<span class="s2">        fix = None</span>
-<span class="s2">      }</span>
-<span class="s2">      beam {</span>
-<span class="s2">        fix = all</span>
-<span class="s2">      }</span>
-<span class="s2">      crystal {</span>
-<span class="s2">        fix = cell</span>
-<span class="s2">      }</span>
-<span class="s2">      detector {</span>
-<span class="s2">        fix = orientation</span>
-<span class="s2">      }</span>
-<span class="s2">      scan_varying = True</span>
-<span class="s2">    }</span>
-<span class="s2">    reflections {</span>
-<span class="s2">      outlier {</span>
-<span class="s2">        algorithm = tukey</span>
-<span class="s2">        tukey {</span>
-<span class="s2">          iqr_multiplier = 0.</span>
-<span class="s2">        }</span>
-<span class="s2">        minimum_number_of_reflections = 1</span>
-<span class="s2">      }</span>
-<span class="s2">    }</span>
-<span class="s2">  }</span>
-<span class="s2">}</span>
-<span class="s2">"""</span><span class="p">)</span>
+<span class="n">refiner_phil</span> <span class="o">=</span> <span class="n">libtbx</span><span class="o">.</span><span class="n">phil</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">refiner {</span>
+<span class="sd">  refinement {</span>
+<span class="sd">    parameterisation {</span>
+<span class="sd">      goniometer {</span>
+<span class="sd">        fix = None</span>
+<span class="sd">      }</span>
+<span class="sd">      beam {</span>
+<span class="sd">        fix = all</span>
+<span class="sd">      }</span>
+<span class="sd">      crystal {</span>
+<span class="sd">        fix = cell</span>
+<span class="sd">      }</span>
+<span class="sd">      detector {</span>
+<span class="sd">        fix = orientation</span>
+<span class="sd">      }</span>
+<span class="sd">      scan_varying = True</span>
+<span class="sd">    }</span>
+<span class="sd">    reflections {</span>
+<span class="sd">      outlier {</span>
+<span class="sd">        algorithm = tukey</span>
+<span class="sd">        tukey {</span>
+<span class="sd">          iqr_multiplier = 0.</span>
+<span class="sd">        }</span>
+<span class="sd">        minimum_number_of_reflections = 1</span>
+<span class="sd">      }</span>
+<span class="sd">    }</span>
+<span class="sd">  }</span>
+<span class="sd">}</span>
+<span class="sd">"""</span>
+<span class="p">)</span>
 
 <span class="n">working_phil</span> <span class="o">=</span> <span class="n">main_phil</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="n">sources</span><span class="o">=</span><span class="p">[</span><span class="n">indexer_phil</span><span class="p">,</span> <span class="n">refiner_phil</span><span class="p">])</span>
 

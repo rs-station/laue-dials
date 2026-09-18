@@ -99,16 +99,139 @@
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">"laue-dials.algorithms.integration"</span><span class="p">)</span>
 
 
+<div class="viewcode-block" id="stack_panels">
+<a class="viewcode-back" href="../../../api/laue_dials.algorithms.html#laue_dials.algorithms.integration.stack_panels">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">stack_panels</span><span class="p">(</span><span class="n">pixels</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Normalize panel pixel data into a single (n_panels, rows, cols) array.</span>
+
+<span class="sd">    A 2D array is treated as a single panel, so the single-panel call</span>
+<span class="sd">    ``Integrator(pixels, centroids)`` is unchanged. A sequence of 2D arrays --</span>
+<span class="sd">    one per panel, as returned by ``imageset.get_raw_data()`` -- is padded to</span>
+<span class="sd">    the largest panel shape; the padding is marked invalid by</span>
+<span class="sd">    :func:`panel_validity` and never enters the fit.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        pixels (np.ndarray or sequence of np.ndarray): Panel pixel data.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: ``(stack, shapes)``, the padded (n_panels, rows, cols) array and</span>
+<span class="sd">        the list of true (rows, cols) shapes.</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pixels</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="n">pixels</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">pixels</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="p">[</span><span class="n">pixels</span><span class="o">.</span><span class="n">shape</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pixels</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="n">pixels</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">pixels</span><span class="p">,</span> <span class="p">[</span><span class="n">pixels</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:]]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">pixels</span><span class="p">)</span>
+
+    <span class="n">arrays</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">pixels</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">arrays</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"no panel pixel data supplied"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">2</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">arrays</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"each panel must be a two-dimensional array of pixels"</span><span class="p">)</span>
+
+    <span class="n">shapes</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">shape</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">arrays</span><span class="p">]</span>
+    <span class="n">rows</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">shapes</span><span class="p">)</span>
+    <span class="n">cols</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">shapes</span><span class="p">)</span>
+    <span class="n">stack</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">arrays</span><span class="p">),</span> <span class="n">rows</span><span class="p">,</span> <span class="n">cols</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">arrays</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">arrays</span><span class="p">):</span>
+        <span class="n">stack</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:</span> <span class="n">a</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">:</span> <span class="n">a</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">a</span>
+    <span class="k">return</span> <span class="n">stack</span><span class="p">,</span> <span class="n">shapes</span></div>
+
+
+
+<div class="viewcode-block" id="panel_validity">
+<a class="viewcode-back" href="../../../api/laue_dials.algorithms.html#laue_dials.algorithms.integration.panel_validity">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">panel_validity</span><span class="p">(</span><span class="n">stack_shape</span><span class="p">,</span> <span class="n">shapes</span><span class="p">,</span> <span class="n">panel_masks</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Build the per-pixel validity array for a padded panel stack.</span>
+
+<span class="sd">    A pixel is valid if it lies inside its panel's true extent and is not</span>
+<span class="sd">    masked off by the detector mask.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        stack_shape (tuple): Shape of the padded stack, (n_panels, rows, cols).</span>
+<span class="sd">        shapes (list): True (rows, cols) shape of each panel.</span>
+<span class="sd">        panel_masks (sequence, optional): One boolean mask per panel, True for</span>
+<span class="sd">            good pixels. Entries may be None. If omitted, every real pixel is</span>
+<span class="sd">            valid.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        np.ndarray: Boolean array with the shape of the padded stack.</span>
+<span class="sd">    """</span>
+    <span class="n">n_panels</span><span class="p">,</span> <span class="n">rows</span><span class="p">,</span> <span class="n">cols</span> <span class="o">=</span> <span class="n">stack_shape</span>
+    <span class="n">valid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_panels</span><span class="p">,</span> <span class="n">rows</span><span class="p">,</span> <span class="n">cols</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">pr</span><span class="p">,</span> <span class="n">pc</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">shapes</span><span class="p">):</span>
+        <span class="n">valid</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:</span><span class="n">pr</span><span class="p">,</span> <span class="p">:</span><span class="n">pc</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">if</span> <span class="n">panel_masks</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">mask</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">panel_masks</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">mask</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">pr</span><span class="p">,</span> <span class="n">pc</span> <span class="o">=</span> <span class="n">shapes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">valid</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:</span><span class="n">pr</span><span class="p">,</span> <span class="p">:</span><span class="n">pc</span><span class="p">]</span> <span class="o">&amp;=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">pr</span><span class="p">,</span> <span class="n">pc</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">valid</span></div>
+
+
+
 <div class="viewcode-block" id="IntegratorBase">
 <a class="viewcode-back" href="../../../api/laue_dials.algorithms.html#laue_dials.algorithms.integration.IntegratorBase">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">IntegratorBase</span><span class="p">:</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">pixels</span><span class="p">,</span> <span class="n">centroids</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">isigi_cutoff</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span><span class="mf">1e-6</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">pixels</span><span class="p">,</span>
+        <span class="n">centroids</span><span class="p">,</span>
+        <span class="n">panel_ids</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">panel_masks</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">neighbor_coords</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">radius</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">k</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+        <span class="n">isigi_cutoff</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span>
+        <span class="n">epsilon</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">pixels</span> <span class="o">=</span> <span class="n">pixels</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Args:</span>
+<span class="sd">            pixels: Either a 2D pixel array (single panel) or a sequence of 2D</span>
+<span class="sd">                arrays, one per detector panel.</span>
+<span class="sd">            centroids (np.ndarray): (n, 2) predicted centroids as (x, y) in the</span>
+<span class="sd">                pixel coordinates of the panel each reflection lies on.</span>
+<span class="sd">            panel_ids (np.ndarray, optional): (n,) panel index per reflection.</span>
+<span class="sd">                Defaults to panel 0 for every reflection.</span>
+<span class="sd">            panel_masks (sequence, optional): One boolean detector mask per</span>
+<span class="sd">                panel, True for good pixels. Masked pixels are excluded from</span>
+<span class="sd">                the fit rather than dropping the reflection.</span>
+<span class="sd">            neighbor_coords (np.ndarray, optional): (n, 2) or (n, 3) centroid</span>
+<span class="sd">                coordinates in a frame shared by every panel, in pixel units.</span>
+<span class="sd">                Used only to estimate the integration radius and to find each</span>
+<span class="sd">                reflection's nearest strong neighbours. Panel-local pixel</span>
+<span class="sd">                coordinates cannot serve for either on a multi-panel detector:</span>
+<span class="sd">                every panel starts again at (0, 0), so the panels pile up on</span>
+<span class="sd">                top of one another, the nearest-neighbour distances collapse</span>
+<span class="sd">                and with them the estimated radius. Defaults to ``centroids``,</span>
+<span class="sd">                which is correct for a single panel.</span>
+<span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pixels</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">panel_shapes</span> <span class="o">=</span> <span class="n">stack_panels</span><span class="p">(</span><span class="n">pixels</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_panels</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">panel_shapes</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">panel_valid</span> <span class="o">=</span> <span class="n">panel_validity</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pixels</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">panel_shapes</span><span class="p">,</span> <span class="n">panel_masks</span>
+        <span class="p">)</span>
+
+        <span class="n">centroids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">centroids</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">panel_ids</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">panel_ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">centroids</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+        <span class="n">panel_ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">panel_ids</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">panel_ids</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">centroids</span><span class="p">),):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"panel_ids must have one entry per centroid"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">panel_ids</span><span class="o">.</span><span class="n">size</span> <span class="ow">and</span> <span class="p">(</span><span class="n">panel_ids</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">panel_ids</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_panels</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"panel_ids refer to a panel with no pixel data"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">panel_ids</span> <span class="o">=</span> <span class="n">panel_ids</span>
+
+        <span class="k">if</span> <span class="n">neighbor_coords</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">neighbor_coords</span> <span class="o">=</span> <span class="n">centroids</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">neighbor_coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">neighbor_coords</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">=</span> <span class="n">epsilon</span>
         <span class="k">if</span> <span class="n">radius</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">radius</span> <span class="o">=</span> <span class="n">estimate_integration_radius</span><span class="p">(</span><span class="n">centroids</span><span class="p">)</span>
+            <span class="n">radius</span> <span class="o">=</span> <span class="n">estimate_integration_radius</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">neighbor_coords</span><span class="p">)</span>
         <span class="n">window</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mgrid</span><span class="p">[</span><span class="o">-</span><span class="n">radius</span> <span class="p">:</span> <span class="n">radius</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="n">radius</span> <span class="p">:</span> <span class="n">radius</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">T</span>
         <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">window</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">window</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">radius</span> <span class="o">=</span> <span class="n">radius</span>
@@ -122,23 +245,59 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">profile_loc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">centroids</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">background</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">window_idx</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">centroids</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">"int"</span><span class="p">)[:,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="c1"># Centre each window on the pixel that contains the centroid. Pixel</span>
+        <span class="c1"># index i spans [i, i+1) -- which is why `xy` adds 0.5 to recover the</span>
+        <span class="c1"># pixel centre -- so that pixel is floor(centroid), not</span>
+        <span class="c1"># round(centroid). Rounding put the window one pixel off whenever the</span>
+        <span class="c1"># centroid's fractional part was &gt;= 0.5, i.e. for about half of all</span>
+        <span class="c1"># reflections, and disagreed with the mask-dilation filter in</span>
+        <span class="c1"># laue.integrate, which floors. That disagreement let a window reach a</span>
+        <span class="c1"># masked pixel the filter believed it had cleared.</span>
+        <span class="n">window_idx</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">centroids</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">"int"</span><span class="p">)[:,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">:]</span>
             <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">window_mask</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span>
         <span class="p">)</span>
 
-        <span class="c1"># Clamp each axis independently to image bounds</span>
-        <span class="n">h</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pixels</span><span class="o">.</span><span class="n">shape</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">window_idx</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">window_idx</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="mi">0</span><span class="p">,</span> <span class="n">h</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">window_idx</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">window_idx</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="mi">0</span><span class="p">,</span> <span class="n">w</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="c1"># Clamp each axis independently to panel bounds, and remember which</span>
+        <span class="c1"># window pixels were actually inside. The clamped duplicates keep the</span>
+        <span class="c1"># indexing legal but must not enter the fit: on a segmented detector a</span>
+        <span class="c1"># large fraction of windows overhang a panel edge (on 50 px wedges with</span>
+        <span class="c1"># a 9 px radius, about 38% of them), and folding the edge pixel in</span>
+        <span class="c1"># several times biases both the background and the profile.</span>
+        <span class="n">h</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pixels</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="n">in_bounds</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="p">(</span><span class="n">window_idx</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="o">&amp;</span> <span class="p">(</span><span class="n">window_idx</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">h</span><span class="p">)</span>
+            <span class="o">&amp;</span> <span class="p">(</span><span class="n">window_idx</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="o">&amp;</span> <span class="p">(</span><span class="n">window_idx</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">w</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">window_idx</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">window_idx</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="mi">0</span><span class="p">,</span> <span class="n">h</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">window_idx</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">window_idx</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="mi">0</span><span class="p">,</span> <span class="n">w</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
 
         <span class="c1"># order is [xy, refl, pixel]</span>
         <span class="c1"># you can index like self.pixels[tuple(self.window_idx)] -&gt; array[refl, pixel]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">window_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">window_idx</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">window_idx</span> <span class="o">=</span> <span class="n">window_idx</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">window_panel</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">broadcast_to</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">panel_ids</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">window_idx</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">window_valid</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">in_bounds</span>
+            <span class="o">&amp;</span> <span class="bp">self</span><span class="o">.</span><span class="n">panel_valid</span><span class="p">[</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">window_panel</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">window_idx</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">window_idx</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">window_idx</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">intensity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">windows</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">uncertainty</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">windows</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+        <span class="n">n_valid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">window_valid</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">n_valid</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">int</span><span class="p">((</span><span class="n">n_valid</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span><span class="si">}</span><span class="s2"> reflection(s) have no usable pixels "</span>
+                <span class="s2">"in their integration window; drop them before integrating."</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_valid</span> <span class="o">=</span> <span class="n">n_valid</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">intensity</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">windows</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">window_valid</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">n_valid</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">uncertainty</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">intensity</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">))</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="n">k</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">isigi_cutoff</span> <span class="o">=</span> <span class="n">isigi_cutoff</span>
@@ -146,7 +305,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">windows</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pixels</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">window_idx</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pixels</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">window_panel</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">window_idx</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">window_idx</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
 
 <div class="viewcode-block" id="IntegratorBase.fit">
 <a class="viewcode-back" href="../../../api/laue_dials.algorithms.html#laue_dials.algorithms.integration.IntegratorBase.fit">[docs]</a>
@@ -212,7 +371,12 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">profile_values</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.special</span><span class="w"> </span><span class="kn">import</span> <span class="n">softmax</span>
 
-        <span class="n">p</span> <span class="o">=</span> <span class="n">softmax</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_profile_values</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="c1"># Normalizing over the valid pixels only keeps sum(p) == 1 over the</span>
+        <span class="c1"># pixels that are actually used, which is what makes the profile-fitted</span>
+        <span class="c1"># intensity and its variance consistent, and gives p == 0 on every</span>
+        <span class="c1"># invalid pixel so they drop out of the weighted sums downstream.</span>
+        <span class="n">log_p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">window_valid</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_profile_values</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">softmax</span><span class="p">(</span><span class="n">log_p</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">p</span>
 
     <span class="nd">@property</span>
@@ -297,7 +461,11 @@
 <span class="sd">        to something the same shape as refls.pixels</span>
 <span class="sd">        """</span>
         <span class="n">im</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pixels</span><span class="p">)</span> <span class="o">*</span> <span class="n">fill_value</span>
-        <span class="n">np</span><span class="o">.</span><span class="n">add</span><span class="o">.</span><span class="n">at</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">window_idx</span><span class="p">),</span> <span class="n">window_values</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">add</span><span class="o">.</span><span class="n">at</span><span class="p">(</span>
+            <span class="n">im</span><span class="p">,</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">window_panel</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">window_idx</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">window_idx</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
+            <span class="n">window_values</span><span class="p">,</span>
+        <span class="p">)</span>
         <span class="k">return</span> <span class="n">im</span></div>
 
 
@@ -308,7 +476,11 @@
 <span class="sd">        autoscale uses skimage.exposure.adjust_log</span>
 <span class="sd">        """</span>
         <span class="k">if</span> <span class="n">pixels</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">pixels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pixels</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_panels</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+                    <span class="s2">"plot_image draws a single panel; pass pixels=... to choose one"</span>
+                <span class="p">)</span>
+            <span class="n">pixels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pixels</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
 
         <span class="k">if</span> <span class="n">autoscale</span><span class="p">:</span>
@@ -337,7 +509,7 @@
         <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.stats</span><span class="w"> </span><span class="kn">import</span> <span class="n">poisson</span>
 
         <span class="n">w</span> <span class="o">=</span> <span class="o">-</span><span class="n">poisson</span><span class="o">.</span><span class="n">logpmf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">windows</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">w</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">window_valid</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">score</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -368,8 +540,12 @@
                 <span class="n">k_actual</span><span class="p">,</span>
                 <span class="n">k</span><span class="p">,</span>
             <span class="p">)</span>
-        <span class="n">knn_idx</span> <span class="o">=</span> <span class="n">KDTree</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">centroids</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">strong</span><span class="p">])</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">centroids</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">k_actual</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="c1"># Neighbours are found in the shared frame, so a reflection near a panel</span>
+        <span class="c1"># edge pools with the spots physically next to it on the adjacent panel</span>
+        <span class="c1"># rather than with whatever happens to sit at the same panel-local</span>
+        <span class="c1"># coordinates several panels away.</span>
+        <span class="n">knn_idx</span> <span class="o">=</span> <span class="n">KDTree</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">neighbor_coords</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">strong</span><span class="p">])</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">neighbor_coords</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">k_actual</span> <span class="o">+</span> <span class="mi">1</span>
         <span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
         <span class="c1"># Strong spots have themselves as first result (distance 0); non-strong</span>
         <span class="c1"># spots are not in the tree so their first result is already a neighbor.</span>
@@ -383,7 +559,7 @@
 <a class="viewcode-back" href="../../../api/laue_dials.algorithms.html#laue_dials.algorithms.integration.Integrator.estimate_background">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">estimate_background</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">windows</span>
-        <span class="n">w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">profile_dist</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">window_valid</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">profile_dist</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
         <span class="n">I</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">intensity</span>
 
         <span class="n">p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">profile_values</span>
@@ -402,6 +578,7 @@
         <span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">log_profile_values</span>
         <span class="p">)</span>  <span class="c1"># normalized over all space, not the profile</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">window_valid</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
         <span class="n">num</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="p">(</span><span class="n">c</span> <span class="o">-</span> <span class="n">bg</span><span class="p">))</span>
         <span class="n">den</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">intensity</span><span class="p">)</span>
         <span class="n">w</span> <span class="o">=</span> <span class="n">num</span> <span class="o">/</span> <span class="n">den</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">p</span>
@@ -433,6 +610,8 @@
         <span class="n">b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">background</span>
         <span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">()</span>
         <span class="n">p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">profile_values</span>
+        <span class="c1"># p is zero on invalid pixels, so they contribute nothing to either sum</span>
+        <span class="c1"># and the weights stay normalized over the pixels that are used.</span>
         <span class="n">w</span> <span class="o">=</span> <span class="n">p</span> <span class="o">/</span> <span class="n">v</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">/</span> <span class="n">v</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">I</span> <span class="o">=</span> <span class="p">(</span><span class="n">c</span> <span class="o">-</span> <span class="n">b</span><span class="p">)</span> <span class="o">*</span> <span class="n">w</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">intensity</span> <span class="o">=</span> <span class="n">I</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
@@ -454,6 +633,10 @@
 <span class="sd">    the integration window and for dilating the detector mask when discarding</span>
 <span class="sd">    predictions that fall in masked regions, so the two stay consistent.</span>
 
+<span class="sd">    The centroids must be in a frame shared by every panel. Panel-local pixel</span>
+<span class="sd">    coordinates superimpose the panels, which drives the nearest-neighbor</span>
+<span class="sd">    distances -- and the radius with them -- towards zero.</span>
+
 <span class="sd">    Args:</span>
 <span class="sd">        centroids (np.ndarray): (n, 2) array of centroid pixel coordinates.</span>
 
@@ -467,6 +650,116 @@
     <span class="n">nn_dist</span> <span class="o">=</span> <span class="n">KDTree</span><span class="p">(</span><span class="n">centroids</span><span class="p">)</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">centroids</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">2</span><span class="p">)[</span><span class="mi">0</span><span class="p">][:,</span> <span class="mi">1</span><span class="p">]</span>
     <span class="n">radius</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">nn_dist</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
     <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">radius</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="detector_global_pixels">
+<a class="viewcode-back" href="../../../api/laue_dials.algorithms.html#laue_dials.algorithms.integration.detector_global_pixels">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">detector_global_pixels</span><span class="p">(</span><span class="n">detector</span><span class="p">,</span> <span class="n">panel_ids</span><span class="p">,</span> <span class="n">spots</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Map panel-local centroids onto a single detector-wide pixel grid.</span>
+
+<span class="sd">    ``xyzcal.px`` is panel-local: every panel starts again at (0, 0), so on a</span>
+<span class="sd">    multi-panel detector the panels are superimposed and the coordinates are</span>
+<span class="sd">    useless as scaling metadata -- on the LADI drum they pile 48 wedges on top</span>
+<span class="sd">    of one another. This lays the panels out on a common grid instead.</span>
+
+<span class="sd">    The panels are assumed to share a slow direction, which is what makes a</span>
+<span class="sd">    two-dimensional layout meaningful at all. Writing ``s`` for the mean slow</span>
+<span class="sd">    axis, each lab-frame point is split into its component along ``s`` (the</span>
+<span class="sd">    slow coordinate) and its azimuth about ``s`` (the fast coordinate,</span>
+<span class="sd">    converted to a distance with the mean panel radius). For a curved detector</span>
+<span class="sd">    that is the unrolled arc length; for a flat one it is a smooth monotonic</span>
+<span class="sd">    function of the fast coordinate. The branch cut is placed in the largest</span>
+<span class="sd">    angular gap between panels, so a detector wrapping past 180 degrees -- the</span>
+<span class="sd">    LADI drum covers about 304 -- does not wrap around on itself. The origin is</span>
+<span class="sd">    the corner of the panel at the low end of both coordinates, so the result</span>
+<span class="sd">    is non-negative and depends only on the detector model.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        detector: dxtbx detector model, or any sequence of panels supporting</span>
+<span class="sd">            get_slow_axis, get_origin, get_pixel_size, get_image_size and</span>
+<span class="sd">            get_pixel_lab_coord.</span>
+<span class="sd">        panel_ids (np.ndarray): (n,) panel index per centroid.</span>
+<span class="sd">        spots (np.ndarray): (n, 2) panel-local centroids in pixels.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        np.ndarray or None: (n, 2) centroids on the detector-wide grid, in</span>
+<span class="sd">        pixels. A single-panel detector is returned unchanged. None if the</span>
+<span class="sd">        panels have no common slow direction, or if they close a full circle</span>
+<span class="sd">        and so leave no gap to cut at.</span>
+<span class="sd">    """</span>
+    <span class="n">spots</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">spots</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)[:,</span> <span class="p">:</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">panel_ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">panel_ids</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">detector</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">spots</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="n">slow</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">p</span><span class="o">.</span><span class="n">get_slow_axis</span><span class="p">()</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">detector</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">slow</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">norm</span> <span class="o">&lt;</span> <span class="mf">1e-9</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">s</span> <span class="o">/</span> <span class="n">norm</span>
+
+    <span class="n">px</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">p</span><span class="o">.</span><span class="n">get_pixel_size</span><span class="p">()</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">detector</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">qx</span><span class="p">,</span> <span class="n">qy</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">px</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()),</span> <span class="nb">float</span><span class="p">(</span><span class="n">px</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+    <span class="n">size</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">p</span><span class="o">.</span><span class="n">get_image_size</span><span class="p">()</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">detector</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+    <span class="n">centres</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="n">p</span><span class="o">.</span><span class="n">get_pixel_lab_coord</span><span class="p">((</span><span class="n">w</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">h</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">p</span><span class="p">,</span> <span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">detector</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
+        <span class="p">],</span>
+        <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">cq</span> <span class="o">=</span> <span class="n">centres</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">centres</span> <span class="o">@</span> <span class="n">s</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
+    <span class="n">radii</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">cq</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">radius</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">radii</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+    <span class="k">if</span> <span class="n">radius</span> <span class="o">&lt;</span> <span class="mf">1e-9</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="n">e1</span> <span class="o">=</span> <span class="n">cq</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">radii</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">e2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">e1</span><span class="p">)</span>
+    <span class="n">e2</span> <span class="o">=</span> <span class="n">e2</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">e2</span><span class="p">)</span>
+    <span class="c1"># Orient the azimuth so that it increases along the panels' fast axis, i.e.</span>
+    <span class="c1"># in the same direction as the panel-local x of xyzcal.px. Without this the</span>
+    <span class="c1"># sign is whichever way round np.cross happens to come out, and the global</span>
+    <span class="c1"># coordinate can run backwards against the local one.</span>
+    <span class="n">fast</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">detector</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_fast_axis</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">fast</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">fast</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span> <span class="o">*</span> <span class="n">s</span><span class="p">,</span> <span class="n">e2</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">e2</span> <span class="o">=</span> <span class="o">-</span><span class="n">e2</span>
+
+    <span class="n">theta_panel</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">cq</span> <span class="o">@</span> <span class="n">e2</span><span class="p">,</span> <span class="n">cq</span> <span class="o">@</span> <span class="n">e1</span><span class="p">)</span>
+
+    <span class="c1"># Put the branch cut in the widest angular gap between panels, so the</span>
+    <span class="c1"># occupied arc is contiguous however far round it goes.</span>
+    <span class="n">order</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">theta_panel</span><span class="p">)</span>
+    <span class="n">ordered</span> <span class="o">=</span> <span class="n">theta_panel</span><span class="p">[</span><span class="n">order</span><span class="p">]</span>
+    <span class="n">gaps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ordered</span><span class="p">,</span> <span class="n">ordered</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span>
+    <span class="n">widest</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">gaps</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">gaps</span><span class="p">[</span><span class="n">widest</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="n">cut</span> <span class="o">=</span> <span class="n">ordered</span><span class="p">[</span><span class="n">widest</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">gaps</span><span class="p">[</span><span class="n">widest</span><span class="p">]</span>
+
+    <span class="n">lab</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="n">detector</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">p</span><span class="p">)]</span><span class="o">.</span><span class="n">get_pixel_lab_coord</span><span class="p">((</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="n">y</span><span class="p">)))</span>
+            <span class="k">for</span> <span class="n">p</span><span class="p">,</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">panel_ids</span><span class="p">,</span> <span class="n">spots</span><span class="p">)</span>
+        <span class="p">],</span>
+        <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">along</span> <span class="o">=</span> <span class="n">lab</span> <span class="o">@</span> <span class="n">s</span>
+    <span class="n">q</span> <span class="o">=</span> <span class="n">lab</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">along</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
+    <span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mod</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">q</span> <span class="o">@</span> <span class="n">e2</span><span class="p">,</span> <span class="n">q</span> <span class="o">@</span> <span class="n">e1</span><span class="p">)</span> <span class="o">-</span> <span class="n">cut</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+
+    <span class="c1"># Anchor on the detector, not on the reflections, so repeated runs and</span>
+    <span class="c1"># different images of the same detector share one coordinate system.</span>
+    <span class="n">theta_ref</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mod</span><span class="p">(</span><span class="n">theta_panel</span> <span class="o">-</span> <span class="n">cut</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">size</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">qx</span> <span class="o">/</span> <span class="n">radius</span>
+    <span class="n">along_ref</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">get_origin</span><span class="p">(),</span> <span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">detector</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+    <span class="n">x</span> <span class="o">=</span> <span class="n">radius</span> <span class="o">*</span> <span class="p">(</span><span class="n">theta</span> <span class="o">-</span> <span class="n">theta_ref</span><span class="o">.</span><span class="n">min</span><span class="p">())</span> <span class="o">/</span> <span class="n">qx</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="p">(</span><span class="n">along</span> <span class="o">-</span> <span class="n">along_ref</span><span class="o">.</span><span class="n">min</span><span class="p">())</span> <span class="o">/</span> <span class="n">qy</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">])</span></div>
 
 
 
