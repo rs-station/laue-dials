@@ -7,13 +7,13 @@
 
     <title>laue_dials.refine &#8212; laue-dials</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
-    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=686e5160" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
     <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=8c38d6ca" />
     <script src="../_static/jquery.js?v=5d32c60e"></script>
     <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
     <script src="../_static/documentation_options.js?v=837179f8"></script>
-    <script src="../_static/doctools.js?v=9bcbadda"></script>
-    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <link rel="icon" href="../_static/rs-favicon_32x32.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -158,28 +158,28 @@ suitable for prediction and integration.</p>
 <h2>Full parameter definitions<a class="headerlink" href="#full-parameter-definitions" title="Link to this heading"></a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">output</span> <span class="p">{</span>
   <span class="n">experiments</span> <span class="o">=</span> <span class="n">poly_refined</span><span class="o">.</span><span class="n">expt</span>
-    <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;The filename for refined experimental models&quot;</span>
+    <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"The filename for refined experimental models"</span>
     <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">str</span>
   <span class="n">reflections</span> <span class="o">=</span> <span class="n">poly_refined</span><span class="o">.</span><span class="n">refl</span>
-    <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;The filename for reflections with updated predictions&quot;</span>
+    <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"The filename for reflections with updated predictions"</span>
     <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">str</span>
   <span class="n">include_unused_reflections</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;If True, keep reflections unused in refinement in updated&quot;</span>
-            <span class="s2">&quot;reflections file. Otherwise, remove them&quot;</span>
+    <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"If True, keep reflections unused in refinement in updated"</span>
+            <span class="s2">"reflections file. Otherwise, remove them"</span>
     <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">bool</span>
     <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">1</span>
   <span class="n">matches</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;The filename for output of the reflection table for reflections&quot;</span>
-            <span class="s2">&quot;used in refinement, containing extra columns used internally.&quot;</span>
-            <span class="s2">&quot;Intended for debugging purposes only&quot;</span>
+    <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"The filename for output of the reflection table for reflections"</span>
+            <span class="s2">"used in refinement, containing extra columns used internally."</span>
+            <span class="s2">"Intended for debugging purposes only"</span>
     <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">str</span>
     <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">2</span>
   <span class="n">centroids</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;The filename for the table of centroids at the end of refinement&quot;</span>
+    <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"The filename for the table of centroids at the end of refinement"</span>
     <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">str</span>
     <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">1</span>
   <span class="n">parameter_table</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;The filename for the table of scan varying parameter values&quot;</span>
+    <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"The filename for the table of scan varying parameter values"</span>
     <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">str</span>
     <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">1</span>
   <span class="n">log</span> <span class="o">=</span> <span class="n">laue</span><span class="o">.</span><span class="n">poly_refined</span><span class="o">.</span><span class="n">log</span>
@@ -188,295 +188,295 @@ suitable for prediction and integration.</p>
     <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">1</span>
   <span class="p">{</span>
     <span class="n">filename</span> <span class="o">=</span> <span class="kc">None</span>
-      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;The base filename for output of plots of parameter&quot;</span>
-              <span class="s2">&quot;correlations. A file extension may be added to control the type&quot;</span>
-              <span class="s2">&quot;of output file, if it is one of matplotlib&#39;s supported types. A&quot;</span>
-              <span class="s2">&quot;JSON file with the same base filename will also be created,&quot;</span>
-              <span class="s2">&quot;containing the correlation matrix and column labels for later&quot;</span>
-              <span class="s2">&quot;inspection, replotting etc.&quot;</span>
+      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"The base filename for output of plots of parameter"</span>
+              <span class="s2">"correlations. A file extension may be added to control the type"</span>
+              <span class="s2">"of output file, if it is one of matplotlib's supported types. A"</span>
+              <span class="s2">"JSON file with the same base filename will also be created,"</span>
+              <span class="s2">"containing the correlation matrix and column labels for later"</span>
+              <span class="s2">"inspection, replotting etc."</span>
       <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">str</span>
     <span class="n">col_select</span> <span class="o">=</span> <span class="kc">None</span>
-      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Specific columns to include in the plots of parameter&quot;</span>
-              <span class="s2">&quot;correlations, either specified by parameter name or 0-based&quot;</span>
-              <span class="s2">&quot;column index. Defaults to all columns. This option is useful&quot;</span>
-              <span class="s2">&quot;when there is a large number of parameters&quot;</span>
+      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Specific columns to include in the plots of parameter"</span>
+              <span class="s2">"correlations, either specified by parameter name or 0-based"</span>
+              <span class="s2">"column index. Defaults to all columns. This option is useful"</span>
+              <span class="s2">"when there is a large number of parameters"</span>
       <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">strings</span>
     <span class="n">steps</span> <span class="o">=</span> <span class="kc">None</span>
-      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Steps for which to make correlation plots. By default only the&quot;</span>
-              <span class="s2">&quot;final step is plotted. Uses zero-based numbering, so the first&quot;</span>
-              <span class="s2">&quot;step is numbered 0.&quot;</span>
+      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Steps for which to make correlation plots. By default only the"</span>
+              <span class="s2">"final step is plotted. Uses zero-based numbering, so the first"</span>
+              <span class="s2">"step is numbered 0."</span>
       <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">ints</span><span class="p">(</span><span class="n">value_min</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
   <span class="p">}</span>
   <span class="n">history</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;The filename for output of the refinement history json&quot;</span>
+    <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"The filename for output of the refinement history json"</span>
     <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">str</span>
     <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="p">}</span>
 <span class="n">n_static_macrocycles</span> <span class="o">=</span> <span class="mi">1</span>
-  <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Number of macro-cycles of static refinement to perform&quot;</span>
+  <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Number of macro-cycles of static refinement to perform"</span>
   <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value_min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">separate_independent_sets</span> <span class="o">=</span> <span class="kc">True</span>
-  <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;If true, the experiment list will be separated into independent&quot;</span>
-          <span class="s2">&quot;groups that do not share models, and these groups will be refined&quot;</span>
-          <span class="s2">&quot;separately.&quot;</span>
+  <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"If true, the experiment list will be separated into independent"</span>
+          <span class="s2">"groups that do not share models, and these groups will be refined"</span>
+          <span class="s2">"separately."</span>
   <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">bool</span>
 <span class="n">refinement</span>
-  <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Parameters to configure the refinement&quot;</span>
+  <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Parameters to configure the refinement"</span>
 <span class="p">{</span>
   <span class="n">mp</span>
     <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">2</span>
   <span class="p">{</span>
     <span class="n">nproc</span> <span class="o">=</span> <span class="mi">1</span>
-      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;The number of processes to use. Not all choices of refinement&quot;</span>
-              <span class="s2">&quot;engine support nproc &gt; 1. Where multiprocessing is possible, it&quot;</span>
-              <span class="s2">&quot;is helpful only in certain circumstances, so this is not&quot;</span>
-              <span class="s2">&quot;recommended for typical use.&quot;</span>
+      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"The number of processes to use. Not all choices of refinement"</span>
+              <span class="s2">"engine support nproc &gt; 1. Where multiprocessing is possible, it"</span>
+              <span class="s2">"is helpful only in certain circumstances, so this is not"</span>
+              <span class="s2">"recommended for typical use."</span>
       <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value_min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
   <span class="p">}</span>
   <span class="n">parameterisation</span>
-    <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Parameters to control the parameterisation of experimental models&quot;</span>
+    <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Parameters to control the parameterisation of experimental models"</span>
   <span class="p">{</span>
     <span class="n">auto_reduction</span>
-      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;determine behaviour when there are too few reflections to&quot;</span>
-              <span class="s2">&quot;reasonably produce a full parameterisation of the experiment&quot;</span>
-              <span class="s2">&quot;list&quot;</span>
+      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"determine behaviour when there are too few reflections to"</span>
+              <span class="s2">"reasonably produce a full parameterisation of the experiment"</span>
+              <span class="s2">"list"</span>
       <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="p">{</span>
       <span class="n">min_nref_per_parameter</span> <span class="o">=</span> <span class="mi">1</span>
-        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;the smallest number of reflections per parameter for a model&quot;</span>
-                <span class="s2">&quot;parameterisation below which the parameterisation will not be&quot;</span>
-                <span class="s2">&quot;made in full, but the action described below will be&quot;</span>
-                <span class="s2">&quot;triggered.&quot;</span>
+        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"the smallest number of reflections per parameter for a model"</span>
+                <span class="s2">"parameterisation below which the parameterisation will not be"</span>
+                <span class="s2">"made in full, but the action described below will be"</span>
+                <span class="s2">"triggered."</span>
         <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value_min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
       <span class="n">action</span> <span class="o">=</span> <span class="n">fail</span> <span class="o">*</span><span class="n">fix</span> <span class="n">remove</span>
-        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;action to take if there are too few reflections across the&quot;</span>
-                <span class="s2">&quot;experiments related to a particular model parameterisation.&quot;</span>
-                <span class="s2">&quot;If fail, an exception will be raised and refinement will not&quot;</span>
-                <span class="s2">&quot;proceed. If fix, refinement will continue but with the&quot;</span>
-                <span class="s2">&quot;parameters relating to that model remaining fixed at their&quot;</span>
-                <span class="s2">&quot;initial values. If remove, parameters relating to that model&quot;</span>
-                <span class="s2">&quot;will be fixed, and in addition all reflections related to&quot;</span>
-                <span class="s2">&quot;that parameterisation will be removed. This will therefore&quot;</span>
-                <span class="s2">&quot;remove these reflections from other parameterisations of the&quot;</span>
-                <span class="s2">&quot;global model too. For example, if a crystal model could not&quot;</span>
-                <span class="s2">&quot;be parameterised it will be excised completely and not&quot;</span>
-                <span class="s2">&quot;contribute to the joint refinement of the detector and beam.&quot;</span>
-                <span class="s2">&quot;In the fix mode, reflections emanating from that crystal will&quot;</span>
-                <span class="s2">&quot;still form residuals and will contribute to detector and beam&quot;</span>
-                <span class="s2">&quot;refinement.&quot;</span>
+        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"action to take if there are too few reflections across the"</span>
+                <span class="s2">"experiments related to a particular model parameterisation."</span>
+                <span class="s2">"If fail, an exception will be raised and refinement will not"</span>
+                <span class="s2">"proceed. If fix, refinement will continue but with the"</span>
+                <span class="s2">"parameters relating to that model remaining fixed at their"</span>
+                <span class="s2">"initial values. If remove, parameters relating to that model"</span>
+                <span class="s2">"will be fixed, and in addition all reflections related to"</span>
+                <span class="s2">"that parameterisation will be removed. This will therefore"</span>
+                <span class="s2">"remove these reflections from other parameterisations of the"</span>
+                <span class="s2">"global model too. For example, if a crystal model could not"</span>
+                <span class="s2">"be parameterised it will be excised completely and not"</span>
+                <span class="s2">"contribute to the joint refinement of the detector and beam."</span>
+                <span class="s2">"In the fix mode, reflections emanating from that crystal will"</span>
+                <span class="s2">"still form residuals and will contribute to detector and beam"</span>
+                <span class="s2">"refinement."</span>
         <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">choice</span>
     <span class="p">}</span>
     <span class="n">scan_varying</span> <span class="o">=</span> <span class="n">Auto</span>
-      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Allow models that are not forced to be static to vary during&quot;</span>
-              <span class="s2">&quot;the scan, Auto will run one macrocycle with static then scan&quot;</span>
-              <span class="s2">&quot;varying refinement for the crystal&quot;</span>
-      <span class="o">.</span><span class="n">short_caption</span> <span class="o">=</span> <span class="s2">&quot;Scan-varying refinement&quot;</span>
+      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Allow models that are not forced to be static to vary during"</span>
+              <span class="s2">"the scan, Auto will run one macrocycle with static then scan"</span>
+              <span class="s2">"varying refinement for the crystal"</span>
+      <span class="o">.</span><span class="n">short_caption</span> <span class="o">=</span> <span class="s2">"Scan-varying refinement"</span>
       <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">bool</span>
     <span class="n">interval_width_degrees</span> <span class="o">=</span> <span class="kc">None</span>
-      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Overall default value of the width of scan between checkpoints&quot;</span>
-              <span class="s2">&quot;in degrees for scan-varying refinement. If set to None, each&quot;</span>
-              <span class="s2">&quot;model will use its own specified value.&quot;</span>
+      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Overall default value of the width of scan between checkpoints"</span>
+              <span class="s2">"in degrees for scan-varying refinement. If set to None, each"</span>
+              <span class="s2">"model will use its own specified value."</span>
       <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value_min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">compose_model_per</span> <span class="o">=</span> <span class="n">image</span> <span class="o">*</span><span class="n">block</span>
-      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;For scan-varying parameterisations, compose a new model either&quot;</span>
-              <span class="s2">&quot;every image or within blocks of a width specified in the&quot;</span>
-              <span class="s2">&quot;reflections parameters. When this block width is larger than&quot;</span>
-              <span class="s2">&quot;the image width the result is faster, with a trade-off in&quot;</span>
-              <span class="s2">&quot;accuracy&quot;</span>
+      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"For scan-varying parameterisations, compose a new model either"</span>
+              <span class="s2">"every image or within blocks of a width specified in the"</span>
+              <span class="s2">"reflections parameters. When this block width is larger than"</span>
+              <span class="s2">"the image width the result is faster, with a trade-off in"</span>
+              <span class="s2">"accuracy"</span>
       <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">choice</span>
       <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">block_width</span> <span class="o">=</span> <span class="mf">1.0</span>
-      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Width of a reflection &#39;block&#39; (in degrees) determining how&quot;</span>
-              <span class="s2">&quot;fine- grained the model used for scan-varying prediction during&quot;</span>
-              <span class="s2">&quot;refinement is. Currently only has any effect if the crystal&quot;</span>
-              <span class="s2">&quot;parameterisation is set to use compose_model_per=block&quot;</span>
+      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Width of a reflection 'block' (in degrees) determining how"</span>
+              <span class="s2">"fine- grained the model used for scan-varying prediction during"</span>
+              <span class="s2">"refinement is. Currently only has any effect if the crystal"</span>
+              <span class="s2">"parameterisation is set to use compose_model_per=block"</span>
       <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value_min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
       <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">set_scan_varying_errors</span> <span class="o">=</span> <span class="kc">False</span>
-      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;If scan-varying refinement is done, and if the estimated&quot;</span>
-              <span class="s2">&quot;covariance of the model states have been calculated by the&quot;</span>
-              <span class="s2">&quot;minimiser, choose whether to return this to the models or not.&quot;</span>
-              <span class="s2">&quot;The default is not to, in order to keep the file size of the&quot;</span>
-              <span class="s2">&quot;serialized model small. At the moment, this only has an effect&quot;</span>
-              <span class="s2">&quot;for crystal unit cell (B matrix) errors.&quot;</span>
+      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"If scan-varying refinement is done, and if the estimated"</span>
+              <span class="s2">"covariance of the model states have been calculated by the"</span>
+              <span class="s2">"minimiser, choose whether to return this to the models or not."</span>
+              <span class="s2">"The default is not to, in order to keep the file size of the"</span>
+              <span class="s2">"serialized model small. At the moment, this only has an effect"</span>
+              <span class="s2">"for crystal unit cell (B matrix) errors."</span>
       <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">bool</span>
     <span class="n">trim_scan_to_observations</span> <span class="o">=</span> <span class="kc">True</span>
-      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;For scan-varying refinement, trim scan objects to the range of&quot;</span>
-              <span class="s2">&quot;observed reflections. This avoids failures in refinement for&quot;</span>
-              <span class="s2">&quot;cases where the extremes of scans contain no data, such as when&quot;</span>
-              <span class="s2">&quot;the crystal moves out of the beam.&quot;</span>
+      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"For scan-varying refinement, trim scan objects to the range of"</span>
+              <span class="s2">"observed reflections. This avoids failures in refinement for"</span>
+              <span class="s2">"cases where the extremes of scans contain no data, such as when"</span>
+              <span class="s2">"the crystal moves out of the beam."</span>
       <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">bool</span>
       <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">debug_centroid_analysis</span> <span class="o">=</span> <span class="kc">False</span>
-      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Set True to write out a file containing the reflections used&quot;</span>
-              <span class="s2">&quot;for centroid analysis for automatic setting of the &quot;</span>
-              <span class="s2">&quot;scan-varying interval width. This can then be analysed with&quot;</span>
-              <span class="s2">&quot;dev.dials.plot_centroid_analysis (requires dials_scratch&quot;</span>
-              <span class="s2">&quot;repository).&quot;</span>
+      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Set True to write out a file containing the reflections used"</span>
+              <span class="s2">"for centroid analysis for automatic setting of the "</span>
+              <span class="s2">"scan-varying interval width. This can then be analysed with"</span>
+              <span class="s2">"dev.dials.plot_centroid_analysis (requires dials_scratch"</span>
+              <span class="s2">"repository)."</span>
       <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">bool</span>
       <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">2</span>
     <span class="n">beam</span>
-      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;beam parameters&quot;</span>
+      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"beam parameters"</span>
     <span class="p">{</span>
       <span class="n">fix</span> <span class="o">=</span> <span class="nb">all</span> <span class="o">*</span><span class="n">in_spindle_plane</span> <span class="o">*</span><span class="n">out_spindle_plane</span> <span class="n">wavelength</span>
-        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Whether to fix beam parameters. By default, in_spindle_plane&quot;</span>
-                <span class="s2">&quot;is selected, and one of the two parameters is fixed. If a&quot;</span>
-                <span class="s2">&quot;goniometer is present this leads to the beam orientation&quot;</span>
-                <span class="s2">&quot;being restricted to a direction in the initial spindle-beam&quot;</span>
-                <span class="s2">&quot;plane. Wavelength is also fixed by default, to allow&quot;</span>
-                <span class="s2">&quot;refinement of the unit cell volume.&quot;</span>
-        <span class="o">.</span><span class="n">short_caption</span> <span class="o">=</span> <span class="s2">&quot;Fix beam parameters&quot;</span>
+        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Whether to fix beam parameters. By default, in_spindle_plane"</span>
+                <span class="s2">"is selected, and one of the two parameters is fixed. If a"</span>
+                <span class="s2">"goniometer is present this leads to the beam orientation"</span>
+                <span class="s2">"being restricted to a direction in the initial spindle-beam"</span>
+                <span class="s2">"plane. Wavelength is also fixed by default, to allow"</span>
+                <span class="s2">"refinement of the unit cell volume."</span>
+        <span class="o">.</span><span class="n">short_caption</span> <span class="o">=</span> <span class="s2">"Fix beam parameters"</span>
         <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">choice</span><span class="p">(</span><span class="n">multi</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
       <span class="n">fix_list</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Fix specified parameters by a list of 0-based indices or&quot;</span>
-                <span class="s2">&quot;partial names to match&quot;</span>
+        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Fix specified parameters by a list of 0-based indices or"</span>
+                <span class="s2">"partial names to match"</span>
         <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">strings</span>
         <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">1</span>
       <span class="n">constraints</span>
-        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Parameter equal shift constraints to use in refinement.&quot;</span>
+        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Parameter equal shift constraints to use in refinement."</span>
         <span class="o">.</span><span class="n">multiple</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">2</span>
       <span class="p">{</span>
         <span class="nb">id</span> <span class="o">=</span> <span class="kc">None</span>
-          <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Select only the specified experiments when looking up which&quot;</span>
-                  <span class="s2">&quot;parameterisations to apply the constraint to. If an&quot;</span>
-                  <span class="s2">&quot;identified parameterisation affects multiple experiments&quot;</span>
-                  <span class="s2">&quot;then the index of any one of those experiments suffices to&quot;</span>
-                  <span class="s2">&quot;identify that parameterisation. If None (the default) then&quot;</span>
-                  <span class="s2">&quot;constraints will be applied to all parameterisations of&quot;</span>
-                  <span class="s2">&quot;this type.&quot;</span>
+          <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Select only the specified experiments when looking up which"</span>
+                  <span class="s2">"parameterisations to apply the constraint to. If an"</span>
+                  <span class="s2">"identified parameterisation affects multiple experiments"</span>
+                  <span class="s2">"then the index of any one of those experiments suffices to"</span>
+                  <span class="s2">"identify that parameterisation. If None (the default) then"</span>
+                  <span class="s2">"constraints will be applied to all parameterisations of"</span>
+                  <span class="s2">"this type."</span>
           <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">ints</span><span class="p">(</span><span class="n">value_min</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="n">parameter</span> <span class="o">=</span> <span class="kc">None</span>
-          <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Identify which parameter of each parameterisation to&quot;</span>
-                  <span class="s2">&quot;constrain by a (partial) parameter name to match. Model&quot;</span>
-                  <span class="s2">&quot;name prefixes such as &#39;Detector1&#39; will be ignored as&quot;</span>
-                  <span class="s2">&quot;parameterisations are already identified by experiment id&quot;</span>
+          <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Identify which parameter of each parameterisation to"</span>
+                  <span class="s2">"constrain by a (partial) parameter name to match. Model"</span>
+                  <span class="s2">"name prefixes such as 'Detector1' will be ignored as"</span>
+                  <span class="s2">"parameterisations are already identified by experiment id"</span>
           <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">str</span>
       <span class="p">}</span>
       <span class="n">force_static</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Force a static parameterisation for the beam when doing&quot;</span>
-                <span class="s2">&quot;scan-varying refinement&quot;</span>
+        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Force a static parameterisation for the beam when doing"</span>
+                <span class="s2">"scan-varying refinement"</span>
         <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">bool</span>
         <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">1</span>
       <span class="n">smoother</span>
-        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Options that affect scan-varying parameterisation&quot;</span>
+        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Options that affect scan-varying parameterisation"</span>
         <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">1</span>
       <span class="p">{</span>
         <span class="n">interval_width_degrees</span> <span class="o">=</span> <span class="mf">36.0</span>
-          <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Width of scan between checkpoints in degrees. Can be set to&quot;</span>
-                  <span class="s2">&quot;Auto.&quot;</span>
+          <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Width of scan between checkpoints in degrees. Can be set to"</span>
+                  <span class="s2">"Auto."</span>
           <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value_min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">absolute_num_intervals</span> <span class="o">=</span> <span class="kc">None</span>
-          <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Number of intervals between checkpoints if scan_varying&quot;</span>
-                  <span class="s2">&quot;refinement is requested. If set, this overrides&quot;</span>
-                  <span class="s2">&quot;interval_width_degrees&quot;</span>
+          <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Number of intervals between checkpoints if scan_varying"</span>
+                  <span class="s2">"refinement is requested. If set, this overrides"</span>
+                  <span class="s2">"interval_width_degrees"</span>
           <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value_min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
       <span class="p">}</span>
     <span class="p">}</span>
     <span class="n">crystal</span>
-      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;crystal parameters&quot;</span>
+      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"crystal parameters"</span>
     <span class="p">{</span>
       <span class="n">fix</span> <span class="o">=</span> <span class="nb">all</span> <span class="n">cell</span> <span class="n">orientation</span>
-        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Fix crystal parameters&quot;</span>
-        <span class="o">.</span><span class="n">short_caption</span> <span class="o">=</span> <span class="s2">&quot;Fix crystal parameters&quot;</span>
+        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Fix crystal parameters"</span>
+        <span class="o">.</span><span class="n">short_caption</span> <span class="o">=</span> <span class="s2">"Fix crystal parameters"</span>
         <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">choice</span>
       <span class="n">unit_cell</span>
         <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">1</span>
       <span class="p">{</span>
         <span class="n">fix_list</span> <span class="o">=</span> <span class="n">real_space_a</span>
-          <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Fix specified parameters by a list of 0-based indices or&quot;</span>
-                  <span class="s2">&quot;partial names to match&quot;</span>
+          <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Fix specified parameters by a list of 0-based indices or"</span>
+                  <span class="s2">"partial names to match"</span>
           <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">strings</span>
           <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="n">restraints</span>
-          <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Least squares unit cell restraints to use in refinement.&quot;</span>
+          <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Least squares unit cell restraints to use in refinement."</span>
           <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="p">{</span>
           <span class="n">tie_to_target</span>
             <span class="o">.</span><span class="n">multiple</span> <span class="o">=</span> <span class="kc">True</span>
           <span class="p">{</span>
             <span class="n">values</span> <span class="o">=</span> <span class="kc">None</span>
-              <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Target unit cell parameters for the restraint for this&quot;</span>
-                      <span class="s2">&quot;parameterisation&quot;</span>
+              <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Target unit cell parameters for the restraint for this"</span>
+                      <span class="s2">"parameterisation"</span>
               <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">floats</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
             <span class="n">sigmas</span> <span class="o">=</span> <span class="kc">None</span>
-              <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;The unit cell target values are associated with sigmas&quot;</span>
-                      <span class="s2">&quot;which are used to determine the weight of each&quot;</span>
-                      <span class="s2">&quot;restraint. A sigma of zero will remove the restraint at&quot;</span>
-                      <span class="s2">&quot;that position. If symmetry constrains two cell&quot;</span>
-                      <span class="s2">&quot;dimensions to be equal then only the smaller of the two&quot;</span>
-                      <span class="s2">&quot;sigmas will be kept&quot;</span>
+              <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"The unit cell target values are associated with sigmas"</span>
+                      <span class="s2">"which are used to determine the weight of each"</span>
+                      <span class="s2">"restraint. A sigma of zero will remove the restraint at"</span>
+                      <span class="s2">"that position. If symmetry constrains two cell"</span>
+                      <span class="s2">"dimensions to be equal then only the smaller of the two"</span>
+                      <span class="s2">"sigmas will be kept"</span>
               <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">floats</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">value_min</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
             <span class="nb">id</span> <span class="o">=</span> <span class="kc">None</span>
-              <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Select only the specified experiments when looking up&quot;</span>
-                      <span class="s2">&quot;which parameterisations to apply these restraints to.&quot;</span>
-                      <span class="s2">&quot;If an identified parameterisation affects multiple&quot;</span>
-                      <span class="s2">&quot;experiments then the index of any one of those&quot;</span>
-                      <span class="s2">&quot;experiments suffices to restrain that parameterisation.&quot;</span>
-                      <span class="s2">&quot;If None (the default) then the restraints will be&quot;</span>
-                      <span class="s2">&quot;applied to all experiments.&quot;</span>
+              <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Select only the specified experiments when looking up"</span>
+                      <span class="s2">"which parameterisations to apply these restraints to."</span>
+                      <span class="s2">"If an identified parameterisation affects multiple"</span>
+                      <span class="s2">"experiments then the index of any one of those"</span>
+                      <span class="s2">"experiments suffices to restrain that parameterisation."</span>
+                      <span class="s2">"If None (the default) then the restraints will be"</span>
+                      <span class="s2">"applied to all experiments."</span>
               <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">ints</span><span class="p">(</span><span class="n">value_min</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
           <span class="p">}</span>
           <span class="n">tie_to_group</span>
             <span class="o">.</span><span class="n">multiple</span> <span class="o">=</span> <span class="kc">True</span>
           <span class="p">{</span>
             <span class="n">target</span> <span class="o">=</span> <span class="o">*</span><span class="n">mean</span> <span class="n">low_memory_mean</span> <span class="n">median</span>
-              <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Function to tie group parameter values to&quot;</span>
+              <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Function to tie group parameter values to"</span>
               <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">choice</span>
             <span class="n">sigmas</span> <span class="o">=</span> <span class="kc">None</span>
-              <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;The unit cell parameters are associated with sigmas&quot;</span>
-                      <span class="s2">&quot;which are used to determine the weight of each&quot;</span>
-                      <span class="s2">&quot;restraint. A sigma of zero will remove the restraint at&quot;</span>
-                      <span class="s2">&quot;that position.&quot;</span>
+              <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"The unit cell parameters are associated with sigmas"</span>
+                      <span class="s2">"which are used to determine the weight of each"</span>
+                      <span class="s2">"restraint. A sigma of zero will remove the restraint at"</span>
+                      <span class="s2">"that position."</span>
               <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">floats</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">value_min</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
             <span class="nb">id</span> <span class="o">=</span> <span class="kc">None</span>
-              <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Select only the specified experiments when looking up&quot;</span>
-                      <span class="s2">&quot;which  parameterisations to apply these restraints to.&quot;</span>
-                      <span class="s2">&quot;For every parameterisation that requires a restraint at&quot;</span>
-                      <span class="s2">&quot;least one experiment index must be supplied. If None&quot;</span>
-                      <span class="s2">&quot;(the default) the restraints will be applied to all&quot;</span>
-                      <span class="s2">&quot;experiments.&quot;</span>
+              <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Select only the specified experiments when looking up"</span>
+                      <span class="s2">"which  parameterisations to apply these restraints to."</span>
+                      <span class="s2">"For every parameterisation that requires a restraint at"</span>
+                      <span class="s2">"least one experiment index must be supplied. If None"</span>
+                      <span class="s2">"(the default) the restraints will be applied to all"</span>
+                      <span class="s2">"experiments."</span>
               <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">ints</span><span class="p">(</span><span class="n">value_min</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
           <span class="p">}</span>
         <span class="p">}</span>
         <span class="n">constraints</span>
-          <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Parameter equal shift constraints to use in refinement.&quot;</span>
+          <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Parameter equal shift constraints to use in refinement."</span>
           <span class="o">.</span><span class="n">multiple</span> <span class="o">=</span> <span class="kc">True</span>
           <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">2</span>
         <span class="p">{</span>
           <span class="nb">id</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Select only the specified experiments when looking up&quot;</span>
-                    <span class="s2">&quot;which parameterisations to apply the constraint to. If an&quot;</span>
-                    <span class="s2">&quot;identified parameterisation affects multiple experiments&quot;</span>
-                    <span class="s2">&quot;then the index of any one of those experiments suffices&quot;</span>
-                    <span class="s2">&quot;to identify that parameterisation. If None (the default)&quot;</span>
-                    <span class="s2">&quot;then constraints will be applied to all parameterisations&quot;</span>
-                    <span class="s2">&quot;of this type.&quot;</span>
+            <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Select only the specified experiments when looking up"</span>
+                    <span class="s2">"which parameterisations to apply the constraint to. If an"</span>
+                    <span class="s2">"identified parameterisation affects multiple experiments"</span>
+                    <span class="s2">"then the index of any one of those experiments suffices"</span>
+                    <span class="s2">"to identify that parameterisation. If None (the default)"</span>
+                    <span class="s2">"then constraints will be applied to all parameterisations"</span>
+                    <span class="s2">"of this type."</span>
             <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">ints</span><span class="p">(</span><span class="n">value_min</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
           <span class="n">parameter</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Identify which parameter of each parameterisation to&quot;</span>
-                    <span class="s2">&quot;constrain by a (partial) parameter name to match. Model&quot;</span>
-                    <span class="s2">&quot;name prefixes such as &#39;Detector1&#39; will be ignored as&quot;</span>
-                    <span class="s2">&quot;parameterisations are already identified by experiment id&quot;</span>
+            <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Identify which parameter of each parameterisation to"</span>
+                    <span class="s2">"constrain by a (partial) parameter name to match. Model"</span>
+                    <span class="s2">"name prefixes such as 'Detector1' will be ignored as"</span>
+                    <span class="s2">"parameterisations are already identified by experiment id"</span>
             <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">str</span>
         <span class="p">}</span>
         <span class="n">force_static</span> <span class="o">=</span> <span class="kc">False</span>
-          <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Force a static parameterisation for the crystal unit cell&quot;</span>
-                  <span class="s2">&quot;when doing scan-varying refinement&quot;</span>
+          <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Force a static parameterisation for the crystal unit cell"</span>
+                  <span class="s2">"when doing scan-varying refinement"</span>
           <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">bool</span>
           <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="n">smoother</span>
-          <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Options that affect scan-varying parameterisation&quot;</span>
+          <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Options that affect scan-varying parameterisation"</span>
           <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="p">{</span>
           <span class="n">interval_width_degrees</span> <span class="o">=</span> <span class="mf">36.0</span>
-            <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Width of scan between checkpoints in degrees. Can be set&quot;</span>
-                    <span class="s2">&quot;to Auto.&quot;</span>
+            <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Width of scan between checkpoints in degrees. Can be set"</span>
+                    <span class="s2">"to Auto."</span>
             <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value_min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
           <span class="n">absolute_num_intervals</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Number of intervals between checkpoints if scan_varying&quot;</span>
-                    <span class="s2">&quot;refinement is requested. If set, this overrides&quot;</span>
-                    <span class="s2">&quot;interval_width_degrees&quot;</span>
+            <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Number of intervals between checkpoints if scan_varying"</span>
+                    <span class="s2">"refinement is requested. If set, this overrides"</span>
+                    <span class="s2">"interval_width_degrees"</span>
             <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value_min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="p">}</span>
       <span class="p">}</span>
@@ -484,458 +484,470 @@ suitable for prediction and integration.</p>
         <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">1</span>
       <span class="p">{</span>
         <span class="n">fix_list</span> <span class="o">=</span> <span class="kc">None</span>
-          <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Fix specified parameters by a list of 0-based indices or&quot;</span>
-                  <span class="s2">&quot;partial names to match&quot;</span>
+          <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Fix specified parameters by a list of 0-based indices or"</span>
+                  <span class="s2">"partial names to match"</span>
           <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">strings</span>
           <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="n">constraints</span>
-          <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Parameter equal shift constraints to use in refinement.&quot;</span>
+          <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Parameter equal shift constraints to use in refinement."</span>
           <span class="o">.</span><span class="n">multiple</span> <span class="o">=</span> <span class="kc">True</span>
           <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">2</span>
         <span class="p">{</span>
           <span class="nb">id</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Select only the specified experiments when looking up&quot;</span>
-                    <span class="s2">&quot;which parameterisations to apply the constraint to. If an&quot;</span>
-                    <span class="s2">&quot;identified parameterisation affects multiple experiments&quot;</span>
-                    <span class="s2">&quot;then the index of any one of those experiments suffices&quot;</span>
-                    <span class="s2">&quot;to identify that parameterisation. If None (the default)&quot;</span>
-                    <span class="s2">&quot;then constraints will be applied to all parameterisations&quot;</span>
-                    <span class="s2">&quot;of this type.&quot;</span>
+            <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Select only the specified experiments when looking up"</span>
+                    <span class="s2">"which parameterisations to apply the constraint to. If an"</span>
+                    <span class="s2">"identified parameterisation affects multiple experiments"</span>
+                    <span class="s2">"then the index of any one of those experiments suffices"</span>
+                    <span class="s2">"to identify that parameterisation. If None (the default)"</span>
+                    <span class="s2">"then constraints will be applied to all parameterisations"</span>
+                    <span class="s2">"of this type."</span>
             <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">ints</span><span class="p">(</span><span class="n">value_min</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
           <span class="n">parameter</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Identify which parameter of each parameterisation to&quot;</span>
-                    <span class="s2">&quot;constrain by a (partial) parameter name to match. Model&quot;</span>
-                    <span class="s2">&quot;name prefixes such as &#39;Detector1&#39; will be ignored as&quot;</span>
-                    <span class="s2">&quot;parameterisations are already identified by experiment id&quot;</span>
+            <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Identify which parameter of each parameterisation to"</span>
+                    <span class="s2">"constrain by a (partial) parameter name to match. Model"</span>
+                    <span class="s2">"name prefixes such as 'Detector1' will be ignored as"</span>
+                    <span class="s2">"parameterisations are already identified by experiment id"</span>
             <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">str</span>
         <span class="p">}</span>
         <span class="n">force_static</span> <span class="o">=</span> <span class="kc">False</span>
-          <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Force a static parameterisation for the crystal orientation&quot;</span>
-                  <span class="s2">&quot;when doing scan-varying refinement&quot;</span>
+          <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Force a static parameterisation for the crystal orientation"</span>
+                  <span class="s2">"when doing scan-varying refinement"</span>
           <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">bool</span>
           <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="n">smoother</span>
-          <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Options that affect scan-varying parameterisation&quot;</span>
+          <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Options that affect scan-varying parameterisation"</span>
           <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="p">{</span>
           <span class="n">interval_width_degrees</span> <span class="o">=</span> <span class="mf">36.0</span>
-            <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Width of scan between checkpoints in degrees. Can be set&quot;</span>
-                    <span class="s2">&quot;to Auto.&quot;</span>
+            <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Width of scan between checkpoints in degrees. Can be set"</span>
+                    <span class="s2">"to Auto."</span>
             <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value_min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
           <span class="n">absolute_num_intervals</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Number of intervals between checkpoints if scan_varying&quot;</span>
-                    <span class="s2">&quot;refinement is requested. If set, this overrides&quot;</span>
-                    <span class="s2">&quot;interval_width_degrees&quot;</span>
+            <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Number of intervals between checkpoints if scan_varying"</span>
+                    <span class="s2">"refinement is requested. If set, this overrides"</span>
+                    <span class="s2">"interval_width_degrees"</span>
             <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value_min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="p">}</span>
       <span class="p">}</span>
     <span class="p">}</span>
     <span class="n">detector</span>
-      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;detector parameters&quot;</span>
+      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"detector parameters"</span>
     <span class="p">{</span>
       <span class="n">panels</span> <span class="o">=</span> <span class="o">*</span><span class="n">automatic</span> <span class="n">single</span> <span class="n">multiple</span> <span class="n">hierarchical</span>
-        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Select appropriate detector parameterisation. Both the single&quot;</span>
-                <span class="s2">&quot;and multiple panel detector options treat the whole detector&quot;</span>
-                <span class="s2">&quot;as a rigid body. The hierarchical parameterisation treats&quot;</span>
-                <span class="s2">&quot;groups of panels as separate rigid bodies.&quot;</span>
+        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Select appropriate detector parameterisation. Both the single"</span>
+                <span class="s2">"and multiple panel detector options treat the whole detector"</span>
+                <span class="s2">"as a rigid body. The hierarchical parameterisation treats"</span>
+                <span class="s2">"groups of panels as separate rigid bodies."</span>
         <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">choice</span>
         <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">1</span>
       <span class="n">hierarchy_level</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Level of the detector hierarchy (starting from the root at 0)&quot;</span>
-                <span class="s2">&quot;at which to determine panel groups to parameterise&quot;</span>
-                <span class="s2">&quot;independently&quot;</span>
+        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Level of the detector hierarchy (starting from the root at 0)"</span>
+                <span class="s2">"at which to determine panel groups to parameterise"</span>
+                <span class="s2">"independently"</span>
         <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value_min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">1</span>
       <span class="n">fix</span> <span class="o">=</span> <span class="nb">all</span> <span class="n">position</span> <span class="n">orientation</span> <span class="o">*</span><span class="n">distance</span>
-        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Fix detector parameters. The translational parameters&quot;</span>
-                <span class="s2">&quot;(position) may be set separately to the orientation.&quot;</span>
-        <span class="o">.</span><span class="n">short_caption</span> <span class="o">=</span> <span class="s2">&quot;Fix detector parameters&quot;</span>
+        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Fix detector parameters. The translational parameters"</span>
+                <span class="s2">"(position) may be set separately to the orientation."</span>
+        <span class="o">.</span><span class="n">short_caption</span> <span class="o">=</span> <span class="s2">"Fix detector parameters"</span>
         <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">choice</span>
       <span class="n">fix_list</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Fix specified parameters by a list of 0-based indices or&quot;</span>
-                <span class="s2">&quot;partial names to match&quot;</span>
+        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Fix specified parameters by a list of 0-based indices or"</span>
+                <span class="s2">"partial names to match"</span>
         <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">strings</span>
         <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">1</span>
       <span class="n">constraints</span>
-        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Parameter equal shift constraints to use in refinement.&quot;</span>
+        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Parameter equal shift constraints to use in refinement."</span>
         <span class="o">.</span><span class="n">multiple</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">2</span>
       <span class="p">{</span>
         <span class="nb">id</span> <span class="o">=</span> <span class="kc">None</span>
-          <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Select only the specified experiments when looking up which&quot;</span>
-                  <span class="s2">&quot;parameterisations to apply the constraint to. If an&quot;</span>
-                  <span class="s2">&quot;identified parameterisation affects multiple experiments&quot;</span>
-                  <span class="s2">&quot;then the index of any one of those experiments suffices to&quot;</span>
-                  <span class="s2">&quot;identify that parameterisation. If None (the default) then&quot;</span>
-                  <span class="s2">&quot;constraints will be applied to all parameterisations of&quot;</span>
-                  <span class="s2">&quot;this type.&quot;</span>
+          <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Select only the specified experiments when looking up which"</span>
+                  <span class="s2">"parameterisations to apply the constraint to. If an"</span>
+                  <span class="s2">"identified parameterisation affects multiple experiments"</span>
+                  <span class="s2">"then the index of any one of those experiments suffices to"</span>
+                  <span class="s2">"identify that parameterisation. If None (the default) then"</span>
+                  <span class="s2">"constraints will be applied to all parameterisations of"</span>
+                  <span class="s2">"this type."</span>
           <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">ints</span><span class="p">(</span><span class="n">value_min</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="n">parameter</span> <span class="o">=</span> <span class="kc">None</span>
-          <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Identify which parameter of each parameterisation to&quot;</span>
-                  <span class="s2">&quot;constrain by a (partial) parameter name to match. Model&quot;</span>
-                  <span class="s2">&quot;name prefixes such as &#39;Detector1&#39; will be ignored as&quot;</span>
-                  <span class="s2">&quot;parameterisations are already identified by experiment id&quot;</span>
+          <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Identify which parameter of each parameterisation to"</span>
+                  <span class="s2">"constrain by a (partial) parameter name to match. Model"</span>
+                  <span class="s2">"name prefixes such as 'Detector1' will be ignored as"</span>
+                  <span class="s2">"parameterisations are already identified by experiment id"</span>
           <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">str</span>
       <span class="p">}</span>
       <span class="n">force_static</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Force a static parameterisation for the detector when doing&quot;</span>
-                <span class="s2">&quot;scan-varying refinement&quot;</span>
+        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Force a static parameterisation for the detector when doing"</span>
+                <span class="s2">"scan-varying refinement"</span>
         <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">bool</span>
         <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">1</span>
       <span class="n">smoother</span>
-        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Options that affect scan-varying parameterisation&quot;</span>
+        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Options that affect scan-varying parameterisation"</span>
         <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">1</span>
       <span class="p">{</span>
         <span class="n">interval_width_degrees</span> <span class="o">=</span> <span class="mf">36.0</span>
-          <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Width of scan between checkpoints in degrees. Can be set to&quot;</span>
-                  <span class="s2">&quot;Auto.&quot;</span>
+          <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Width of scan between checkpoints in degrees. Can be set to"</span>
+                  <span class="s2">"Auto."</span>
           <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value_min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">absolute_num_intervals</span> <span class="o">=</span> <span class="kc">None</span>
-          <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Number of intervals between checkpoints if scan_varying&quot;</span>
-                  <span class="s2">&quot;refinement is requested. If set, this overrides&quot;</span>
-                  <span class="s2">&quot;interval_width_degrees&quot;</span>
+          <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Number of intervals between checkpoints if scan_varying"</span>
+                  <span class="s2">"refinement is requested. If set, this overrides"</span>
+                  <span class="s2">"interval_width_degrees"</span>
           <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value_min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
       <span class="p">}</span>
     <span class="p">}</span>
     <span class="n">goniometer</span>
-      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;goniometer setting matrix parameters&quot;</span>
+      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"goniometer setting matrix parameters"</span>
     <span class="p">{</span>
       <span class="n">fix</span> <span class="o">=</span> <span class="o">*</span><span class="nb">all</span> <span class="n">in_beam_plane</span> <span class="n">out_beam_plane</span>
-        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Whether to fix goniometer parameters. By default, fix all.&quot;</span>
-                <span class="s2">&quot;Alternatively the setting matrix can be constrained to allow&quot;</span>
-                <span class="s2">&quot;rotation only within the spindle-beam plane or to allow&quot;</span>
-                <span class="s2">&quot;rotation only around an axis that lies in that plane. Set to&quot;</span>
-                <span class="s2">&quot;None to refine the in two orthogonal directions.&quot;</span>
-        <span class="o">.</span><span class="n">short_caption</span> <span class="o">=</span> <span class="s2">&quot;Fix goniometer parameters&quot;</span>
+        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Whether to fix goniometer parameters. By default, fix all."</span>
+                <span class="s2">"Alternatively the setting matrix can be constrained to allow"</span>
+                <span class="s2">"rotation only within the spindle-beam plane or to allow"</span>
+                <span class="s2">"rotation only around an axis that lies in that plane. Set to"</span>
+                <span class="s2">"None to refine the in two orthogonal directions."</span>
+        <span class="o">.</span><span class="n">short_caption</span> <span class="o">=</span> <span class="s2">"Fix goniometer parameters"</span>
         <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">choice</span><span class="p">(</span><span class="n">multi</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
       <span class="n">fix_list</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Fix specified parameters by a list of 0-based indices or&quot;</span>
-                <span class="s2">&quot;partial names to match&quot;</span>
+        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Fix specified parameters by a list of 0-based indices or"</span>
+                <span class="s2">"partial names to match"</span>
         <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">strings</span>
         <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">1</span>
       <span class="n">constraints</span>
-        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Parameter equal shift constraints to use in refinement.&quot;</span>
+        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Parameter equal shift constraints to use in refinement."</span>
         <span class="o">.</span><span class="n">multiple</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">2</span>
       <span class="p">{</span>
         <span class="nb">id</span> <span class="o">=</span> <span class="kc">None</span>
-          <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Select only the specified experiments when looking up which&quot;</span>
-                  <span class="s2">&quot;parameterisations to apply the constraint to. If an&quot;</span>
-                  <span class="s2">&quot;identified parameterisation affects multiple experiments&quot;</span>
-                  <span class="s2">&quot;then the index of any one of those experiments suffices to&quot;</span>
-                  <span class="s2">&quot;identify that parameterisation. If None (the default) then&quot;</span>
-                  <span class="s2">&quot;constraints will be applied to all parameterisations of&quot;</span>
-                  <span class="s2">&quot;this type.&quot;</span>
+          <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Select only the specified experiments when looking up which"</span>
+                  <span class="s2">"parameterisations to apply the constraint to. If an"</span>
+                  <span class="s2">"identified parameterisation affects multiple experiments"</span>
+                  <span class="s2">"then the index of any one of those experiments suffices to"</span>
+                  <span class="s2">"identify that parameterisation. If None (the default) then"</span>
+                  <span class="s2">"constraints will be applied to all parameterisations of"</span>
+                  <span class="s2">"this type."</span>
           <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">ints</span><span class="p">(</span><span class="n">value_min</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="n">parameter</span> <span class="o">=</span> <span class="kc">None</span>
-          <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Identify which parameter of each parameterisation to&quot;</span>
-                  <span class="s2">&quot;constrain by a (partial) parameter name to match. Model&quot;</span>
-                  <span class="s2">&quot;name prefixes such as &#39;Detector1&#39; will be ignored as&quot;</span>
-                  <span class="s2">&quot;parameterisations are already identified by experiment id&quot;</span>
+          <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Identify which parameter of each parameterisation to"</span>
+                  <span class="s2">"constrain by a (partial) parameter name to match. Model"</span>
+                  <span class="s2">"name prefixes such as 'Detector1' will be ignored as"</span>
+                  <span class="s2">"parameterisations are already identified by experiment id"</span>
           <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">str</span>
       <span class="p">}</span>
       <span class="n">force_static</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Force a static parameterisation for the goniometer when doing&quot;</span>
-                <span class="s2">&quot;scan-varying refinement&quot;</span>
+        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Force a static parameterisation for the goniometer when doing"</span>
+                <span class="s2">"scan-varying refinement"</span>
         <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">bool</span>
         <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">1</span>
       <span class="n">smoother</span>
-        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Options that affect scan-varying parameterisation&quot;</span>
+        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Options that affect scan-varying parameterisation"</span>
         <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">1</span>
       <span class="p">{</span>
         <span class="n">interval_width_degrees</span> <span class="o">=</span> <span class="mf">36.0</span>
-          <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Width of scan between checkpoints in degrees. Can be set to&quot;</span>
-                  <span class="s2">&quot;Auto.&quot;</span>
+          <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Width of scan between checkpoints in degrees. Can be set to"</span>
+                  <span class="s2">"Auto."</span>
           <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value_min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">absolute_num_intervals</span> <span class="o">=</span> <span class="kc">None</span>
-          <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Number of intervals between checkpoints if scan_varying&quot;</span>
-                  <span class="s2">&quot;refinement is requested. If set, this overrides&quot;</span>
-                  <span class="s2">&quot;interval_width_degrees&quot;</span>
+          <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Number of intervals between checkpoints if scan_varying"</span>
+                  <span class="s2">"refinement is requested. If set, this overrides"</span>
+                  <span class="s2">"interval_width_degrees"</span>
           <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value_min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
       <span class="p">}</span>
     <span class="p">}</span>
     <span class="n">sparse</span> <span class="o">=</span> <span class="n">Auto</span>
-      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Calculate gradients using sparse data structures.&quot;</span>
+      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Calculate gradients using sparse data structures."</span>
       <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">bool</span>
       <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">treat_single_image_as_still</span> <span class="o">=</span> <span class="kc">False</span>
-      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Set this to True to treat a single image scan with a non zero&quot;</span>
-              <span class="s2">&quot;oscillation width as a still&quot;</span>
+      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Set this to True to treat a single image scan with a non zero"</span>
+              <span class="s2">"oscillation width as a still"</span>
       <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">bool</span>
       <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">spherical_relp_model</span> <span class="o">=</span> <span class="kc">True</span>
-      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;For stills refinement, set true to use the spherical relp model&quot;</span>
-              <span class="s2">&quot;for prediction and gradients.&quot;</span>
+      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"For stills refinement, set true to use the spherical relp model"</span>
+              <span class="s2">"for prediction and gradients."</span>
       <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">bool</span>
       <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">1</span>
   <span class="p">}</span>
   <span class="n">refinery</span>
-    <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Parameters to configure the refinery&quot;</span>
+    <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Parameters to configure the refinery"</span>
     <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">1</span>
   <span class="p">{</span>
     <span class="n">engine</span> <span class="o">=</span> <span class="n">SimpleLBFGS</span> <span class="n">LBFGScurvs</span> <span class="n">GaussNewton</span> <span class="n">LevMar</span> <span class="o">*</span><span class="n">SparseLevMar</span>
-      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;The minimisation engine to use&quot;</span>
+      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"The minimisation engine to use"</span>
       <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">choice</span>
     <span class="n">max_iterations</span> <span class="o">=</span> <span class="kc">None</span>
-      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Maximum number of iterations in refinement before termination.&quot;</span>
-              <span class="s2">&quot;None implies the engine supplies its own default.&quot;</span>
+      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Maximum number of iterations in refinement before termination."</span>
+              <span class="s2">"None implies the engine supplies its own default."</span>
       <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value_min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">log</span> <span class="o">=</span> <span class="kc">None</span>
-      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Filename for an optional log that a minimisation engine may use&quot;</span>
-              <span class="s2">&quot;to write additional information&quot;</span>
+      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Filename for an optional log that a minimisation engine may use"</span>
+              <span class="s2">"to write additional information"</span>
       <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">path</span>
     <span class="n">journal</span>
-      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Extra items to track in the refinement history&quot;</span>
+      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Extra items to track in the refinement history"</span>
     <span class="p">{</span>
       <span class="n">track_step</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Record parameter shifts history in the refinement journal, if&quot;</span>
-                <span class="s2">&quot;the engine supports it.&quot;</span>
+        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Record parameter shifts history in the refinement journal, if"</span>
+                <span class="s2">"the engine supports it."</span>
         <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">bool</span>
       <span class="n">track_gradient</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Record parameter gradients history in the refinement journal,&quot;</span>
-                <span class="s2">&quot;if the engine supports it.&quot;</span>
+        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Record parameter gradients history in the refinement journal,"</span>
+                <span class="s2">"if the engine supports it."</span>
         <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">bool</span>
       <span class="n">track_parameter_correlation</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Record correlation matrix between columns of the Jacobian for&quot;</span>
-                <span class="s2">&quot;each step of refinement.&quot;</span>
+        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Record correlation matrix between columns of the Jacobian for"</span>
+                <span class="s2">"each step of refinement."</span>
         <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">bool</span>
       <span class="n">track_jacobian_structure</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Record numbers of explicit and structural zeroes in each&quot;</span>
-                <span class="s2">&quot;column of the Jacobian at each step of refinement.&quot;</span>
+        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Record numbers of explicit and structural zeroes in each"</span>
+                <span class="s2">"column of the Jacobian at each step of refinement."</span>
         <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">bool</span>
       <span class="n">track_condition_number</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Record condition number of the Jacobian for each step of &quot;</span>
-                <span class="s2">&quot;refinement.&quot;</span>
+        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Record condition number of the Jacobian for each step of "</span>
+                <span class="s2">"refinement."</span>
         <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">bool</span>
       <span class="n">track_normal_matrix</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Record the full normal matrix at each step of refinement&quot;</span>
+        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Record the full normal matrix at each step of refinement"</span>
         <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">bool</span>
       <span class="n">track_out_of_sample_rmsd</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Record RMSDs calculated using the refined experiments with&quot;</span>
-                <span class="s2">&quot;reflections not used in refinement at each step. Only valid&quot;</span>
-                <span class="s2">&quot;if a subset of input reflections was taken for refinement&quot;</span>
+        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Record RMSDs calculated using the refined experiments with"</span>
+                <span class="s2">"reflections not used in refinement at each step. Only valid"</span>
+                <span class="s2">"if a subset of input reflections was taken for refinement"</span>
         <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">bool</span>
     <span class="p">}</span>
   <span class="p">}</span>
   <span class="n">target</span>
-    <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Parameters to configure the target function&quot;</span>
+    <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Parameters to configure the target function"</span>
     <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">1</span>
   <span class="p">{</span>
     <span class="n">rmsd_cutoff</span> <span class="o">=</span> <span class="o">*</span><span class="n">fraction_of_bin_size</span> <span class="n">absolute</span>
-      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Method to choose rmsd cutoffs. This is currently either as a&quot;</span>
-              <span class="s2">&quot;fraction of the discrete units of the spot positional data,&quot;</span>
-              <span class="s2">&quot;i.e. (pixel width, pixel height, image thickness in phi), or a&quot;</span>
-              <span class="s2">&quot;tuple of absolute values to use as the cutoffs&quot;</span>
+      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Method to choose rmsd cutoffs. This is currently either as a"</span>
+              <span class="s2">"fraction of the discrete units of the spot positional data,"</span>
+              <span class="s2">"i.e. (pixel width, pixel height, image thickness in phi), or a"</span>
+              <span class="s2">"tuple of absolute values to use as the cutoffs"</span>
       <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">choice</span>
     <span class="n">bin_size_fraction</span> <span class="o">=</span> <span class="mf">0.0</span>
-      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Set this to a fractional value, say 0.2, to make a cut off in&quot;</span>
-              <span class="s2">&quot;the natural discrete units of positional data, viz., (pixel&quot;</span>
-              <span class="s2">&quot;width, pixel height, image thickness in phi). This would then&quot;</span>
-              <span class="s2">&quot;determine when the RMSD target is achieved. Only used if&quot;</span>
-              <span class="s2">&quot;rmsd_cutoff = fraction_of_bin_size.&quot;</span>
+      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Set this to a fractional value, say 0.2, to make a cut off in"</span>
+              <span class="s2">"the natural discrete units of positional data, viz., (pixel"</span>
+              <span class="s2">"width, pixel height, image thickness in phi). This would then"</span>
+              <span class="s2">"determine when the RMSD target is achieved. Only used if"</span>
+              <span class="s2">"rmsd_cutoff = fraction_of_bin_size."</span>
       <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value_min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">absolute_cutoffs</span> <span class="o">=</span> <span class="kc">None</span>
-      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Absolute Values for the RMSD target achieved cutoffs in X, Y&quot;</span>
-              <span class="s2">&quot;and Phi. The units are (mm, mm, rad).&quot;</span>
+      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Absolute Values for the RMSD target achieved cutoffs in X, Y"</span>
+              <span class="s2">"and Phi. The units are (mm, mm, rad)."</span>
       <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">floats</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">value_min</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
     <span class="n">gradient_calculation_blocksize</span> <span class="o">=</span> <span class="kc">None</span>
-      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Maximum number of reflections to use for gradient calculation.&quot;</span>
-              <span class="s2">&quot;If there are more reflections than this in the manager then the&quot;</span>
-              <span class="s2">&quot;minimiser must do the full calculation in blocks.&quot;</span>
+      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Maximum number of reflections to use for gradient calculation."</span>
+              <span class="s2">"If there are more reflections than this in the manager then the"</span>
+              <span class="s2">"minimiser must do the full calculation in blocks."</span>
       <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value_min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
   <span class="p">}</span>
   <span class="n">reflections</span>
-    <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Parameters used by the reflection manager&quot;</span>
+    <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Parameters used by the reflection manager"</span>
   <span class="p">{</span>
     <span class="n">reflections_per_degree</span> <span class="o">=</span> <span class="n">Auto</span>
-      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;The number of centroids per degree of the sequence to use in&quot;</span>
-              <span class="s2">&quot;refinement. The default (Auto) uses all reflections unless the&quot;</span>
-              <span class="s2">&quot;dataset is wider than a single turn. Then the number of&quot;</span>
-              <span class="s2">&quot;reflections may be reduced until a minimum of 100 per degree of&quot;</span>
-              <span class="s2">&quot;the sequence is reached to speed up calculations. Set this to&quot;</span>
-              <span class="s2">&quot;None to force use all of suitable reflections.&quot;</span>
+      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"The number of centroids per degree of the sequence to use in"</span>
+              <span class="s2">"refinement. The default (Auto) uses all reflections unless the"</span>
+              <span class="s2">"dataset is wider than a single turn. Then the number of"</span>
+              <span class="s2">"reflections may be reduced until a minimum of 100 per degree of"</span>
+              <span class="s2">"the sequence is reached to speed up calculations. Set this to"</span>
+              <span class="s2">"None to force use all of suitable reflections."</span>
       <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value_min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
       <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">minimum_sample_size</span> <span class="o">=</span> <span class="mi">1000</span>
-      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;cutoff that determines whether subsetting of the input&quot;</span>
-              <span class="s2">&quot;reflection list is done&quot;</span>
+      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"cutoff that determines whether subsetting of the input"</span>
+              <span class="s2">"reflection list is done"</span>
       <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
       <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">maximum_sample_size</span> <span class="o">=</span> <span class="kc">None</span>
-      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;The maximum number of reflections to use in refinement.&quot;</span>
-              <span class="s2">&quot;Overrides reflections_per_degree if that produces a larger&quot;</span>
-              <span class="s2">&quot;sample size.&quot;</span>
+      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"The maximum number of reflections to use in refinement."</span>
+              <span class="s2">"Overrides reflections_per_degree if that produces a larger"</span>
+              <span class="s2">"sample size."</span>
       <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value_min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
       <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">random_seed</span> <span class="o">=</span> <span class="mi">42</span>
-      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Random seed to use when sampling to create a working set of&quot;</span>
-              <span class="s2">&quot;reflections. May be int or None.&quot;</span>
+      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Random seed to use when sampling to create a working set of"</span>
+              <span class="s2">"reflections. May be int or None."</span>
       <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
       <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">close_to_spindle_cutoff</span> <span class="o">=</span> <span class="mf">0.02</span>
-      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;The inclusion criterion currently uses the volume of the&quot;</span>
-              <span class="s2">&quot;parallelepiped formed by the spindle axis, the incident beam&quot;</span>
-              <span class="s2">&quot;and the scattered beam. If this is lower than some value then&quot;</span>
-              <span class="s2">&quot;the reflection is excluded from refinement. In detector space,&quot;</span>
-              <span class="s2">&quot;these are the reflections located close to the rotation axis.&quot;</span>
+      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"The inclusion criterion currently uses the volume of the"</span>
+              <span class="s2">"parallelepiped formed by the spindle axis, the incident beam"</span>
+              <span class="s2">"and the scattered beam. If this is lower than some value then"</span>
+              <span class="s2">"the reflection is excluded from refinement. In detector space,"</span>
+              <span class="s2">"these are the reflections located close to the rotation axis."</span>
       <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value_min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
       <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">scan_margin</span> <span class="o">=</span> <span class="mf">0.0</span>
-      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Reflections within this value in degrees from the centre of the&quot;</span>
-              <span class="s2">&quot;first or last image of the scan will be removed before&quot;</span>
-              <span class="s2">&quot;refinement, unless doing so would result in too few remaining&quot;</span>
-              <span class="s2">&quot;reflections. Reflections that are truncated at the scan edges&quot;</span>
-              <span class="s2">&quot;have poorly-determined centroids and can bias the refined model&quot;</span>
-              <span class="s2">&quot;if they are included.&quot;</span>
+      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Reflections within this value in degrees from the centre of the"</span>
+              <span class="s2">"first or last image of the scan will be removed before"</span>
+              <span class="s2">"refinement, unless doing so would result in too few remaining"</span>
+              <span class="s2">"reflections. Reflections that are truncated at the scan edges"</span>
+              <span class="s2">"have poorly-determined centroids and can bias the refined model"</span>
+              <span class="s2">"if they are included."</span>
       <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value_min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">value_max</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
       <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">weighting_strategy</span>
-      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Parameters to configure weighting strategy overrides&quot;</span>
+      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Parameters to configure weighting strategy overrides"</span>
       <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="p">{</span>
       <span class="n">override</span> <span class="o">=</span> <span class="n">statistical</span> <span class="o">*</span><span class="n">stills</span> <span class="n">constant</span> <span class="n">external_deltapsi</span>
-        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;selection of a strategy to override default weighting&quot;</span>
-                <span class="s2">&quot;behaviour&quot;</span>
+        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"selection of a strategy to override default weighting"</span>
+                <span class="s2">"behaviour"</span>
         <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">choice</span>
       <span class="n">delpsi_constant</span> <span class="o">=</span> <span class="mi">1000000</span>
-        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;used by the stills strategy to choose absolute weight value&quot;</span>
-                <span class="s2">&quot;for the angular distance from Ewald sphere term of the target&quot;</span>
-                <span class="s2">&quot;function, whilst the X and Y parts use statistical weights&quot;</span>
+        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"used by the stills strategy to choose absolute weight value"</span>
+                <span class="s2">"for the angular distance from Ewald sphere term of the target"</span>
+                <span class="s2">"function, whilst the X and Y parts use statistical weights"</span>
         <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value_min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
       <span class="n">constants</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="mf">1.0</span> <span class="mf">1.0</span>
-        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;constant weights for three parts of the target function,&quot;</span>
-                <span class="s2">&quot;whether the case is for stills or scans. The default gives&quot;</span>
-                <span class="s2">&quot;unit weighting.&quot;</span>
+        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"constant weights for three parts of the target function,"</span>
+                <span class="s2">"whether the case is for stills or scans. The default gives"</span>
+                <span class="s2">"unit weighting."</span>
         <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">floats</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">value_min</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
       <span class="n">wavelength_weight</span> <span class="o">=</span> <span class="mf">1e4</span>
-        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Weight for the wavelength term in the target function for&quot;</span>
-                <span class="s2">&quot;Laue refinement&quot;</span>
+        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Weight for the wavelength term in the target function for"</span>
+                <span class="s2">"Laue refinement"</span>
         <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value_min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="p">}</span>
     <span class="n">outlier</span>
-      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Outlier rejection after initial reflection prediction.&quot;</span>
+      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Outlier rejection after initial reflection prediction."</span>
     <span class="p">{</span>
       <span class="n">algorithm</span> <span class="o">=</span> <span class="n">null</span> <span class="n">auto</span> <span class="o">*</span><span class="n">mcd</span> <span class="n">tukey</span> <span class="n">sauter_poon</span>
-        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Outlier rejection algorithm. If auto is selected, the&quot;</span>
-                <span class="s2">&quot;algorithm is chosen automatically.&quot;</span>
-        <span class="o">.</span><span class="n">short_caption</span> <span class="o">=</span> <span class="s2">&quot;Outlier rejection algorithm&quot;</span>
+        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Outlier rejection algorithm. If auto is selected, the"</span>
+                <span class="s2">"algorithm is chosen automatically."</span>
+        <span class="o">.</span><span class="n">short_caption</span> <span class="o">=</span> <span class="s2">"Outlier rejection algorithm"</span>
         <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">choice</span>
       <span class="n">nproc</span> <span class="o">=</span> <span class="mi">1</span>
-        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Number of processes over which to split outlier&quot;</span>
-                <span class="s2">&quot;identification. If set to Auto, DIALS will choose&quot;</span>
-                <span class="s2">&quot;automatically.&quot;</span>
+        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Number of processes over which to split outlier"</span>
+                <span class="s2">"identification. If set to Auto, DIALS will choose"</span>
+                <span class="s2">"automatically."</span>
         <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value_min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">1</span>
       <span class="n">minimum_number_of_reflections</span> <span class="o">=</span> <span class="mi">1</span>
-        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;The minimum number of input observations per outlier&quot;</span>
-                <span class="s2">&quot;rejection job below which all reflections in the job will be&quot;</span>
-                <span class="s2">&quot;rejected as potential outliers.&quot;</span>
+        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"The minimum number of input observations per outlier"</span>
+                <span class="s2">"rejection job below which all reflections in the job will be"</span>
+                <span class="s2">"rejected as potential outliers."</span>
         <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value_min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">1</span>
       <span class="n">separate_experiments</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;If true, outlier rejection will be performed on each&quot;</span>
-                <span class="s2">&quot;experiment separately. Otherwise, the data from all&quot;</span>
-                <span class="s2">&quot;experiments will be combined for outlier rejection.&quot;</span>
+        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"If true, outlier rejection will be performed on each"</span>
+                <span class="s2">"experiment separately. Otherwise, the data from all"</span>
+                <span class="s2">"experiments will be combined for outlier rejection."</span>
         <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">bool</span>
         <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">1</span>
       <span class="n">separate_panels</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Perform outlier rejection separately for each panel of a&quot;</span>
-                <span class="s2">&quot;multi- panel detector model. Otherwise data from across all&quot;</span>
-                <span class="s2">&quot;panels will be combined for outlier rejection.&quot;</span>
+        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Perform outlier rejection separately for each panel of a"</span>
+                <span class="s2">"multi- panel detector model. Otherwise data from across all"</span>
+                <span class="s2">"panels will be combined for outlier rejection."</span>
         <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">bool</span>
         <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">1</span>
       <span class="n">separate_blocks</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;If true, for scans outlier rejection will be performed&quot;</span>
-                <span class="s2">&quot;separately in equal-width blocks of phi, controlled by the&quot;</span>
-                <span class="s2">&quot;parameter outlier.block_width.&quot;</span>
+        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"If true, for scans outlier rejection will be performed"</span>
+                <span class="s2">"separately in equal-width blocks of phi, controlled by the"</span>
+                <span class="s2">"parameter outlier.block_width."</span>
         <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">bool</span>
         <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">1</span>
       <span class="n">block_width</span> <span class="o">=</span> <span class="n">Auto</span>
-        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;If separate_blocks, a scan will be divided into equal-sized&quot;</span>
-                <span class="s2">&quot;blocks with width (in degrees) close to this value for&quot;</span>
-                <span class="s2">&quot;outlier rejection. If Auto, a width of at least 18 degrees&quot;</span>
-                <span class="s2">&quot;will be determined, such that each block contains enough&quot;</span>
-                <span class="s2">&quot;reflections to perform outlier rejection.&quot;</span>
+        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"If separate_blocks, a scan will be divided into equal-sized"</span>
+                <span class="s2">"blocks with width (in degrees) close to this value for"</span>
+                <span class="s2">"outlier rejection. If Auto, a width of at least 18 degrees"</span>
+                <span class="s2">"will be determined, such that each block contains enough"</span>
+                <span class="s2">"reflections to perform outlier rejection."</span>
         <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value_min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">1</span>
       <span class="n">separate_images</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;If true, every image will be treated separately for outlier&quot;</span>
-                <span class="s2">&quot;rejection. It is a special case that will override both&quot;</span>
-                <span class="s2">&quot;separate_experiments and separate_blocks, and will set these&quot;</span>
-                <span class="s2">&quot;to False if required.&quot;</span>
+        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"If true, every image will be treated separately for outlier"</span>
+                <span class="s2">"rejection. It is a special case that will override both"</span>
+                <span class="s2">"separate_experiments and separate_blocks, and will set these"</span>
+                <span class="s2">"to False if required."</span>
         <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">bool</span>
         <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">2</span>
       <span class="n">tukey</span>
-        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Options for the tukey outlier rejector&quot;</span>
+        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Options for the tukey outlier rejector"</span>
         <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">1</span>
       <span class="p">{</span>
         <span class="n">iqr_multiplier</span> <span class="o">=</span> <span class="mf">1.5</span>
-          <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;The IQR multiplier used to detect outliers. A value of 1.5&quot;</span>
-                  <span class="s2">&quot;gives Tukey&#39;s rule for outlier detection&quot;</span>
+          <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"The IQR multiplier used to detect outliers. A value of 1.5"</span>
+                  <span class="s2">"gives Tukey's rule for outlier detection"</span>
           <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value_min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
       <span class="p">}</span>
       <span class="n">mcd</span>
-        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Options for the mcd outlier rejector, which uses an algorithm&quot;</span>
-                <span class="s2">&quot;based on FAST-MCD by Rousseeuw and van Driessen. See&quot;</span>
-                <span class="s2">&quot;doi.org/10.1080/00401706.1999.10485670.&quot;</span>
+        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Options for the mcd outlier rejector, which uses an algorithm"</span>
+                <span class="s2">"based on FAST-MCD by Rousseeuw and van Driessen. See"</span>
+                <span class="s2">"doi.org/10.1080/00401706.1999.10485670."</span>
         <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">1</span>
       <span class="p">{</span>
+        <span class="n">positional_coordinates</span> <span class="o">=</span> <span class="o">*</span><span class="n">auto</span> <span class="n">xy</span> <span class="n">radial_transverse</span> \
+                                 <span class="n">deltatt_transverse</span>
+          <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Whether to use xy spot coordinates in image space,"</span>
+                  <span class="s2">"radial/transverse spot coordinates relative to the beam"</span>
+                  <span class="s2">"vector, or a mix of delta two theta and transverse"</span>
+                  <span class="s2">"coordinates."</span>
+          <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">choice</span>
+        <span class="n">rotational_coordinates</span> <span class="o">=</span> <span class="o">*</span><span class="n">auto</span> <span class="n">null</span> <span class="n">phi</span> <span class="n">deltapsi</span> <span class="n">delpsidstar</span>
+          <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Whether to use phi rotation, delta psi angle, or deltapsi"</span>
+                  <span class="s2">"normalized by resolution as coordinates. Null means only"</span>
+                  <span class="s2">"use positional_coordinates."</span>
+          <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">choice</span>
         <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.5</span>
-          <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Decimal fraction controlling the size of subsets over which&quot;</span>
-                  <span class="s2">&quot;the covariance matrix determinant is minimised.&quot;</span>
+          <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Decimal fraction controlling the size of subsets over which"</span>
+                  <span class="s2">"the covariance matrix determinant is minimised."</span>
           <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value_min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">value_max</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">max_n_groups</span> <span class="o">=</span> <span class="mi">5</span>
-          <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;The maximum number of groups to split the dataset into if&quot;</span>
-                  <span class="s2">&quot;the dataset is &#39;large&#39; (more observations than twice the&quot;</span>
-                  <span class="s2">&quot;min_group_size).&quot;</span>
+          <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"The maximum number of groups to split the dataset into if"</span>
+                  <span class="s2">"the dataset is 'large' (more observations than twice the"</span>
+                  <span class="s2">"min_group_size)."</span>
           <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value_min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">min_group_size</span> <span class="o">=</span> <span class="mi">300</span>
-          <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;The smallest sub-dataset size when splitting the dataset&quot;</span>
-                  <span class="s2">&quot;into a number of groups, maximally max_n_groups.&quot;</span>
+          <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"The smallest sub-dataset size when splitting the dataset"</span>
+                  <span class="s2">"into a number of groups, maximally max_n_groups."</span>
           <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value_min</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">n_trials</span> <span class="o">=</span> <span class="mi">500</span>
-          <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;The number of samples used for initial estimates to seed&quot;</span>
-                  <span class="s2">&quot;the search within each sub-dataset.&quot;</span>
+          <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"The number of samples used for initial estimates to seed"</span>
+                  <span class="s2">"the search within each sub-dataset."</span>
           <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value_min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">k1</span> <span class="o">=</span> <span class="mi">2</span>
-          <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;The number of concentration steps to take after initial&quot;</span>
-                  <span class="s2">&quot;estimates.&quot;</span>
+          <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"The number of concentration steps to take after initial"</span>
+                  <span class="s2">"estimates."</span>
           <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value_min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">k2</span> <span class="o">=</span> <span class="mi">2</span>
-          <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;If the dataset is &#39;large&#39;, the number of concentration&quot;</span>
-                  <span class="s2">&quot;steps to take after applying the best subset estimates to&quot;</span>
-                  <span class="s2">&quot;the merged group.&quot;</span>
+          <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"If the dataset is 'large', the number of concentration"</span>
+                  <span class="s2">"steps to take after applying the best subset estimates to"</span>
+                  <span class="s2">"the merged group."</span>
           <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value_min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">k3</span> <span class="o">=</span> <span class="mi">100</span>
-          <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;If the dataset is &#39;small&#39;, the number of concentration&quot;</span>
-                  <span class="s2">&quot;steps to take after selecting the best of the initial&quot;</span>
-                  <span class="s2">&quot;estimates, applied to the whole dataset.&quot;</span>
+          <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"If the dataset is 'small', the number of concentration"</span>
+                  <span class="s2">"steps to take after selecting the best of the initial"</span>
+                  <span class="s2">"estimates, applied to the whole dataset."</span>
           <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value_min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">threshold_probability</span> <span class="o">=</span> <span class="mf">0.975</span>
-          <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Quantile probability from the Chi-squared distribution with&quot;</span>
-                  <span class="s2">&quot;number of degrees of freedom equal to the number of&quot;</span>
-                  <span class="s2">&quot;dimensions of the data data (e.g. 3 for X, Y and Phi&quot;</span>
-                  <span class="s2">&quot;residuals). Observations whose robust Mahalanobis distances&quot;</span>
-                  <span class="s2">&quot;are larger than the obtained quantile will be flagged as&quot;</span>
-                  <span class="s2">&quot;outliers.&quot;</span>
+          <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Quantile probability from the Chi-squared distribution with"</span>
+                  <span class="s2">"number of degrees of freedom equal to the number of"</span>
+                  <span class="s2">"dimensions of the data data (e.g. 3 for X, Y and Phi"</span>
+                  <span class="s2">"residuals). Observations whose robust Mahalanobis distances"</span>
+                  <span class="s2">"are larger than the obtained quantile will be flagged as"</span>
+                  <span class="s2">"outliers."</span>
           <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value_min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">value_max</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
       <span class="p">}</span>
       <span class="n">sauter_poon</span>
-        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Options for the outlier rejector described in Sauter &amp; Poon&quot;</span>
-                <span class="s2">&quot;(2010) (https://doi.org/10.1107/S0021889810010782)&quot;</span>
+        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Options for the outlier rejector described in Sauter &amp; Poon"</span>
+                <span class="s2">"(2010) (https://doi.org/10.1107/S0021889810010782)"</span>
         <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">1</span>
       <span class="p">{</span>
         <span class="n">px_sz</span> <span class="o">=</span> <span class="n">Auto</span>
-          <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;X, Y pixel size in mm. If Auto, this will be taken from the&quot;</span>
-                  <span class="s2">&quot;first panel of the first experiment.&quot;</span>
+          <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"X, Y pixel size in mm. If Auto, this will be taken from the"</span>
+                  <span class="s2">"first panel of the first experiment."</span>
           <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">floats</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">value_min</span><span class="o">=</span><span class="mf">0.001</span><span class="p">)</span>
         <span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span>
-          <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Verbose output.&quot;</span>
+          <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Verbose output."</span>
           <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">bool</span>
           <span class="o">.</span><span class="n">multiple</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="n">pdf</span> <span class="o">=</span> <span class="kc">None</span>
-          <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Output file name for making graphs of |dr| vs spot number&quot;</span>
-                  <span class="s2">&quot;and dy vs dx.&quot;</span>
+          <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Output file name for making graphs of |dr| vs spot number"</span>
+                  <span class="s2">"and dy vs dx."</span>
           <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">str</span>
           <span class="o">.</span><span class="n">multiple</span> <span class="o">=</span> <span class="kc">False</span>
       <span class="p">}</span>
@@ -943,7 +955,7 @@ suitable for prediction and integration.</p>
   <span class="p">}</span>
 <span class="p">}</span>
 <span class="n">nproc</span> <span class="o">=</span> <span class="mi">1</span>
-  <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Number of parallel processes to run&quot;</span>
+  <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Number of parallel processes to run"</span>
   <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -961,7 +973,7 @@ suitable for prediction and integration.</p>
       &#169;2025, Research Agreement between Harvard University and University of Chicago.
       
       |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.1.3</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
       &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
       
       |

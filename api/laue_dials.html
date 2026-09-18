@@ -7,13 +7,13 @@
 
     <title>laue_dials package &#8212; laue-dials</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
-    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=686e5160" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
     <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=8c38d6ca" />
     <script src="../_static/jquery.js?v=5d32c60e"></script>
     <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
     <script src="../_static/documentation_options.js?v=837179f8"></script>
-    <script src="../_static/doctools.js?v=9bcbadda"></script>
-    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <link rel="icon" href="../_static/rs-favicon_32x32.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -114,22 +114,36 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="laue_dials.algorithms.html#module-laue_dials.algorithms.integration">laue_dials.algorithms.integration module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="laue_dials.algorithms.html#laue_dials.algorithms.integration.Profile"><code class="docutils literal notranslate"><span class="pre">Profile</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="laue_dials.algorithms.html#laue_dials.algorithms.integration.Profile.background"><code class="docutils literal notranslate"><span class="pre">Profile.background</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="laue_dials.algorithms.html#laue_dials.algorithms.integration.Profile.difference_vectors"><code class="docutils literal notranslate"><span class="pre">Profile.difference_vectors</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="laue_dials.algorithms.html#laue_dials.algorithms.integration.Profile.fit"><code class="docutils literal notranslate"><span class="pre">Profile.fit()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="laue_dials.algorithms.html#laue_dials.algorithms.integration.Profile.from_dataframe"><code class="docutils literal notranslate"><span class="pre">Profile.from_dataframe()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="laue_dials.algorithms.html#laue_dials.algorithms.integration.Profile.integrate"><code class="docutils literal notranslate"><span class="pre">Profile.integrate()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="laue_dials.algorithms.html#laue_dials.algorithms.integration.Profile.set_profile_params"><code class="docutils literal notranslate"><span class="pre">Profile.set_profile_params()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="laue_dials.algorithms.html#laue_dials.algorithms.integration.Profile.update_background_plane"><code class="docutils literal notranslate"><span class="pre">Profile.update_background_plane()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="laue_dials.algorithms.html#laue_dials.algorithms.integration.Profile.update_mask"><code class="docutils literal notranslate"><span class="pre">Profile.update_mask()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="laue_dials.algorithms.html#laue_dials.algorithms.integration.Profile.update_profile"><code class="docutils literal notranslate"><span class="pre">Profile.update_profile()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="laue_dials.algorithms.html#laue_dials.algorithms.integration.Integrator"><code class="docutils literal notranslate"><span class="pre">Integrator</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="laue_dials.algorithms.html#laue_dials.algorithms.integration.Integrator.assign_knn"><code class="docutils literal notranslate"><span class="pre">Integrator.assign_knn()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="laue_dials.algorithms.html#laue_dials.algorithms.integration.Integrator.estimate_background"><code class="docutils literal notranslate"><span class="pre">Integrator.estimate_background()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="laue_dials.algorithms.html#laue_dials.algorithms.integration.Integrator.estimate_profiles"><code class="docutils literal notranslate"><span class="pre">Integrator.estimate_profiles()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="laue_dials.algorithms.html#laue_dials.algorithms.integration.Integrator.integrate"><code class="docutils literal notranslate"><span class="pre">Integrator.integrate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="laue_dials.algorithms.html#laue_dials.algorithms.integration.Integrator.pixel_weights"><code class="docutils literal notranslate"><span class="pre">Integrator.pixel_weights</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="laue_dials.algorithms.html#laue_dials.algorithms.integration.Integrator.score"><code class="docutils literal notranslate"><span class="pre">Integrator.score</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="laue_dials.algorithms.html#laue_dials.algorithms.integration.Integrator.set_strong"><code class="docutils literal notranslate"><span class="pre">Integrator.set_strong()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="laue_dials.algorithms.html#laue_dials.algorithms.integration.SegmentedImage"><code class="docutils literal notranslate"><span class="pre">SegmentedImage</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="laue_dials.algorithms.html#laue_dials.algorithms.integration.SegmentedImage.integrate"><code class="docutils literal notranslate"><span class="pre">SegmentedImage.integrate()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="laue_dials.algorithms.html#laue_dials.algorithms.integration.IntegratorBase"><code class="docutils literal notranslate"><span class="pre">IntegratorBase</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="laue_dials.algorithms.html#laue_dials.algorithms.integration.IntegratorBase.fg_to_image"><code class="docutils literal notranslate"><span class="pre">IntegratorBase.fg_to_image()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="laue_dials.algorithms.html#laue_dials.algorithms.integration.IntegratorBase.fit"><code class="docutils literal notranslate"><span class="pre">IntegratorBase.fit()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="laue_dials.algorithms.html#laue_dials.algorithms.integration.IntegratorBase.get_log_p_mdist"><code class="docutils literal notranslate"><span class="pre">IntegratorBase.get_log_p_mdist()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="laue_dials.algorithms.html#laue_dials.algorithms.integration.IntegratorBase.log_profile_values"><code class="docutils literal notranslate"><span class="pre">IntegratorBase.log_profile_values</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="laue_dials.algorithms.html#laue_dials.algorithms.integration.IntegratorBase.plot_image"><code class="docutils literal notranslate"><span class="pre">IntegratorBase.plot_image()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="laue_dials.algorithms.html#laue_dials.algorithms.integration.IntegratorBase.plot_image_with_profiles"><code class="docutils literal notranslate"><span class="pre">IntegratorBase.plot_image_with_profiles()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="laue_dials.algorithms.html#laue_dials.algorithms.integration.IntegratorBase.plot_profiles"><code class="docutils literal notranslate"><span class="pre">IntegratorBase.plot_profiles()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="laue_dials.algorithms.html#laue_dials.algorithms.integration.IntegratorBase.predict"><code class="docutils literal notranslate"><span class="pre">IntegratorBase.predict()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="laue_dials.algorithms.html#laue_dials.algorithms.integration.IntegratorBase.profile_dist"><code class="docutils literal notranslate"><span class="pre">IntegratorBase.profile_dist</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="laue_dials.algorithms.html#laue_dials.algorithms.integration.IntegratorBase.profile_values"><code class="docutils literal notranslate"><span class="pre">IntegratorBase.profile_values</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="laue_dials.algorithms.html#laue_dials.algorithms.integration.IntegratorBase.single_profile_image"><code class="docutils literal notranslate"><span class="pre">IntegratorBase.single_profile_image()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="laue_dials.algorithms.html#laue_dials.algorithms.integration.IntegratorBase.windows"><code class="docutils literal notranslate"><span class="pre">IntegratorBase.windows</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="laue_dials.algorithms.html#laue_dials.algorithms.integration.IntegratorBase.xy"><code class="docutils literal notranslate"><span class="pre">IntegratorBase.xy</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="laue_dials.algorithms.html#laue_dials.algorithms.integration.cov"><code class="docutils literal notranslate"><span class="pre">cov()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="laue_dials.algorithms.html#laue_dials.algorithms.integration.estimate_integration_radius"><code class="docutils literal notranslate"><span class="pre">estimate_integration_radius()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="laue_dials.algorithms.html#laue_dials.algorithms.integration.mvn_log_pdf"><code class="docutils literal notranslate"><span class="pre">mvn_log_pdf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="laue_dials.algorithms.html#laue_dials.algorithms.integration.unmasked_prediction_selection"><code class="docutils literal notranslate"><span class="pre">unmasked_prediction_selection()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="laue_dials.algorithms.html#module-laue_dials.algorithms.laue">laue_dials.algorithms.laue module</a><ul>
@@ -206,6 +220,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="laue_dials.command_line.html#module-laue_dials.command_line.predict">laue_dials.command_line.predict module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="laue_dials.command_line.html#laue_dials.command_line.predict.filter_masked_predictions"><code class="docutils literal notranslate"><span class="pre">filter_masked_predictions()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="laue_dials.command_line.html#laue_dials.command_line.predict.predict_spots"><code class="docutils literal notranslate"><span class="pre">predict_spots()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="laue_dials.command_line.html#laue_dials.command_line.predict.run"><code class="docutils literal notranslate"><span class="pre">run()</span></code></a></li>
 </ul>
@@ -259,7 +274,7 @@
       &#169;2025, Research Agreement between Harvard University and University of Chicago.
       
       |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.1.3</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
       &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
       
       |

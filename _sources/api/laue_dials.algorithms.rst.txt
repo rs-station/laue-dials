@@ -11,37 +11,37 @@ laue\_dials.algorithms.diffgeo module
 
 .. automodule:: laue_dials.algorithms.diffgeo
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 laue\_dials.algorithms.integration module
 -----------------------------------------
 
 .. automodule:: laue_dials.algorithms.integration
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 laue\_dials.algorithms.laue module
 ----------------------------------
 
 .. automodule:: laue_dials.algorithms.laue
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 laue\_dials.algorithms.monochromatic module
 -------------------------------------------
 
 .. automodule:: laue_dials.algorithms.monochromatic
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 laue\_dials.algorithms.outliers module
 --------------------------------------
 
 .. automodule:: laue_dials.algorithms.outliers
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

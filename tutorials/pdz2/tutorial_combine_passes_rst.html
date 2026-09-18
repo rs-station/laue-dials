@@ -7,13 +7,13 @@
 
     <title>Installation &#8212; laue-dials</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
-    <link rel="stylesheet" type="text/css" href="../../_static/basic.css?v=686e5160" />
+    <link rel="stylesheet" type="text/css" href="../../_static/basic.css?v=b08954a9" />
     <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=8c38d6ca" />
     <script src="../../_static/jquery.js?v=5d32c60e"></script>
     <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
     <script src="../../_static/documentation_options.js?v=837179f8"></script>
-    <script src="../../_static/doctools.js?v=9bcbadda"></script>
-    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <link rel="icon" href="../../_static/rs-favicon_32x32.png"/>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -172,17 +172,17 @@ dataset.</p>
 <p>First, we create two dictionaries, <code class="docutils literal notranslate"><span class="pre">START_ANGLES</span></code> and <code class="docutils literal notranslate"><span class="pre">OSCS</span></code>, that
 respectively map the pass names to the start angles and rotation steps
 (treated as oscillations in <code class="docutils literal notranslate"><span class="pre">dials.import)</span></code>.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">declare</span> <span class="o">-</span><span class="n">A</span> <span class="n">START_ANGLES</span><span class="o">=</span><span class="p">(</span> <span class="p">[</span><span class="s2">&quot;c&quot;</span><span class="p">]</span><span class="o">=</span><span class="mi">0</span> <span class="p">[</span><span class="s2">&quot;d&quot;</span><span class="p">]</span><span class="o">=</span><span class="mi">92</span> <span class="p">[</span><span class="s2">&quot;e&quot;</span><span class="p">]</span><span class="o">=</span><span class="mi">181</span> <span class="p">[</span><span class="s2">&quot;f&quot;</span><span class="p">]</span><span class="o">=</span><span class="mf">361.5</span><span class="p">)</span>
-<span class="n">declare</span> <span class="o">-</span><span class="n">A</span> <span class="n">OSCS</span><span class="o">=</span><span class="p">(</span> <span class="p">[</span><span class="s2">&quot;c&quot;</span><span class="p">]</span><span class="o">=</span><span class="mi">2</span> <span class="p">[</span><span class="s2">&quot;d&quot;</span><span class="p">]</span><span class="o">=</span><span class="mi">2</span> <span class="p">[</span><span class="s2">&quot;e&quot;</span><span class="p">]</span><span class="o">=</span><span class="mi">2</span> <span class="p">[</span><span class="s2">&quot;f&quot;</span><span class="p">]</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">declare</span> <span class="o">-</span><span class="n">A</span> <span class="n">START_ANGLES</span><span class="o">=</span><span class="p">(</span> <span class="p">[</span><span class="s2">"c"</span><span class="p">]</span><span class="o">=</span><span class="mi">0</span> <span class="p">[</span><span class="s2">"d"</span><span class="p">]</span><span class="o">=</span><span class="mi">92</span> <span class="p">[</span><span class="s2">"e"</span><span class="p">]</span><span class="o">=</span><span class="mi">181</span> <span class="p">[</span><span class="s2">"f"</span><span class="p">]</span><span class="o">=</span><span class="mf">361.5</span><span class="p">)</span>
+<span class="n">declare</span> <span class="o">-</span><span class="n">A</span> <span class="n">OSCS</span><span class="o">=</span><span class="p">(</span> <span class="p">[</span><span class="s2">"c"</span><span class="p">]</span><span class="o">=</span><span class="mi">2</span> <span class="p">[</span><span class="s2">"d"</span><span class="p">]</span><span class="o">=</span><span class="mi">2</span> <span class="p">[</span><span class="s2">"e"</span><span class="p">]</span><span class="o">=</span><span class="mi">2</span> <span class="p">[</span><span class="s2">"f"</span><span class="p">]</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Then, we import the files for the <code class="docutils literal notranslate"><span class="pre">c</span></code>,<code class="docutils literal notranslate"><span class="pre">off</span></code> images using
 <code class="docutils literal notranslate"><span class="pre">dials.import</span></code>.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1">#this is the delay time.</span>
-<span class="nv">TIME</span><span class="o">=</span><span class="s2">&quot;off&quot;</span>
+<span class="nv">TIME</span><span class="o">=</span><span class="s2">"off"</span>
 <span class="c1"># this is the pass.</span>
-<span class="nv">pass</span><span class="o">=</span><span class="s2">&quot;c&quot;</span>
-<span class="nv">FILE_INPUT_TEMPLATE</span><span class="o">=</span><span class="s2">&quot;data/e35</span><span class="si">${</span><span class="nv">pass</span><span class="si">}</span><span class="s2">_</span><span class="si">${</span><span class="nv">TIME</span><span class="si">}</span><span class="s2">_###.mccd&quot;</span>
+<span class="nv">pass</span><span class="o">=</span><span class="s2">"c"</span>
+<span class="nv">FILE_INPUT_TEMPLATE</span><span class="o">=</span><span class="s2">"data/e35</span><span class="si">${</span><span class="nv">pass</span><span class="si">}</span><span class="s2">_</span><span class="si">${</span><span class="nv">TIME</span><span class="si">}</span><span class="s2">_###.mccd"</span>
 <span class="c1"># Import data into DIALS files</span>
 dials.import<span class="w"> </span>geometry.scan.oscillation<span class="o">=</span><span class="si">${</span><span class="nv">START_ANGLES</span><span class="p">[</span><span class="nv">$pass</span><span class="p">]</span><span class="si">}</span>,<span class="si">${</span><span class="nv">OSCS</span><span class="p">[</span><span class="nv">$pass</span><span class="p">]</span><span class="si">}</span><span class="se">\</span>
 <span class="w">    </span>geometry.goniometer.invert_rotation_axis<span class="o">=</span>True<span class="w"> </span><span class="se">\</span>
@@ -223,7 +223,7 @@ use that mask during spotfinding.</p></li>
 <span class="w">    </span>spotfinder.filter.max_separation<span class="o">=</span><span class="m">10</span>
 </pre></div>
 </div>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">CELL</span><span class="o">=</span><span class="s1">&#39;&quot;65.3,39.45,39.01,90.000,117.45,90.000&quot;&#39;</span><span class="w"> </span><span class="c1">#this is a unit cell of PDZ2 from PDB 5E11</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">CELL</span><span class="o">=</span><span class="s1">'"65.3,39.45,39.01,90.000,117.45,90.000"'</span><span class="w"> </span><span class="c1">#this is a unit cell of PDZ2 from PDB 5E11</span>
 
 laue.index<span class="w"> </span>imported.expt<span class="w"> </span>strong.refl<span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>indexer.indexing.known_symmetry.space_group<span class="o">=</span><span class="m">5</span><span class="w"> </span><span class="se">\</span>
@@ -254,7 +254,7 @@ here</a>.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>dials.image_viewer<span class="w"> </span>imported.expt<span class="w"> </span>strong.refl
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="../../_images/PDZ2_spotfinding_image_viewer.png"><img alt="First image of PDZ2 dataset with spotfinding results." src="../../_images/PDZ2_spotfinding_image_viewer.png" style="width: 800px;" />
+<a class="reference internal image-reference" href="../../_images/PDZ2_spotfinding_image_viewer.png"><img alt="First image of PDZ2 dataset with spotfinding results." src="../../_images/PDZ2_spotfinding_image_viewer.png" width="800" />
 </a>
 </section>
 <section id="making-stills">
@@ -283,9 +283,9 @@ the centroids of all strong and weak reflections on the detector.</p>
 <p><code class="docutils literal notranslate"><span class="pre">laue.integrate</span></code> then builds spot profiles and integrates intensities
 on the detector.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>laue.optimize_indexing<span class="w"> </span>stills.*<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>output.experiments<span class="o">=</span><span class="s2">&quot;optimized.expt&quot;</span><span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>output.reflections<span class="o">=</span><span class="s2">&quot;optimized.refl&quot;</span><span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>output.log<span class="o">=</span><span class="s2">&quot;laue.optimize_indexing.log&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>output.experiments<span class="o">=</span><span class="s2">"optimized.expt"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>output.reflections<span class="o">=</span><span class="s2">"optimized.refl"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>output.log<span class="o">=</span><span class="s2">"laue.optimize_indexing.log"</span><span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>wavelengths.lam_min<span class="o">=</span><span class="m">0</span>.95<span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>wavelengths.lam_max<span class="o">=</span><span class="m">1</span>.2<span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>reciprocal_grid.d_min<span class="o">=</span><span class="m">1</span>.7<span class="w"> </span><span class="se">\</span>
@@ -293,9 +293,9 @@ on the detector.</p>
 </pre></div>
 </div>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>laue.refine<span class="w"> </span>optimized.*<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>output.experiments<span class="o">=</span><span class="s2">&quot;poly_refined.expt&quot;</span><span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>output.reflections<span class="o">=</span><span class="s2">&quot;poly_refined.refl&quot;</span><span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>output.log<span class="o">=</span><span class="s2">&quot;laue.poly_refined.log&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>output.experiments<span class="o">=</span><span class="s2">"poly_refined.expt"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>output.reflections<span class="o">=</span><span class="s2">"poly_refined.refl"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>output.log<span class="o">=</span><span class="s2">"laue.poly_refined.log"</span><span class="w"> </span><span class="se">\</span>
 <span class="w">    </span><span class="nv">nproc</span><span class="o">=</span><span class="m">8</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>sink.log
 </pre></div>
 </div>
@@ -304,7 +304,7 @@ root-mean-square deviations (rmsds) as a function of image.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>laue.compute_rmsds<span class="w"> </span>poly_refined.*<span class="w"> </span><span class="nv">refined_only</span><span class="o">=</span>True<span class="w"> </span><span class="nv">show</span><span class="o">=</span>True<span class="w"> </span><span class="nv">save</span><span class="o">=</span>True
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="../../_images/residuals.png"><img alt="RMSDs of PDZ2 dataset after polychromatic refinement." src="../../_images/residuals.png" style="width: 600px;" />
+<a class="reference internal image-reference" href="../../_images/residuals.png"><img alt="RMSDs of PDZ2 dataset after polychromatic refinement." src="../../_images/residuals.png" width="600" />
 </a>
 <p>These <code class="docutils literal notranslate"><span class="pre">rmsd</span></code>s look good.</p>
 </section>
@@ -317,7 +317,7 @@ resemble the beam spectrum, so this is a good check to do at this time!</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>laue.plot_wavelengths<span class="w"> </span>poly_refined.refl<span class="w"> </span><span class="nv">refined_only</span><span class="o">=</span>True<span class="w"> </span><span class="nv">save</span><span class="o">=</span>True<span class="w"> </span><span class="nv">show</span><span class="o">=</span>True
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="../../_images/wavelengths.png"><img alt="Assigned wavelengths of PDZ2 dataset after polychromatic refinement." src="../../_images/wavelengths.png" style="width: 600px;" />
+<a class="reference internal image-reference" href="../../_images/wavelengths.png"><img alt="Assigned wavelengths of PDZ2 dataset after polychromatic refinement." src="../../_images/wavelengths.png" width="600" />
 </a>
 <p>This is the expected wavelength profile, indicating successful
 wavelength assignment.</p>
@@ -341,8 +341,8 @@ our refined experiment model, and at each of those locations we will
 integrate the intensities to get an <code class="docutils literal notranslate"><span class="pre">mtz</span></code> file that we can feed into
 <code class="docutils literal notranslate"><span class="pre">careless</span></code>.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>laue.predict<span class="w"> </span>poly_refined.*<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>output.reflections<span class="o">=</span><span class="s2">&quot;predicted.refl&quot;</span><span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>output.log<span class="o">=</span><span class="s2">&quot;laue.predict.log&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>output.reflections<span class="o">=</span><span class="s2">"predicted.refl"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>output.log<span class="o">=</span><span class="s2">"laue.predict.log"</span><span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>wavelengths.lam_min<span class="o">=</span><span class="m">0</span>.95<span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>wavelengths.lam_max<span class="o">=</span><span class="m">1</span>.2<span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>reciprocal_grid.d_min<span class="o">=</span><span class="m">1</span>.7<span class="w"> </span><span class="se">\</span>
@@ -350,8 +350,8 @@ integrate the intensities to get an <code class="docutils literal notranslate"><
 </pre></div>
 </div>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>laue.integrate<span class="w"> </span>poly_refined.expt<span class="w"> </span>predicted.refl<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>output.filename<span class="o">=</span><span class="s2">&quot;integrated.mtz&quot;</span><span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>output.log<span class="o">=</span><span class="s2">&quot;laue.integrate.log&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>output.filename<span class="o">=</span><span class="s2">"integrated.mtz"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>output.log<span class="o">=</span><span class="s2">"laue.integrate.log"</span><span class="w"> </span><span class="se">\</span>
 <span class="w">    </span><span class="nv">nproc</span><span class="o">=</span><span class="m">8</span>
 </pre></div>
 </div>
@@ -375,9 +375,9 @@ run it as a standalone parallel script, attached as
 <code class="docutils literal notranslate"><span class="pre">gain_0,3</span></code> containing subfolders of <code class="docutils literal notranslate"><span class="pre">dials</span></code> files for each pass. For
 example, <code class="docutils literal notranslate"><span class="pre">../gain_0,3-from_stills/dials_files_d_100ns</span></code> contains
 <code class="docutils literal notranslate"><span class="pre">dials</span></code> files for pass <code class="docutils literal notranslate"><span class="pre">d</span></code>, timepoint <code class="docutils literal notranslate"><span class="pre">100ns</span></code>.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">declare</span><span class="w"> </span>-A<span class="w"> </span><span class="nv">START_ANGLES</span><span class="o">=(</span><span class="w"> </span><span class="o">[</span><span class="s2">&quot;c&quot;</span><span class="o">]=</span><span class="m">0</span><span class="w"> </span><span class="o">[</span><span class="s2">&quot;d&quot;</span><span class="o">]=</span><span class="m">92</span><span class="w"> </span><span class="o">[</span><span class="s2">&quot;e&quot;</span><span class="o">]=</span><span class="m">181</span><span class="w"> </span><span class="o">[</span><span class="s2">&quot;f&quot;</span><span class="o">]=</span><span class="m">361</span>.5<span class="o">)</span>
-<span class="nb">declare</span><span class="w"> </span>-A<span class="w"> </span><span class="nv">OSCS</span><span class="o">=(</span><span class="w"> </span><span class="o">[</span><span class="s2">&quot;c&quot;</span><span class="o">]=</span><span class="m">2</span><span class="w"> </span><span class="o">[</span><span class="s2">&quot;d&quot;</span><span class="o">]=</span><span class="m">2</span><span class="w"> </span><span class="o">[</span><span class="s2">&quot;e&quot;</span><span class="o">]=</span><span class="m">2</span><span class="w"> </span><span class="o">[</span><span class="s2">&quot;f&quot;</span><span class="o">]=</span><span class="m">1</span><span class="o">)</span>
-<span class="nb">declare</span><span class="w"> </span>-A<span class="w"> </span><span class="nv">DELAY</span><span class="o">=</span><span class="s2">&quot;off&quot;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">declare</span><span class="w"> </span>-A<span class="w"> </span><span class="nv">START_ANGLES</span><span class="o">=(</span><span class="w"> </span><span class="o">[</span><span class="s2">"c"</span><span class="o">]=</span><span class="m">0</span><span class="w"> </span><span class="o">[</span><span class="s2">"d"</span><span class="o">]=</span><span class="m">92</span><span class="w"> </span><span class="o">[</span><span class="s2">"e"</span><span class="o">]=</span><span class="m">181</span><span class="w"> </span><span class="o">[</span><span class="s2">"f"</span><span class="o">]=</span><span class="m">361</span>.5<span class="o">)</span>
+<span class="nb">declare</span><span class="w"> </span>-A<span class="w"> </span><span class="nv">OSCS</span><span class="o">=(</span><span class="w"> </span><span class="o">[</span><span class="s2">"c"</span><span class="o">]=</span><span class="m">2</span><span class="w"> </span><span class="o">[</span><span class="s2">"d"</span><span class="o">]=</span><span class="m">2</span><span class="w"> </span><span class="o">[</span><span class="s2">"e"</span><span class="o">]=</span><span class="m">2</span><span class="w"> </span><span class="o">[</span><span class="s2">"f"</span><span class="o">]=</span><span class="m">1</span><span class="o">)</span>
+<span class="nb">declare</span><span class="w"> </span>-A<span class="w"> </span><span class="nv">DELAY</span><span class="o">=</span><span class="s2">"off"</span>
 
 <span class="nv">gain</span><span class="o">=</span><span class="m">0</span>.3
 <span class="k">for</span><span class="w"> </span>pass<span class="w"> </span><span class="k">in</span><span class="w"> </span>c<span class="w"> </span>d<span class="w"> </span>e<span class="w"> </span>f
@@ -392,12 +392,12 @@ example, <code class="docutils literal notranslate"><span class="pre">../gain_0,
 </div>
 <p>Once the <code class="docutils literal notranslate"><span class="pre">off</span></code> timepoint series finish, we process the remaining
 timepoints.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">declare</span><span class="w"> </span>-A<span class="w"> </span><span class="nv">START_ANGLES</span><span class="o">=(</span><span class="w"> </span><span class="o">[</span><span class="s2">&quot;c&quot;</span><span class="o">]=</span><span class="m">0</span><span class="w"> </span><span class="o">[</span><span class="s2">&quot;d&quot;</span><span class="o">]=</span><span class="m">92</span><span class="w"> </span><span class="o">[</span><span class="s2">&quot;e&quot;</span><span class="o">]=</span><span class="m">181</span><span class="w"> </span><span class="o">[</span><span class="s2">&quot;f&quot;</span><span class="o">]=</span><span class="m">361</span>.5<span class="o">)</span>
-<span class="nb">declare</span><span class="w"> </span>-A<span class="w"> </span><span class="nv">OSCS</span><span class="o">=(</span><span class="w"> </span><span class="o">[</span><span class="s2">&quot;c&quot;</span><span class="o">]=</span><span class="m">2</span><span class="w"> </span><span class="o">[</span><span class="s2">&quot;d&quot;</span><span class="o">]=</span><span class="m">2</span><span class="w"> </span><span class="o">[</span><span class="s2">&quot;e&quot;</span><span class="o">]=</span><span class="m">2</span><span class="w"> </span><span class="o">[</span><span class="s2">&quot;f&quot;</span><span class="o">]=</span><span class="m">1</span><span class="o">)</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">declare</span><span class="w"> </span>-A<span class="w"> </span><span class="nv">START_ANGLES</span><span class="o">=(</span><span class="w"> </span><span class="o">[</span><span class="s2">"c"</span><span class="o">]=</span><span class="m">0</span><span class="w"> </span><span class="o">[</span><span class="s2">"d"</span><span class="o">]=</span><span class="m">92</span><span class="w"> </span><span class="o">[</span><span class="s2">"e"</span><span class="o">]=</span><span class="m">181</span><span class="w"> </span><span class="o">[</span><span class="s2">"f"</span><span class="o">]=</span><span class="m">361</span>.5<span class="o">)</span>
+<span class="nb">declare</span><span class="w"> </span>-A<span class="w"> </span><span class="nv">OSCS</span><span class="o">=(</span><span class="w"> </span><span class="o">[</span><span class="s2">"c"</span><span class="o">]=</span><span class="m">2</span><span class="w"> </span><span class="o">[</span><span class="s2">"d"</span><span class="o">]=</span><span class="m">2</span><span class="w"> </span><span class="o">[</span><span class="s2">"e"</span><span class="o">]=</span><span class="m">2</span><span class="w"> </span><span class="o">[</span><span class="s2">"f"</span><span class="o">]=</span><span class="m">1</span><span class="o">)</span>
 <span class="nv">gain</span><span class="o">=</span><span class="m">0</span>.3
-<span class="k">for</span><span class="w"> </span>delay<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="s2">&quot;50ns&quot;</span><span class="w"> </span><span class="s2">&quot;100ns&quot;</span><span class="w"> </span><span class="s2">&quot;200ns&quot;</span>
+<span class="k">for</span><span class="w"> </span>delay<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="s2">"50ns"</span><span class="w"> </span><span class="s2">"100ns"</span><span class="w"> </span><span class="s2">"200ns"</span>
 <span class="k">do</span>
-<span class="w">    </span><span class="k">for</span><span class="w"> </span>pass<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="s2">&quot;c&quot;</span><span class="w"> </span><span class="s2">&quot;d&quot;</span><span class="w"> </span><span class="s2">&quot;e&quot;</span><span class="w"> </span><span class="s2">&quot;f&quot;</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span>pass<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="s2">"c"</span><span class="w"> </span><span class="s2">"d"</span><span class="w"> </span><span class="s2">"e"</span><span class="w"> </span><span class="s2">"f"</span>
 <span class="w">    </span><span class="k">do</span>
 <span class="w">        </span>sh<span class="w"> </span>scripts/one_pass-from_off.sh<span class="w"> </span><span class="nv">$pass</span><span class="w"> </span><span class="nv">$delay</span><span class="w"> </span><span class="si">${</span><span class="nv">START_ANGLES</span><span class="p">[</span><span class="nv">$pass</span><span class="p">]</span><span class="si">}</span><span class="w"> </span><span class="si">${</span><span class="nv">OSCS</span><span class="p">[</span><span class="nv">$pass</span><span class="p">]</span><span class="si">}</span><span class="w"> </span><span class="nv">$gain</span><span class="w"> </span>x,y,z<span class="w"> </span>&gt;&gt;<span class="w"> </span>sink.log
 <span class="w">    </span><span class="k">done</span>
@@ -411,7 +411,7 @@ be found in <code class="docutils literal notranslate"><span class="pre">gain_0,
 </pre></div>
 </div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">reciprocalspaceship</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">rs</span>
-<span class="n">rs</span><span class="o">.</span><span class="n">read_mtz</span><span class="p">(</span><span class="s2">&quot;gain_0,3/ld_0,3_mtzs/cdef_e35_off.mtz&quot;</span><span class="p">)</span>
+<span class="n">rs</span><span class="o">.</span><span class="n">read_mtz</span><span class="p">(</span><span class="s2">"gain_0,3/ld_0,3_mtzs/cdef_e35_off.mtz"</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>We expect a mtz file with about 350,000 reflections.</p>
@@ -456,7 +456,7 @@ free to consult documentation or email the
       &#169;2025, Research Agreement between Harvard University and University of Chicago.
       
       |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.1.3</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
       &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
       
       |

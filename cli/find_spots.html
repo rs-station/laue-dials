@@ -7,13 +7,13 @@
 
     <title>laue_dials.find_spots &#8212; laue-dials</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
-    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=686e5160" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
     <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=8c38d6ca" />
     <script src="../_static/jquery.js?v=5d32c60e"></script>
     <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
     <script src="../_static/documentation_options.js?v=837179f8"></script>
-    <script src="../_static/doctools.js?v=9bcbadda"></script>
-    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <link rel="icon" href="../_static/rs-favicon_32x32.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -120,10 +120,10 @@ that contains all the found strong spots for the experiment.</p>
 <section id="basic-parameters">
 <h2>Basic parameters<a class="headerlink" href="#basic-parameters" title="Link to this heading"></a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">output</span> <span class="p">{</span>
-  <span class="n">reflections</span> <span class="o">=</span> <span class="s1">&#39;strong.refl&#39;</span>
+  <span class="n">reflections</span> <span class="o">=</span> <span class="s1">'strong.refl'</span>
   <span class="n">shoeboxes</span> <span class="o">=</span> <span class="kc">False</span>
   <span class="n">experiments</span> <span class="o">=</span> <span class="kc">None</span>
-  <span class="n">log</span> <span class="o">=</span> <span class="s1">&#39;laue.find_spots.log&#39;</span>
+  <span class="n">log</span> <span class="o">=</span> <span class="s1">'laue.find_spots.log'</span>
 <span class="p">}</span>
 <span class="n">per_image_statistics</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="n">spotfinder</span> <span class="p">{</span>
@@ -131,7 +131,7 @@ that contains all the found strong spots for the experiment.</p>
     <span class="n">mask</span> <span class="o">=</span> <span class="kc">None</span>
   <span class="p">}</span>
   <span class="n">write_hot_mask</span> <span class="o">=</span> <span class="kc">False</span>
-  <span class="n">hot_mask_prefix</span> <span class="o">=</span> <span class="s1">&#39;hot_mask&#39;</span>
+  <span class="n">hot_mask_prefix</span> <span class="o">=</span> <span class="s1">'hot_mask'</span>
   <span class="n">force_2d</span> <span class="o">=</span> <span class="kc">True</span>
   <span class="n">scan_range</span> <span class="o">=</span> <span class="kc">None</span>
   <span class="n">region_of_interest</span> <span class="o">=</span> <span class="kc">None</span>
@@ -163,6 +163,12 @@ that contains all the found strong spots for the experiment.</p>
     <span class="n">chunksize</span> <span class="o">=</span> <span class="n">auto</span>
     <span class="n">min_chunksize</span> <span class="o">=</span> <span class="mi">20</span>
   <span class="p">}</span>
+  <span class="n">tof</span> <span class="p">{</span>
+    <span class="n">rs_proximity_threshold_multiplier</span> <span class="o">=</span> <span class="kc">None</span>
+  <span class="p">}</span>
+  <span class="n">laue</span> <span class="p">{</span>
+    <span class="n">initial_wavelength</span> <span class="o">=</span> <span class="kc">None</span>
+  <span class="p">}</span>
   <span class="n">threshold</span> <span class="p">{</span>
     <span class="n">algorithm</span> <span class="o">=</span> <span class="n">dispersion</span> <span class="o">*</span><span class="n">dispersion_extended</span> <span class="n">radial_profile</span>
     <span class="n">dispersion</span> <span class="p">{</span>
@@ -182,101 +188,101 @@ that contains all the found strong spots for the experiment.</p>
 <section id="full-parameter-definitions">
 <h2>Full parameter definitions<a class="headerlink" href="#full-parameter-definitions" title="Link to this heading"></a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">output</span> <span class="p">{</span>
-  <span class="n">reflections</span> <span class="o">=</span> <span class="s1">&#39;strong.refl&#39;</span>
-    <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;The output filename&quot;</span>
+  <span class="n">reflections</span> <span class="o">=</span> <span class="s1">'strong.refl'</span>
+    <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"The output filename"</span>
     <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">str</span>
   <span class="n">shoeboxes</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Save the raw pixel values inside the reflection shoeboxes.&quot;</span>
+    <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Save the raw pixel values inside the reflection shoeboxes."</span>
     <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">bool</span>
   <span class="n">experiments</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Save the modified experiments. (usually only modified with hot&quot;</span>
-            <span class="s2">&quot;pixel mask)&quot;</span>
+    <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Save the modified experiments. (usually only modified with hot"</span>
+            <span class="s2">"pixel mask)"</span>
     <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">str</span>
-  <span class="n">log</span> <span class="o">=</span> <span class="s1">&#39;laue.find_spots.log&#39;</span>
-    <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;The log filename&quot;</span>
+  <span class="n">log</span> <span class="o">=</span> <span class="s1">'laue.find_spots.log'</span>
+    <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"The log filename"</span>
     <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">str</span>
 <span class="p">}</span>
 <span class="n">maximum_trusted_value</span> <span class="o">=</span> <span class="kc">None</span>
-  <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Override maximum trusted value for spot finding only&quot;</span>
+  <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Override maximum trusted value for spot finding only"</span>
   <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
   <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">2</span>
 <span class="n">per_image_statistics</span> <span class="o">=</span> <span class="kc">False</span>
-  <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Whether or not to print a table of per-image statistics.&quot;</span>
+  <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Whether or not to print a table of per-image statistics."</span>
   <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">bool</span>
 <span class="n">spotfinder</span>
-  <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Parameters used in the spot finding algorithm.&quot;</span>
+  <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Parameters used in the spot finding algorithm."</span>
 <span class="p">{</span>
   <span class="n">lookup</span>
-    <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Parameters specifying lookup file path&quot;</span>
+    <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Parameters specifying lookup file path"</span>
   <span class="p">{</span>
     <span class="n">mask</span> <span class="o">=</span> <span class="kc">None</span>
-      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;The path to the mask file.&quot;</span>
+      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"The path to the mask file."</span>
       <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">str</span>
   <span class="p">}</span>
   <span class="n">write_hot_mask</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Write the hot mask&quot;</span>
+    <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Write the hot mask"</span>
     <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">bool</span>
-  <span class="n">hot_mask_prefix</span> <span class="o">=</span> <span class="s1">&#39;hot_mask&#39;</span>
-    <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Prefix for the hot mask pickle file&quot;</span>
+  <span class="n">hot_mask_prefix</span> <span class="o">=</span> <span class="s1">'hot_mask'</span>
+    <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Prefix for the hot mask pickle file"</span>
     <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">str</span>
   <span class="n">force_2d</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Do spot finding in 2D&quot;</span>
+    <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Do spot finding in 2D"</span>
     <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">bool</span>
   <span class="n">scan_range</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;The range of images to use in finding spots. The ranges are&quot;</span>
-            <span class="s2">&quot;inclusive (e.g. j0 &lt;= j &lt; j1). For sequences the scan range is&quot;</span>
-            <span class="s2">&quot;interpreted as the literal scan range. Whereas for imagesets the&quot;</span>
-            <span class="s2">&quot;scan range is interpreted as the image number in the imageset.&quot;</span>
-            <span class="s2">&quot;Multiple ranges can be specified by repeating the scan_range=&quot;</span>
-            <span class="s2">&quot;parameter.&quot;</span>
+    <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"The range of images to use in finding spots. The ranges are"</span>
+            <span class="s2">"inclusive (e.g. j0 &lt;= j &lt; j1). For sequences the scan range is"</span>
+            <span class="s2">"interpreted as the literal scan range. Whereas for imagesets the"</span>
+            <span class="s2">"scan range is interpreted as the image number in the imageset."</span>
+            <span class="s2">"Multiple ranges can be specified by repeating the scan_range="</span>
+            <span class="s2">"parameter."</span>
     <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">ints</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
     <span class="o">.</span><span class="n">multiple</span> <span class="o">=</span> <span class="kc">True</span>
   <span class="n">exclude_images</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Input in the format exp:start:end Exclude a range of images&quot;</span>
-            <span class="s2">&quot;(start, stop) from the dataset with experiment identifier exp &quot;</span>
-            <span class="s2">&quot;(inclusive of frames start, stop). Multiple ranges can be given&quot;</span>
-            <span class="s2">&quot;in one go, e.g. exclude_images=0:150:200,1:200:250&quot;</span>
-            <span class="s2">&quot;exclude_images=&#39;0:150:200 1:200:250&#39;&quot;</span>
-    <span class="o">.</span><span class="n">short_caption</span> <span class="o">=</span> <span class="s2">&quot;Exclude images&quot;</span>
+    <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Input in the format exp:start:end Exclude a range of images"</span>
+            <span class="s2">"(start, stop) from the dataset with experiment identifier exp "</span>
+            <span class="s2">"(inclusive of frames start, stop). Multiple ranges can be given"</span>
+            <span class="s2">"in one go, e.g. exclude_images=0:150:200,1:200:250"</span>
+            <span class="s2">"exclude_images='0:150:200 1:200:250'"</span>
+    <span class="o">.</span><span class="n">short_caption</span> <span class="o">=</span> <span class="s2">"Exclude images"</span>
     <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">strings</span>
     <span class="o">.</span><span class="n">multiple</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">1</span>
   <span class="n">exclude_images_multiple</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Exclude this single image and each multiple of this image number&quot;</span>
-            <span class="s2">&quot;in each experiment. This is provided as a convenient shorthand to&quot;</span>
-            <span class="s2">&quot;specify image exclusions for cRED data, where the scan of&quot;</span>
-            <span class="s2">&quot;diffraction images is interrupted at regular intervals by a&quot;</span>
-            <span class="s2">&quot;crystal positioning image (typically every 20th image).&quot;</span>
+    <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Exclude this single image and each multiple of this image number"</span>
+            <span class="s2">"in each experiment. This is provided as a convenient shorthand to"</span>
+            <span class="s2">"specify image exclusions for cRED data, where the scan of"</span>
+            <span class="s2">"diffraction images is interrupted at regular intervals by a"</span>
+            <span class="s2">"crystal positioning image (typically every 20th image)."</span>
     <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value_min</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">2</span>
   <span class="n">region_of_interest</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;A region of interest to look for spots. Specified as: x0,x1,y0,y1&quot;</span>
-            <span class="s2">&quot;The pixels x0 and y0 are included in the range but the pixels x1&quot;</span>
-            <span class="s2">&quot;and y1 are not. To specify an ROI covering the whole image set&quot;</span>
-            <span class="s2">&quot;region_of_interest=0,width,0,height.&quot;</span>
+    <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"A region of interest to look for spots. Specified as: x0,x1,y0,y1"</span>
+            <span class="s2">"The pixels x0 and y0 are included in the range but the pixels x1"</span>
+            <span class="s2">"and y1 are not. To specify an ROI covering the whole image set"</span>
+            <span class="s2">"region_of_interest=0,width,0,height."</span>
     <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">ints</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
   <span class="n">compute_mean_background</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Compute the mean background for each image&quot;</span>
+    <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Compute the mean background for each image"</span>
     <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">bool</span>
   <span class="nb">filter</span>
-    <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Parameters used in the spot finding filter strategy.&quot;</span>
+    <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Parameters used in the spot finding filter strategy."</span>
   <span class="p">{</span>
     <span class="n">min_spot_size</span> <span class="o">=</span> <span class="n">Auto</span>
-      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;The minimum number of contiguous pixels for a spot to be&quot;</span>
-              <span class="s2">&quot;accepted by the filtering algorithm.&quot;</span>
+      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"The minimum number of contiguous pixels for a spot to be"</span>
+              <span class="s2">"accepted by the filtering algorithm."</span>
       <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value_min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">max_spot_size</span> <span class="o">=</span> <span class="mi">1000</span>
-      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;The maximum number of contiguous pixels for a spot to be&quot;</span>
-              <span class="s2">&quot;accepted by the filtering algorithm.&quot;</span>
+      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"The maximum number of contiguous pixels for a spot to be"</span>
+              <span class="s2">"accepted by the filtering algorithm."</span>
       <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value_min</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     <span class="n">max_separation</span> <span class="o">=</span> <span class="mi">2</span>
-      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;The maximum peak-to-centroid separation (in pixels) for a spot&quot;</span>
-              <span class="s2">&quot;to be accepted by the filtering algorithm.&quot;</span>
+      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"The maximum peak-to-centroid separation (in pixels) for a spot"</span>
+              <span class="s2">"to be accepted by the filtering algorithm."</span>
       <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value_min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
       <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">max_strong_pixel_fraction</span> <span class="o">=</span> <span class="mf">0.25</span>
-      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;If the fraction of pixels in an image marked as strong is&quot;</span>
-              <span class="s2">&quot;greater than this value, throw an exception&quot;</span>
+      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"If the fraction of pixels in an image marked as strong is"</span>
+              <span class="s2">"greater than this value, throw an exception"</span>
       <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value_min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">value_max</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">background_gradient</span>
       <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">2</span>
@@ -295,159 +301,174 @@ that contains all the found strong spots for the experiment.</p>
         <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">bool</span>
     <span class="p">}</span>
     <span class="n">border</span> <span class="o">=</span> <span class="mi">0</span>
-      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;The border around the edge of the image.&quot;</span>
+      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"The border around the edge of the image."</span>
       <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">d_min</span> <span class="o">=</span> <span class="kc">None</span>
-      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;The high resolution limit in Angstrom for a pixel to be&quot;</span>
-              <span class="s2">&quot;accepted by the filtering algorithm.&quot;</span>
+      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"The high resolution limit in Angstrom for a pixel to be"</span>
+              <span class="s2">"accepted by the filtering algorithm."</span>
       <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value_min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">d_max</span> <span class="o">=</span> <span class="kc">None</span>
-      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;The low resolution limit in Angstrom for a pixel to be accepted&quot;</span>
-              <span class="s2">&quot;by the filtering algorithm.&quot;</span>
+      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"The low resolution limit in Angstrom for a pixel to be accepted"</span>
+              <span class="s2">"by the filtering algorithm."</span>
       <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value_min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">disable_parallax_correction</span> <span class="o">=</span> <span class="kc">False</span>
-      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Set to ``True`` to use a faster, but less accurate, simple&quot;</span>
-              <span class="s2">&quot;px-to-mm  mapping by disabling accounting for parallax&quot;</span>
-              <span class="s2">&quot;correction when generating  resolution masks.&quot;</span>
+      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Set to ``True`` to use a faster, but less accurate, simple"</span>
+              <span class="s2">"px-to-mm  mapping by disabling accounting for parallax"</span>
+              <span class="s2">"correction when generating  resolution masks."</span>
       <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">bool</span>
     <span class="n">resolution_range</span> <span class="o">=</span> <span class="kc">None</span>
-      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;an untrusted resolution range&quot;</span>
+      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"an untrusted resolution range"</span>
       <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">floats</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
       <span class="o">.</span><span class="n">multiple</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="n">untrusted</span>
       <span class="o">.</span><span class="n">multiple</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="p">{</span>
       <span class="n">panel</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;then the whole panel is masked out&quot;</span>
+        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"then the whole panel is masked out"</span>
         <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
       <span class="n">circle</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;An untrusted circle (xc, yc, r)&quot;</span>
+        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"An untrusted circle (xc, yc, r)"</span>
         <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">ints</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
       <span class="n">rectangle</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;An untrusted rectangle (x0, x1, y0, y1)&quot;</span>
+        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"An untrusted rectangle (x0, x1, y0, y1)"</span>
         <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">ints</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
       <span class="n">polygon</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;The pixel coordinates (fast, slow) that define the corners &quot;</span>
-                <span class="s2">&quot;of the untrusted polygon. Spots whose centroids fall within &quot;</span>
-                <span class="s2">&quot;the bounds of the untrusted polygon will be rejected.&quot;</span>
+        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"The pixel coordinates (fast, slow) that define the corners "</span>
+                <span class="s2">"of the untrusted polygon. Spots whose centroids fall within "</span>
+                <span class="s2">"the bounds of the untrusted polygon will be rejected."</span>
         <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">ints</span><span class="p">(</span><span class="n">value_min</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
       <span class="n">pixel</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;An untrusted pixel (y, x)&quot;</span>
+        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"An untrusted pixel (y, x)"</span>
         <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">ints</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">value_min</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
     <span class="p">}</span>
     <span class="n">ice_rings</span> <span class="p">{</span>
       <span class="nb">filter</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">bool</span>
       <span class="n">unit_cell</span> <span class="o">=</span> <span class="mf">4.498</span><span class="p">,</span><span class="mf">4.498</span><span class="p">,</span><span class="mf">7.338</span><span class="p">,</span><span class="mi">90</span><span class="p">,</span><span class="mi">90</span><span class="p">,</span><span class="mi">120</span>
-        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;The unit cell to generate d_spacings for powder rings.&quot;</span>
+        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"The unit cell to generate d_spacings for powder rings."</span>
         <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">unit_cell</span>
         <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">1</span>
       <span class="n">space_group</span> <span class="o">=</span> <span class="mi">194</span>
-        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;The space group used to generate d_spacings for powder rings.&quot;</span>
+        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"The space group used to generate d_spacings for powder rings."</span>
         <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">space_group</span>
         <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">1</span>
       <span class="n">width</span> <span class="o">=</span> <span class="mf">0.002</span>
-        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;The width of an ice ring (in 1/d^2).&quot;</span>
+        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"The width of an ice ring (in 1/d^2)."</span>
         <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value_min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">1</span>
       <span class="n">d_min</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;The high resolution limit (otherwise use detector d_min)&quot;</span>
+        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"The high resolution limit (otherwise use detector d_min)"</span>
         <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value_min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="p">}</span>
   <span class="p">}</span>
   <span class="n">mp</span> <span class="p">{</span>
     <span class="n">method</span> <span class="o">=</span> <span class="o">*</span><span class="n">none</span> <span class="n">drmaa</span> <span class="n">sge</span> <span class="n">lsf</span> <span class="n">pbs</span>
-      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;The cluster method to use&quot;</span>
+      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"The cluster method to use"</span>
       <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">choice</span>
     <span class="n">njobs</span> <span class="o">=</span> <span class="mi">1</span>
-      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;The number of cluster jobs to use&quot;</span>
+      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"The number of cluster jobs to use"</span>
       <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value_min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">nproc</span> <span class="o">=</span> <span class="mi">1</span>
-      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;The number of processes to use per cluster job&quot;</span>
+      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"The number of processes to use per cluster job"</span>
       <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value_min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">chunksize</span> <span class="o">=</span> <span class="n">auto</span>
-      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;The number of jobs to process per process&quot;</span>
+      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"The number of jobs to process per process"</span>
       <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value_min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">min_chunksize</span> <span class="o">=</span> <span class="mi">20</span>
-      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;When chunksize is auto, this is the minimum chunksize&quot;</span>
+      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"When chunksize is auto, this is the minimum chunksize"</span>
       <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value_min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
   <span class="p">}</span>
+  <span class="n">tof</span> <span class="p">{</span>
+    <span class="n">rs_proximity_threshold_multiplier</span> <span class="o">=</span> <span class="kc">None</span>
+      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"If not None, spots in close proximity in reciprocal space are"</span>
+              <span class="s2">"filtered out based on this value. The distance is calculated as"</span>
+              <span class="s2">"the first peak of a histrogram of distances, multiplied by the"</span>
+              <span class="s2">"rs_proximity_threshold_multiplier"</span>
+      <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+  <span class="p">}</span>
+  <span class="n">laue</span> <span class="p">{</span>
+    <span class="n">initial_wavelength</span> <span class="o">=</span> <span class="kc">None</span>
+      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Initial wavelength assignment for reflections from Laue data If"</span>
+              <span class="s2">"None, initial_wavelength will be set as the average of "</span>
+              <span class="s2">"beam.wavelength_range"</span>
+      <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value_min</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+  <span class="p">}</span>
   <span class="n">threshold</span>
-    <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Extensions for threshold algorithms to be used in spot finding.&quot;</span>
+    <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Extensions for threshold algorithms to be used in spot finding."</span>
   <span class="p">{</span>
     <span class="n">algorithm</span> <span class="o">=</span> <span class="n">dispersion</span> <span class="o">*</span><span class="n">dispersion_extended</span> <span class="n">radial_profile</span>
-      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;The choice of algorithm&quot;</span>
+      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"The choice of algorithm"</span>
       <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">choice</span>
     <span class="n">dispersion</span>
-      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Extensions to do dispersion threshold.&quot;</span>
+      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Extensions to do dispersion threshold."</span>
     <span class="p">{</span>
       <span class="n">gain</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Use a flat gain map for the entire detector to act as a&quot;</span>
-                <span class="s2">&quot;multiplier for the gain set by the format. Cannot be used in&quot;</span>
-                <span class="s2">&quot;conjunction with lookup.gain_map parameter.&quot;</span>
+        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Use a flat gain map for the entire detector to act as a"</span>
+                <span class="s2">"multiplier for the gain set by the format. Cannot be used in"</span>
+                <span class="s2">"conjunction with lookup.gain_map parameter."</span>
         <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value_min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
       <span class="n">kernel_size</span> <span class="o">=</span> <span class="mi">3</span> <span class="mi">3</span>
-        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;The size of the local area around the spot in which to&quot;</span>
-                <span class="s2">&quot;calculate the mean and variance. The kernel is given as a box&quot;</span>
-                <span class="s2">&quot;of size (2 * nx + 1, 2 * ny + 1) centred at the pixel.&quot;</span>
+        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"The size of the local area around the spot in which to"</span>
+                <span class="s2">"calculate the mean and variance. The kernel is given as a box"</span>
+                <span class="s2">"of size (2 * nx + 1, 2 * ny + 1) centred at the pixel."</span>
         <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">ints</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
         <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">1</span>
       <span class="n">sigma_background</span> <span class="o">=</span> <span class="mi">6</span>
-        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;The number of standard deviations of the index of dispersion&quot;</span>
-                <span class="s2">&quot;(variance / mean) in the local area below which the pixel&quot;</span>
-                <span class="s2">&quot;will be classified as background.&quot;</span>
+        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"The number of standard deviations of the index of dispersion"</span>
+                <span class="s2">"(variance / mean) in the local area below which the pixel"</span>
+                <span class="s2">"will be classified as background."</span>
         <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">1</span>
       <span class="n">sigma_strong</span> <span class="o">=</span> <span class="mi">3</span>
-        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;The number of standard deviations above the mean in the local&quot;</span>
-                <span class="s2">&quot;area above which the pixel will be classified as strong.&quot;</span>
+        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"The number of standard deviations above the mean in the local"</span>
+                <span class="s2">"area above which the pixel will be classified as strong."</span>
         <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">1</span>
       <span class="n">min_local</span> <span class="o">=</span> <span class="mi">2</span>
-        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;The minimum number of pixels under the image processing&quot;</span>
-                <span class="s2">&quot;kernel that are need to do the thresholding operation.&quot;</span>
-                <span class="s2">&quot;Setting the value between 2 and the total number of pixels&quot;</span>
-                <span class="s2">&quot;under the kernel will force the algorithm to use that number&quot;</span>
-                <span class="s2">&quot;as the minimum. If the value is less than or equal to zero,&quot;</span>
-                <span class="s2">&quot;then the algorithm will use all pixels under the kernel. In&quot;</span>
-                <span class="s2">&quot;effect this will add a border of pixels which are always&quot;</span>
-                <span class="s2">&quot;classed as background around the edge of the image and around&quot;</span>
-                <span class="s2">&quot;any masked out pixels.&quot;</span>
+        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"The minimum number of pixels under the image processing"</span>
+                <span class="s2">"kernel that are need to do the thresholding operation."</span>
+                <span class="s2">"Setting the value between 2 and the total number of pixels"</span>
+                <span class="s2">"under the kernel will force the algorithm to use that number"</span>
+                <span class="s2">"as the minimum. If the value is less than or equal to zero,"</span>
+                <span class="s2">"then the algorithm will use all pixels under the kernel. In"</span>
+                <span class="s2">"effect this will add a border of pixels which are always"</span>
+                <span class="s2">"classed as background around the edge of the image and around"</span>
+                <span class="s2">"any masked out pixels."</span>
         <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="o">.</span><span class="n">expert_level</span> <span class="o">=</span> <span class="mi">1</span>
       <span class="n">global_threshold</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;The global threshold value. Consider all pixels less than&quot;</span>
-                <span class="s2">&quot;this value to be part of the background.&quot;</span>
+        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"The global threshold value. Consider all pixels less than"</span>
+                <span class="s2">"this value to be part of the background."</span>
         <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="p">}</span>
     <span class="n">radial_profile</span>
-      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Extension to calculate a radial profile threshold. This method&quot;</span>
-              <span class="s2">&quot;calculates background value and iqr in 2θ shells, then sets a&quot;</span>
-              <span class="s2">&quot;threshold at a level n_iqr above the radial background. As&quot;</span>
-              <span class="s2">&quot;such, it is important to have the beam centre correct and to&quot;</span>
-              <span class="s2">&quot;mask out any significant shadows. The method may be&quot;</span>
-              <span class="s2">&quot;particularly useful for electron diffraction images, where&quot;</span>
-              <span class="s2">&quot;there can be considerable inelastic scatter around low&quot;</span>
-              <span class="s2">&quot;resolution spots. In addition, the algorithm is relatively&quot;</span>
-              <span class="s2">&quot;insensitive to noise properties of the detector. This helps for&quot;</span>
-              <span class="s2">&quot;the case of integrating detectors with poorly known gain and&quot;</span>
-              <span class="s2">&quot;response statistics. A similar algorithm is available in other&quot;</span>
-              <span class="s2">&quot;programs. The description of &#39;peakfinder 8&#39; in&quot;</span>
-              <span class="s2">&quot;https://doi.org/10.1107/S1600576714007626 was helpful in the&quot;</span>
-              <span class="s2">&quot;development of this method.&quot;</span>
+      <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Extension to calculate a radial profile threshold. This method"</span>
+              <span class="s2">"calculates background value and iqr in 2θ shells, then sets a"</span>
+              <span class="s2">"threshold at a level n_iqr above the radial background. As"</span>
+              <span class="s2">"such, it is important to have the beam centre correct and to"</span>
+              <span class="s2">"mask out any significant shadows. The method may be"</span>
+              <span class="s2">"particularly useful for electron diffraction images, where"</span>
+              <span class="s2">"there can be considerable inelastic scatter around low"</span>
+              <span class="s2">"resolution spots. In addition, the algorithm is relatively"</span>
+              <span class="s2">"insensitive to noise properties of the detector. This helps for"</span>
+              <span class="s2">"the case of integrating detectors with poorly known gain and"</span>
+              <span class="s2">"response statistics. A similar algorithm is available in other"</span>
+              <span class="s2">"programs. The description of 'peakfinder 8' in"</span>
+              <span class="s2">"https://doi.org/10.1107/S1600576714007626 was helpful in the"</span>
+              <span class="s2">"development of this method."</span>
     <span class="p">{</span>
       <span class="n">n_iqr</span> <span class="o">=</span> <span class="mi">6</span>
-        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;IQR multiplier for determining the threshold value&quot;</span>
+        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"IQR multiplier for determining the threshold value"</span>
         <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
       <span class="n">blur</span> <span class="o">=</span> <span class="n">narrow</span> <span class="n">wide</span>
-        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Optional preprocessing of the image by a convolution with a&quot;</span>
-                <span class="s2">&quot;simple Gaussian kernel of size either 3×3 (narrow) or 5×5&quot;</span>
-                <span class="s2">&quot;(wide). This may help to reduce noise peaks and to combine&quot;</span>
-                <span class="s2">&quot;split spots.&quot;</span>
+        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Optional preprocessing of the image by a convolution with a"</span>
+                <span class="s2">"simple Gaussian kernel of size either 3×3 (narrow) or 5×5"</span>
+                <span class="s2">"(wide). This may help to reduce noise peaks and to combine"</span>
+                <span class="s2">"split spots."</span>
         <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">choice</span>
       <span class="n">n_bins</span> <span class="o">=</span> <span class="mi">100</span>
-        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Number of 2θ bins in which to calculate background&quot;</span>
+        <span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">"Number of 2θ bins in which to calculate background"</span>
         <span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="p">}</span>
   <span class="p">}</span>
@@ -468,7 +489,7 @@ that contains all the found strong spots for the experiment.</p>
       &#169;2025, Research Agreement between Harvard University and University of Chicago.
       
       |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.1.3</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
       &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
       
       |
