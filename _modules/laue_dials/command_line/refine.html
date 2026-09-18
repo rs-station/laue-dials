@@ -108,11 +108,8 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">dxtbx.model</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExperimentList</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">dxtbx.model.experiment_list</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExperimentListFactory</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">laue_dials.algorithms.laue</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">gen_beam_models</span><span class="p">,</span>
-    <span class="n">remove_beam_models</span><span class="p">,</span>
-    <span class="n">store_wavelengths</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">laue_dials.algorithms.laue</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">gen_beam_models</span><span class="p">,</span> <span class="n">remove_beam_models</span><span class="p">,</span>
+                                        <span class="n">store_wavelengths</span><span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">laue_dials.utils.version</span><span class="w"> </span><span class="kn">import</span> <span class="n">laue_version</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">"laue-dials.command_line.refine"</span><span class="p">)</span>
@@ -142,64 +139,62 @@
     <span class="n">process_includes</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="n">refiner_phil</span> <span class="o">=</span> <span class="n">libtbx</span><span class="o">.</span><span class="n">phil</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span>
-<span class="w">    </span><span class="sd">"""</span>
+<span class="n">refiner_phil</span> <span class="o">=</span> <span class="n">libtbx</span><span class="o">.</span><span class="n">phil</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s2">"""</span>
 
-<span class="sd">refinement {</span>
-<span class="sd">  refinery {</span>
-<span class="sd">    engine = SparseLevMar</span>
-<span class="sd">  }</span>
+<span class="s2">refinement {</span>
+<span class="s2">  refinery {</span>
+<span class="s2">    engine = SparseLevMar</span>
+<span class="s2">  }</span>
 
-<span class="sd">  reflections {</span>
-<span class="sd">    weighting_strategy {</span>
-<span class="sd">      override = stills</span>
-<span class="sd">    }</span>
+<span class="s2">  reflections {</span>
+<span class="s2">    weighting_strategy {</span>
+<span class="s2">      override = stills</span>
+<span class="s2">    }</span>
 
-<span class="sd">    outlier {</span>
-<span class="sd">      nproc = 1</span>
+<span class="s2">    outlier {</span>
+<span class="s2">      nproc = 1</span>
 
-<span class="sd">      minimum_number_of_reflections = 1</span>
+<span class="s2">      minimum_number_of_reflections = 1</span>
 
-<span class="sd">      algorithm = mcd</span>
+<span class="s2">      algorithm = mcd</span>
 
-<span class="sd">      separate_images = True</span>
-<span class="sd">    }</span>
-<span class="sd">  }</span>
+<span class="s2">      separate_images = True</span>
+<span class="s2">    }</span>
+<span class="s2">  }</span>
 
-<span class="sd">  parameterisation {</span>
-<span class="sd">    beam {</span>
-<span class="sd">      fix = *in_spindle_plane *out_spindle_plane</span>
-<span class="sd">    }</span>
+<span class="s2">  parameterisation {</span>
+<span class="s2">    beam {</span>
+<span class="s2">      fix = *in_spindle_plane *out_spindle_plane</span>
+<span class="s2">    }</span>
 
-<span class="sd">    crystal {</span>
-<span class="sd">      unit_cell {</span>
-<span class="sd">        fix_list = real_space_a</span>
-<span class="sd">      }</span>
-<span class="sd">    }</span>
+<span class="s2">    crystal {</span>
+<span class="s2">      unit_cell {</span>
+<span class="s2">        fix_list = real_space_a</span>
+<span class="s2">      }</span>
+<span class="s2">    }</span>
 
-<span class="sd">    detector {</span>
-<span class="sd">      fix = distance</span>
-<span class="sd">    }</span>
+<span class="s2">    detector {</span>
+<span class="s2">      fix = distance</span>
+<span class="s2">    }</span>
 
-<span class="sd">    auto_reduction {</span>
-<span class="sd">      action = fix</span>
+<span class="s2">    auto_reduction {</span>
+<span class="s2">      action = fix</span>
 
-<span class="sd">      min_nref_per_parameter = 1</span>
-<span class="sd">    }</span>
+<span class="s2">      min_nref_per_parameter = 1</span>
+<span class="s2">    }</span>
 
-<span class="sd">    spherical_relp_model = True</span>
-<span class="sd">  }</span>
-<span class="sd">}</span>
+<span class="s2">    spherical_relp_model = True</span>
+<span class="s2">  }</span>
+<span class="s2">}</span>
 
-<span class="sd">output {</span>
-<span class="sd">  experiments = poly_refined.expt</span>
+<span class="s2">output {</span>
+<span class="s2">  experiments = poly_refined.expt</span>
 
-<span class="sd">  reflections = poly_refined.refl</span>
+<span class="s2">  reflections = poly_refined.refl</span>
 
-<span class="sd">  log = laue.poly_refined.log</span>
-<span class="sd">}</span>
-<span class="sd">"""</span>
-<span class="p">)</span>
+<span class="s2">  log = laue.poly_refined.log</span>
+<span class="s2">}</span>
+<span class="s2">"""</span><span class="p">)</span>
 
 <span class="n">working_phil</span> <span class="o">=</span> <span class="n">main_phil</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="n">sources</span><span class="o">=</span><span class="p">[</span><span class="n">refiner_phil</span><span class="p">])</span>
 

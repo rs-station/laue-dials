@@ -106,14 +106,13 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">cctbx</span><span class="w"> </span><span class="kn">import</span> <span class="n">sgtbx</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">dials.array_family</span><span class="w"> </span><span class="kn">import</span> <span class="n">flex</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">dials.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">show_mail_handle_errors</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">dials.util.options</span><span class="w"> </span><span class="kn">import</span> <span class="n">ArgumentParser</span><span class="p">,</span> <span class="n">reflections_and_experiments_from_files</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dials.util.options</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">ArgumentParser</span><span class="p">,</span>
+                                <span class="n">reflections_and_experiments_from_files</span><span class="p">)</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">laue_dials.algorithms.integration</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">Integrator</span><span class="p">,</span>
-    <span class="n">detector_global_pixels</span><span class="p">,</span>
-    <span class="n">estimate_integration_radius</span><span class="p">,</span>
-    <span class="n">unmasked_prediction_selection</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">laue_dials.algorithms.integration</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">Integrator</span><span class="p">,</span>
+                                               <span class="n">detector_global_pixels</span><span class="p">,</span>
+                                               <span class="n">estimate_integration_radius</span><span class="p">,</span>
+                                               <span class="n">unmasked_prediction_selection</span><span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">laue_dials.utils.version</span><span class="w"> </span><span class="kn">import</span> <span class="n">laue_version</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">"laue-dials.command_line.integrate"</span><span class="p">)</span>
