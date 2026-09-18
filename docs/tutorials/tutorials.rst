@@ -6,6 +6,7 @@ Tutorials
 
 | :doc:`Processing Anomalous Scattering with HEWL Data <hewl/HEWL_anom_laue_dials_processing_final_rst>`
 | :doc:`Time-Resolved EF-X Processing on PDZ2 Data <pdz2/tutorial_combine_passes_rst>`
+| :doc:`Serial Pink-Beam Laue Processing of DHFR Data <serial_dhfr/serial_laue_dhfr_rst>`
 
 
 .. _toctree: https://www.sphinx-doc.org/en/master/usage/restructuredtext/directives.html
