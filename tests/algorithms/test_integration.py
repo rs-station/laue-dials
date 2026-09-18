@@ -214,8 +214,89 @@ def test_integrator_predict_shapes_and_positivity():
     integ.fit()
     v = integ.predict()
     assert v.shape == integ.windows.shape
-    # predict() = max(0, I) * profile + background, both non-negative.
+    # predict() sums max(0, I) * profile and averages background, both
+    # non-negative.
     assert (v > 0).all()
+
+
+def _reference_predict(integ):
+    """Loop-based predict() that sums overlapping windows pixel by pixel."""
+    p = integ.profile_values
+    signal = np.maximum(0.0, integ.intensity)[:, None] * p
+    bg = np.broadcast_to(integ.background, p.shape)
+    rows, cols = integ.window_idx
+    per_pixel = {}
+    for i in range(integ.n):
+        seen = set()
+        for k in range(integ.m):
+            key = (rows[i, k], cols[i, k])
+            if key in seen:  # clamped repeat within one window
+                continue
+            seen.add(key)
+            per_pixel.setdefault(key, []).append((signal[i, k], bg[i, k]))
+    v = np.empty_like(p)
+    for i in range(integ.n):
+        for k in range(integ.m):
+            contribs = per_pixel[(rows[i, k], cols[i, k])]
+            v[i, k] = sum(s for s, _ in contribs) + np.mean([b for _, b in contribs])
+    return v
+
+
+def _randomize_state(integ, seed):
+    rng = np.random.default_rng(seed)
+    integ.intensity = rng.uniform(-50.0, 500.0, integ.n)
+    integ.background = rng.uniform(1.0, 10.0, (integ.n, 1))
+
+
+def test_predict_matches_reference_with_overlaps_and_edges():
+    # Crowded spots, some near the image edge, so windows both overlap one
+    # another and get clamped at the detector boundary.
+    centroids = np.array(
+        [[10, 10], [14, 12], [2, 30], [5, 33], [40, 40], [43, 38], [45, 44], [58, 2]],
+        dtype="float32",
+    )
+    pixels, centroids = make_synthetic_image(shape=(60, 60), centroids=centroids)
+    integ = Integrator(pixels, centroids, radius=5)
+    _randomize_state(integ, seed=11)
+    assert np.allclose(integ.predict(), _reference_predict(integ))
+
+
+def test_predict_two_overlapping_reflections_matches_formula():
+    centroids = np.array([[20, 20], [24, 20]], dtype="float32")
+    pixels, centroids = make_synthetic_image(shape=(40, 40), centroids=centroids)
+    integ = Integrator(pixels, centroids, radius=4)
+    integ.intensity = np.array([100.0, 30.0])
+    integ.background = np.array([[2.0], [6.0]])
+    p = integ.profile_values
+    v = integ.predict()
+
+    # Match pixels shared by the two windows.
+    pix0 = {tuple(ij): k for k, ij in enumerate(integ.window_idx[:, 0].T)}
+    shared = [
+        (pix0[tuple(ij)], k)
+        for k, ij in enumerate(integ.window_idx[:, 1].T)
+        if tuple(ij) in pix0
+    ]
+    assert shared
+    for k0, k1 in shared:
+        expected = 100.0 * p[0, k0] + 30.0 * p[1, k1] + 0.5 * 2.0 + 0.5 * 6.0
+        assert np.isclose(v[0, k0], expected)
+        assert np.isclose(v[1, k1], expected)
+
+    # Unshared pixels see only their own reflection.
+    only0 = np.setdiff1d(np.arange(integ.m), [k0 for k0, _ in shared])
+    assert np.allclose(v[0, only0], 100.0 * p[0, only0] + 2.0)
+
+
+def test_predict_without_overlaps_is_unchanged():
+    pixels, centroids = make_synthetic_image(seed=3)
+    integ = Integrator(pixels, centroids, radius=5)
+    _randomize_state(integ, seed=4)
+    expected = (
+        np.maximum(0.0, integ.intensity[:, None]) * integ.profile_values
+        + integ.background
+    )
+    assert np.allclose(integ.predict(), expected)
 
 
 # ---------------------------------------------------------------------------

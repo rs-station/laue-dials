@@ -46,6 +46,22 @@ class IntegratorBase:
         self.window_idx = self.window_idx.transpose(2, 0, 1)
         self.m = self.window_idx.shape[-1]
 
+        # Bookkeeping for summing overlapping windows in predict(). Map every
+        # window entry onto a compact index over the distinct pixels touched
+        # by any window, so per-pixel sums never need a detector-sized array.
+        flat_idx = np.ravel_multi_index(tuple(self.window_idx), (h, w))
+        self._pixel_ids, self._pixel_inverse = np.unique(flat_idx, return_inverse=True)
+        self._pixel_inverse = self._pixel_inverse.reshape(flat_idx.shape)
+        # Clamping repeats edge pixels within a single window. Those repeats
+        # share xy and therefore profile value, so only the first occurrence
+        # of each pixel per reflection contributes to the per-pixel sums.
+        order = np.argsort(flat_idx, axis=-1, kind="stable")
+        sorted_idx = np.take_along_axis(flat_idx, order, axis=-1)
+        first_sorted = np.ones_like(sorted_idx, dtype=bool)
+        first_sorted[:, 1:] = sorted_idx[:, 1:] != sorted_idx[:, :-1]
+        self._first_occurrence = np.empty_like(first_sorted)
+        np.put_along_axis(self._first_occurrence, order, first_sorted, axis=-1)
+
         self.intensity = self.windows.mean(-1)
         self.uncertainty = np.sqrt(self.windows.mean(-1))
 
@@ -89,9 +105,37 @@ class IntegratorBase:
             previous = score
 
     def predict(self):
+        """
+        Predict the expected counts in every window pixel, accounting for
+        overlapping reflections.
+
+        Signal is additive, so a pixel covered by several windows receives the
+        profile-weighted intensity of every reflection that covers it. The
+        background is a single physical quantity per pixel, so it is the mean
+        of the covering reflections' background estimates rather than their
+        sum. For reflections i and j sharing pixel n this gives
+
+            v[i, n] = v[j, n] = I[i] p[i, n] + I[j] p[j, n]
+                                + 0.5 * bg[i] + 0.5 * bg[j]
+
+        and it reduces to I[i] p[i, n] + bg[i] where windows do not overlap.
+
+        Returns:
+            np.ndarray: (n_refls, n_window_pixels) array of expected counts.
+        """
         p = self.profile_values
-        v = np.maximum(0.0, self.intensity[:, None]) * p + self.background
-        return v
+        signal = np.maximum(0.0, self.intensity[:, None]) * p
+        bg = np.broadcast_to(self.background, p.shape)
+
+        first = self._first_occurrence
+        idx = self._pixel_inverse[first]
+        n_pix = len(self._pixel_ids)
+        signal_sum = np.bincount(idx, weights=signal[first], minlength=n_pix)
+        bg_sum = np.bincount(idx, weights=bg[first], minlength=n_pix)
+        n_refls = np.bincount(idx, minlength=n_pix)
+
+        v = signal_sum + bg_sum / n_refls
+        return v[self._pixel_inverse]
 
     def get_log_p_mdist(self):
         return mvn_log_pdf(
