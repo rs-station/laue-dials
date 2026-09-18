@@ -27,8 +27,7 @@ from laue_dials.utils.version import laue_version
 logger = logging.getLogger("laue.command_line.sequence_to_stills")
 
 # The phil scope
-phil_scope = parse(
-    """
+phil_scope = parse("""
 output {
   experiments = stills.expt
     .type = str
@@ -52,8 +51,7 @@ max_scan_points = None
   .type = int
   .expert_level = 2
   .help = Limit number of scan points
-"""
-)
+""")
 
 
 def sequence_to_stills(experiments, reflections, params):
@@ -236,7 +234,7 @@ def run(args=None, phil=phil_scope):
     # Get initial time for process
     start_time = time.time()
 
-    (new_experiments, new_reflections) = sequence_to_stills(
+    new_experiments, new_reflections = sequence_to_stills(
         experiments, reflections, params
     )
     # Write out the output experiments, reflections

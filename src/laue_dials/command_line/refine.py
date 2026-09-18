@@ -50,8 +50,7 @@ nproc = 1
     process_includes=True,
 )
 
-refiner_phil = libtbx.phil.parse(
-    """
+refiner_phil = libtbx.phil.parse("""
 
 refinement {
   refinery {
@@ -106,8 +105,7 @@ output {
 
   log = laue.poly_refined.log
 }
-"""
-)
+""")
 
 working_phil = main_phil.fetch(sources=[refiner_phil])
 

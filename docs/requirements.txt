@@ -20,5 +20,6 @@ argparse
 gemmi>=0.7.0
 matplotlib
 scipy
+scikit-image
 jupyter
 pandoc
