@@ -173,7 +173,7 @@ more cores and memory.
 .. code:: bash
 
     N=12
-    
+
     laue.find_spots imported.expt \
         output.shoeboxes=False \
         spotfinder.mp.nproc=$N \
@@ -310,7 +310,7 @@ friends)
 .. code:: bash
 
     N=12
-    
+
     laue.index imported.expt strong.refl \
         indexer.indexing.nproc=$N \
         indexer.indexing.method="pink_indexer" \
@@ -348,18 +348,18 @@ spots with Miller indices assigned where the indexer could do so.
     import numpy as np
     from dials.array_family import flex
     from dxtbx.model.experiment_list import ExperimentListFactory
-    
+
     mono_expts = ExperimentListFactory.from_json_file("monochromatic.expt", check_format=False)
     mono = flex.reflection_table.from_file("monochromatic.refl")
     strong = flex.reflection_table.from_file("strong.refl")
-    
+
     n = len(mono_expts)
     per_strong = np.array([(strong["id"] == i).count(True) for i in range(n)])
     per_indexed = np.array([(mono["id"] == i).count(True) for i in range(n)])
     fractions = per_indexed / per_strong
-    
+
     cells_arr = np.array([e.crystal.get_unit_cell().parameters() for e in mono_expts])
-    
+
     print(f"Images indexed: {n}")
     print(f"Strong spots: {per_strong.sum()}; indexed (monochromatic): {per_indexed.sum()}")
     print(f"Fraction indexed: mean {fractions.mean():.2f}, "
@@ -479,7 +479,7 @@ reduce the residuals. Serial-specific choices in this command:
 .. code:: bash
 
     N=12
-    
+
     laue.optimize_indexing monochromatic.expt monochromatic.refl \
         output.experiments="optimized.expt" \
         output.reflections="optimized.refl" \
@@ -494,11 +494,11 @@ reduce the residuals. Serial-specific choices in this command:
 .. code:: python
 
     from dials.array_family import flex
-    
+
     opt = flex.reflection_table.from_file("optimized.refl")
     strong = flex.reflection_table.from_file("strong.refl")
     wl = opt["wavelength"].as_numpy_array()
-    
+
     print(f"Indexed after optimization: {len(opt)} of {len(strong)} strong spots "
           f"({len(opt) / len(strong):.2f})")
     print(f"Assigned wavelength range: {wl.min():.3f} - {wl.max():.3f} Angstrom")
@@ -535,7 +535,7 @@ to see a few percent of reflections flagged on each image.
 .. code:: bash
 
     N=12
-    
+
     laue.refine optimized.expt optimized.refl \
         output.experiments="poly_refined.expt" \
         output.reflections="poly_refined.refl" \
@@ -658,7 +658,7 @@ fall on masked pixels.
 .. code:: bash
 
     N=12
-    
+
     laue.predict poly_refined.expt poly_refined.refl \
         output.reflections="predicted.refl" \
         output.log="laue.predict.log" \
@@ -672,10 +672,10 @@ fall on masked pixels.
     import numpy as np
     from dxtbx.model.experiment_list import ExperimentListFactory
     from dials.array_family import flex
-    
+
     poly_expts = ExperimentListFactory.from_json_file("poly_refined.expt", check_format=False)
     pred = flex.reflection_table.from_file("predicted.refl")
-    
+
     per_image = np.array([(pred["id"] == i).count(True) for i in range(len(poly_expts))])
     print(f"Predicted reflections: {len(pred)} total across {len(poly_expts)} images "
           f"(mean {per_image.mean():.0f} per image)")
@@ -726,7 +726,7 @@ fitting noise. The result is written straight to an ``.mtz`` file.
 .. code:: bash
 
     N=12
-    
+
     laue.integrate poly_refined.expt predicted.refl \
         output.filename="integrated.mtz" \
         output.log="laue.integrate.log" \
@@ -738,7 +738,7 @@ reflection. We can inspect it with ``reciprocalspaceship``:
 .. code:: python
 
     import reciprocalspaceship as rs
-    
+
     ds = rs.read_mtz("integrated.mtz")
     print(ds.spacegroup.short_name(), ds.cell)
     print("Columns:", list(ds.columns))
@@ -780,7 +780,7 @@ A quick look at the data quality:
     import numpy as np
     import matplotlib.pyplot as plt
     import reciprocalspaceship as rs
-    
+
     ds = rs.read_mtz("integrated.mtz")
     ds = ds.compute_dHKL()
     d = ds["dHKL"].to_numpy(dtype=float)
@@ -788,7 +788,7 @@ A quick look at the data quality:
     w = ds["wavelength"].to_numpy(dtype=float)
     print("Resolution range: %.2f - %.2f Angstrom" % (d.max(), d.min()))
     print("Mean I/sigma(I): %.2f;  fraction with I/sigma(I) > 2: %.2f" % (isigi.mean(), (isigi > 2).mean()))
-    
+
     # Resolution bins with equal volume in reciprocal space
     edges = np.linspace(1 / 6.0**3, 1 / d.min() ** 3, 11) ** (-1 / 3)
     mids, means = [], []
@@ -796,7 +796,7 @@ A quick look at the data quality:
         sel = (d <= hi) & (d > lo)
         mids.append(0.5 * (hi + lo))
         means.append(isigi[sel].mean())
-    
+
     fig, axes = plt.subplots(1, 3, figsize=(13, 3.8))
     axes[0].plot(1 / np.array(mids) ** 2, means, "o-")
     ticks = [6, 4, 3, 2.5, 2, 1.7]
