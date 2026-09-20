@@ -1,14 +1,14 @@
 #!/bin/bash
 # Serial pink-beam Laue processing of the DHFR data set with laue-dials.
 # Companion script to the "Serial Pink-Beam Laue Processing of DHFR Data"
-# tutorial. The values below are for the DHFR data at
-# https://zenodo.org/records/10199220 (first five images copied to ./data,
+# tutorial. The values below are for the full DHFR data set at
+# https://zenodo.org/records/10199220 (all 179 images copied to ./data,
 # pixels.mask in the working directory). You may need to change these
 # values if analyzing a different data set.
 
 FILE_INPUT_TEMPLATE="$(pwd)/data/e080_###.mccd"
 MASK="pixels.mask"
-N=1
+N=12
 
 # Import data
 # You may need to change some of these values to match your data set
@@ -21,7 +21,7 @@ dials.import geometry.scan.oscillation=0,1 \
     input.template=$FILE_INPUT_TEMPLATE
 
 # Get a monochromatic geometry model
-dials.find_spots imported.expt \
+laue.find_spots imported.expt \
     output.shoeboxes=False \
     spotfinder.mp.nproc=$N \
     spotfinder.threshold.dispersion.gain=0.15 \
@@ -35,8 +35,8 @@ laue.index imported.expt strong.refl \
     indexer.indexing.pink_indexer.wavelength=1.1 \
     indexer.indexing.pink_indexer.percent_bandwidth=15 \
     indexer.indexing.pink_indexer.max_refls=50 \
-    indexer.indexing.pink_indexer.min_lattices=5 \
-    indexer.indexing.pink_indexer.rotogram_grid_points=180 \
+    indexer.indexing.pink_indexer.min_lattices=20 \
+    indexer.indexing.pink_indexer.rotogram_grid_points=360 \
     indexer.indexing.pink_indexer.voxel_grid_points=250 \
     indexer.indexing.known_symmetry.space_group=19 \
     indexer.indexing.known_symmetry.unit_cell=34.297,45.552,99.035,90,90,90 \
@@ -60,8 +60,6 @@ laue.optimize_indexing monochromatic.expt monochromatic.refl \
     reciprocal_grid.d_min=1.4 \
     geometry.unit_cell=34.297,45.552,99.035,90,90,90 \
     n_macrocycles=5 \
-    keep_unindexed=False \
-    filter_spectrum=True \
     nproc=$N
 
 laue.refine optimized.* \
