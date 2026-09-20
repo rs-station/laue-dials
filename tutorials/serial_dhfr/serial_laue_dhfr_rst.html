@@ -105,8 +105,9 @@ That makes this data set a convenient stand-in for a true serial
 experiment: it exercises exactly the same code path, while still
 allowing you to check the results against the rotation-series tutorial
 if you wish.</p>
-<p>At the end of processing we will have an integrated <code class="docutils literal notranslate"><span class="pre">.mtz</span></code> file that
-can be scaled and merged with
+<p>This tutorial processes the <strong>complete</strong> 179-image data set. At the end
+of processing we will have an integrated <code class="docutils literal notranslate"><span class="pre">.mtz</span></code> file that can be
+scaled and merged with
 <code class="docutils literal notranslate"><span class="pre">`careless</span></code> &lt;<a class="reference external" href="https://github.com/rs-station/careless">https://github.com/rs-station/careless</a>&gt;`__.</p>
 </section>
 <section id="installation">
@@ -138,8 +139,8 @@ notebook with the environment activated when you are ready.</p>
 <p>Documentation for <code class="docutils literal notranslate"><span class="pre">laue-dials</span></code> can be found
 <a class="reference external" href="https://rs-station.github.io/laue-dials/index.html">here</a>, and
 entering any <code class="docutils literal notranslate"><span class="pre">laue.*</span></code> command with no arguments on the command line
-prints a help page. This tutorial was run with DIALS 3.27 and the
-development version of <code class="docutils literal notranslate"><span class="pre">laue-dials</span></code>.</p>
+prints a help page. This tutorial was run with DIALS 3.29 and laue-dials
+0.5.1.</p>
 </section>
 <section id="introduction">
 <h1>Introduction<a class="headerlink" href="#introduction" title="Link to this heading"></a></h1>
@@ -148,32 +149,25 @@ development version of <code class="docutils literal notranslate"><span class="p
 images named <code class="docutils literal notranslate"><span class="pre">e080_001.mccd</span></code> through <code class="docutils literal notranslate"><span class="pre">e080_179.mccd</span></code>, plus a
 <code class="docutils literal notranslate"><span class="pre">pixels.mask</span></code> file that blanks out the beamstop shadow and a few dead
 regions of the detector.</p>
-<p>For this tutorial we process only the <strong>first five images</strong>. Two
-reasons:</p>
-<ol class="arabic simple">
-<li><p>The pink-beam indexer holds a dense three-dimensional voxel grid in
-memory while it searches orientation space, and this tutorial was
-written on a laptop with about 4 GB of RAM. Five images is enough to
-see every stage of the pipeline while keeping the run time to a few
-minutes.</p></li>
-<li><p>In a serial experiment the number of images is limited only by your
-patience, so the commands below are written to scale: every program
-takes an <code class="docutils literal notranslate"><span class="pre">nproc</span></code> (or <code class="docutils literal notranslate"><span class="pre">N</span></code>) argument, and nothing in the pipeline
-depends on the number of images.</p></li>
-</ol>
-<p>Copy (or symlink) the first five images into a directory called <code class="docutils literal notranslate"><span class="pre">data</span></code>
+<p>This tutorial processes all 179 images. Every program in the pipeline
+below takes an <code class="docutils literal notranslate"><span class="pre">nproc</span></code> (or <code class="docutils literal notranslate"><span class="pre">N</span></code>) argument to parallelize across
+images, and nothing in the pipeline depends on how many images you give
+it, so the same commands work unchanged on a subset or on a much larger
+collection.</p>
+<p>Copy (or symlink) all of the images into a directory called <code class="docutils literal notranslate"><span class="pre">data</span></code>
 next to this notebook, and put <code class="docutils literal notranslate"><span class="pre">pixels.mask</span></code> in the working directory:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">data</span><span class="o">/</span><span class="n">e080_001</span><span class="o">.</span><span class="n">mccd</span>
 <span class="n">data</span><span class="o">/</span><span class="n">e080_002</span><span class="o">.</span><span class="n">mccd</span>
-<span class="n">data</span><span class="o">/</span><span class="n">e080_003</span><span class="o">.</span><span class="n">mccd</span>
-<span class="n">data</span><span class="o">/</span><span class="n">e080_004</span><span class="o">.</span><span class="n">mccd</span>
-<span class="n">data</span><span class="o">/</span><span class="n">e080_005</span><span class="o">.</span><span class="n">mccd</span>
+<span class="o">...</span>
+<span class="n">data</span><span class="o">/</span><span class="n">e080_179</span><span class="o">.</span><span class="n">mccd</span>
 <span class="n">pixels</span><span class="o">.</span><span class="n">mask</span>
 </pre></div>
 </div>
 <p>All of the commands in this tutorial are also collected in
 <a class="reference download internal" download="" href="../../_downloads/ab8671169a005fbfd29795d57e7e36e0/serial_pipeline.sh"><code class="xref download docutils literal notranslate"><span class="pre">serial_pipeline.sh</span></code></a>, which you can run in
-one go once you are comfortable with the individual steps.</p>
+one go once you are comfortable with the individual steps. We use
+<code class="docutils literal notranslate"><span class="pre">N=12</span></code> throughout; adjust it to match the number of cores available on
+your machine.</p>
 </section>
 <section id="importing-data">
 <h1>Importing Data<a class="headerlink" href="#importing-data" title="Link to this heading"></a></h1>
@@ -190,16 +184,16 @@ individually.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">geometry.detector.panel.pixel=0.08854,0.08854</span></code> — the pixel size in
 mm.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">geometry.scan.oscillation=0,1</span></code> and
-<code class="docutils literal notranslate"><span class="pre">geometry.goniometer.axes=0,1,0</span></code> — a nominal scan and rotation axis,
-needed only so that the format reader is happy. They are discarded in
-the next line.</p></li>
+<code class="docutils literal notranslate"><span class="pre">geometry.goniometer.axes=0,1,0</span></code> — a nominal scan and rotation
+axis, needed only so that the format reader is happy. They are
+discarded in the next line.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">convert_sequences_to_stills=True</span></code> — this is the key option for
 serial data. It tells DIALS to forget the scan and goniometer and to
-treat every image as an independent still experiment, which is what we
-want for a serial data set.</p></li>
+treat every image as an independent still experiment, which is what
+we want for a serial data set.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">lookup.mask=pixels.mask</span></code> — the pixel mask. Applying it at import
-means it is stored in the experiment list and inherited by every later
-step.</p></li>
+means it is stored in the experiment list and inherited by every
+later step.</p></li>
 </ul>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>dials.import<span class="w"> </span>geometry.scan.oscillation<span class="o">=</span><span class="m">0</span>,1<span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>geometry.goniometer.axes<span class="o">=</span><span class="m">0</span>,1,0<span class="w"> </span><span class="se">\</span>
@@ -211,7 +205,7 @@ step.</p></li>
 </pre></div>
 </div>
 <p>The import summary at the end of the output should report
-<code class="docutils literal notranslate"><span class="pre">num</span> <span class="pre">stills:</span> <span class="pre">5</span></code> and no sweeps. If you see a sweep instead,
+<code class="docutils literal notranslate"><span class="pre">num</span> <span class="pre">stills:</span> <span class="pre">179</span></code> and no sweeps. If you see a sweep instead,
 <code class="docutils literal notranslate"><span class="pre">convert_sequences_to_stills</span></code> did not take effect and the later
 stills-specific options will fail.</p>
 <p>A quick way to check that the geometry is sensible is <code class="docutils literal notranslate"><span class="pre">dials.show</span></code>:</p>
@@ -223,16 +217,16 @@ stills-specific options will fail.</p>
 <h1>Spot Finding<a class="headerlink" href="#spot-finding" title="Link to this heading"></a></h1>
 <p>Spot finding is exactly the same as for rotation data: we look for
 connected pixels that rise above the local background on every image. We
-call <code class="docutils literal notranslate"><span class="pre">dials.find_spots</span></code> directly here (<code class="docutils literal notranslate"><span class="pre">laue.find_spots</span></code> is a thin
-wrapper around it and either can be used). The important parameters are:</p>
+call <code class="docutils literal notranslate"><span class="pre">laue.find_spots</span></code>, a thin wrapper around <code class="docutils literal notranslate"><span class="pre">dials.find_spots</span></code>
+(either can be used interchangeably). The important parameters are:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">spotfinder.threshold.dispersion.gain=0.15</span></code> — the effective detector
-gain used by the dispersion threshold. Lower values find more (and
-weaker) spots; too low and you start picking up noise. For this
-detector 0.15 gives a clean set of strong spots.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">spotfinder.threshold.dispersion.gain=0.15</span></code> — the effective
+detector gain used by the dispersion threshold. Lower values find
+more (and weaker) spots; too low and you start picking up noise. For
+this detector 0.15 gives a clean set of strong spots.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">spotfinder.filter.max_separation=10</span></code> — the maximum distance in
-pixels between a spot’s centroid and its brightest pixel. This rejects
-streaky or overlapping blobs that would confuse indexing.</p></li>
+pixels between a spot’s centroid and its brightest pixel. This
+rejects streaky or overlapping blobs that would confuse indexing.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">output.shoeboxes=False</span></code> — do not store the pixel data for every
 spot in the reflection file. It keeps <code class="docutils literal notranslate"><span class="pre">strong.refl</span></code> small; the
 integrator does its own pixel extraction later.</p></li>
@@ -241,9 +235,9 @@ become spots.</p></li>
 </ul>
 <p><code class="docutils literal notranslate"><span class="pre">N</span></code> sets the number of parallel processes. Raise it on a machine with
 more cores and memory.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">N</span><span class="o">=</span><span class="m">1</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">N</span><span class="o">=</span><span class="m">12</span>
 
-dials.find_spots<span class="w"> </span>imported.expt<span class="w"> </span><span class="se">\</span>
+laue.find_spots<span class="w"> </span>imported.expt<span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>output.shoeboxes<span class="o">=</span>False<span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>spotfinder.mp.nproc<span class="o">=</span><span class="nv">$N</span><span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>spotfinder.threshold.dispersion.gain<span class="o">=</span><span class="m">0</span>.15<span class="w"> </span><span class="se">\</span>
@@ -251,8 +245,8 @@ dials.find_spots<span class="w"> </span>imported.expt<span class="w"> </span><sp
 <span class="w">    </span>lookup.mask<span class="o">=</span>pixels.mask
 </pre></div>
 </div>
-<p>The log ends with a histogram of spots per image. Each of the five
-images yields between roughly 550 and 610 strong spots, for 2878 in
+<p>The log ends with a histogram of spots per image. Across the 179 images,
+each yields between roughly 390 and 610 strong spots, for 85,428 in
 total, and the counts are consistent from image to image, which is a
 good sign that the threshold is neither too high nor too low.</p>
 <section id="viewing-images">
@@ -262,74 +256,30 @@ image. DIALS ships an interactive viewer for this:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dials</span><span class="o">.</span><span class="n">image_viewer</span> <span class="n">imported</span><span class="o">.</span><span class="n">expt</span> <span class="n">strong</span><span class="o">.</span><span class="n">refl</span>
 </pre></div>
 </div>
-<p>Tick “Mark centers of mass” to draw the found spots. If many obvious
-spots are not marked, lower the gain; if the marks land on noise between
-the spots, raise it. The viewer also has a tool for drawing new mask
-regions if you see scatter from the beamstop or a bad panel that you
-want to exclude.</p>
-<p>Because this tutorial is a static notebook we draw the same overlay with
-matplotlib instead. The helper below is reused throughout the tutorial
-to show the first image with reflection positions on top of it.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">dials.array_family</span><span class="w"> </span><span class="kn">import</span> <span class="n">flex</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">dxtbx.model.experiment_list</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExperimentListFactory</span>
-
-<span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="s2">"tutorial_images"</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-<span class="c1"># Load the first image once (raw counts, masked pixels shown white)</span>
-<span class="n">expts</span> <span class="o">=</span> <span class="n">ExperimentListFactory</span><span class="o">.</span><span class="n">from_json_file</span><span class="p">(</span><span class="s2">"imported.expt"</span><span class="p">,</span> <span class="n">check_format</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">image</span> <span class="o">=</span> <span class="n">expts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">imageset</span><span class="o">.</span><span class="n">get_raw_data</span><span class="p">(</span><span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">as_numpy_array</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
-<span class="n">image</span><span class="p">[</span><span class="n">image</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
-<span class="n">NX</span><span class="p">,</span> <span class="n">NY</span> <span class="o">=</span> <span class="n">expts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">detector</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_image_size</span><span class="p">()</span>
-<span class="n">VMAX</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanpercentile</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="mf">99.7</span><span class="p">)</span>
-<span class="n">ZOOM</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1100</span><span class="p">,</span> <span class="mi">1900</span><span class="p">,</span> <span class="mi">2300</span><span class="p">,</span> <span class="mi">3100</span><span class="p">)</span>  <span class="c1"># x0, x1, y0, y1 of a zoomed-in region</span>
-
-
-<span class="k">def</span><span class="w"> </span><span class="nf">show_image</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">zoom</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">"Greys"</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">VMAX</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="s2">"nearest"</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">zoom</span><span class="p">:</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">ZOOM</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ZOOM</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">ZOOM</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">ZOOM</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">NX</span><span class="p">)</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">NY</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"x (pixels)"</span><span class="p">)</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"y (pixels)"</span><span class="p">)</span>
-
-
-<span class="k">def</span><span class="w"> </span><span class="nf">xy</span><span class="p">(</span><span class="n">refl</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">sel</span><span class="p">):</span>
-    <span class="n">xyz</span> <span class="o">=</span> <span class="n">refl</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">sel</span><span class="p">)</span><span class="o">.</span><span class="n">as_numpy_array</span><span class="p">()</span>
-    <span class="k">return</span> <span class="n">xyz</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">xyz</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
-
-
-<span class="n">strong</span> <span class="o">=</span> <span class="n">flex</span><span class="o">.</span><span class="n">reflection_table</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="s2">"strong.refl"</span><span class="p">)</span>
-<span class="n">per_image</span> <span class="o">=</span> <span class="p">[(</span><span class="n">strong</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]</span> <span class="o">==</span> <span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">expts</span><span class="p">))]</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Strong spots per image:"</span><span class="p">,</span> <span class="n">per_image</span><span class="p">,</span> <span class="s2">"total:"</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">strong</span><span class="p">))</span>
-
-<span class="n">sx</span><span class="p">,</span> <span class="n">sy</span> <span class="o">=</span> <span class="n">xy</span><span class="p">(</span><span class="n">strong</span><span class="p">,</span> <span class="s2">"xyzobs.px.value"</span><span class="p">,</span> <span class="n">strong</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
-<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="mf">5.4</span><span class="p">))</span>
-<span class="n">show_image</span><span class="p">(</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">sx</span><span class="p">,</span> <span class="n">sy</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">facecolors</span><span class="o">=</span><span class="s2">"none"</span><span class="p">,</span> <span class="n">edgecolors</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span> <span class="n">linewidths</span><span class="o">=</span><span class="mf">0.4</span><span class="p">)</span>
-<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">Rectangle</span><span class="p">((</span><span class="n">ZOOM</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ZOOM</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span> <span class="n">ZOOM</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">ZOOM</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ZOOM</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">-</span> <span class="n">ZOOM</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
-                                <span class="n">fill</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">"tab:blue"</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.2</span><span class="p">))</span>
-<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Image 1: </span><span class="si">{</span><span class="n">per_image</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> strong spots"</span><span class="p">)</span>
-<span class="n">show_image</span><span class="p">(</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">zoom</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">sx</span><span class="p">,</span> <span class="n">sy</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span> <span class="n">facecolors</span><span class="o">=</span><span class="s2">"none"</span><span class="p">,</span> <span class="n">edgecolors</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span> <span class="n">linewidths</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
-<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"Zoom of the boxed region"</span><span class="p">)</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">"tutorial_images/spotfinding_image.png"</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">110</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<p>“Mark centers of mass” is ticked by default and draws the found spots as
+red dots. If many obvious spots are not marked, lower the gain; if the
+marks land on noise between the spots, raise it. The viewer also has a
+tool for drawing new mask regions if you see scatter from the beamstop
+or a bad panel that you want to exclude. We also pass <code class="docutils literal notranslate"><span class="pre">brightness=60</span></code>
+(equivalent to raising the “Brightness” slider in the settings panel) to
+make the faint diffuse scatter around the streaks easier to see.</p>
+<p>The screenshot below is exactly what <code class="docutils literal notranslate"><span class="pre">dials.image_viewer</span></code> shows for
+the first image once spot finding has run — no extra plotting code
+required.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>dials.image_viewer<span class="w"> </span>imported.expt<span class="w"> </span>strong.refl<span class="w"> </span><span class="nv">brightness</span><span class="o">=</span><span class="m">60</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="../../_images/spotfinding_image.png"><img alt="Spot finding results on the first image" src="../../_images/spotfinding_image.png" width="800" />
-</a>
+<figure class="align-default" id="id1">
+<img alt="Spot finding results on the first image" src="../../_images/spotfinding_image.png" />
+<figcaption>
+<p><span class="caption-text">Spot finding results on the first image</span><a class="headerlink" href="#id1" title="Link to this image"></a></p>
+</figcaption>
+</figure>
 <p>The spots lie on the curved, streak-like loci typical of Laue
 diffraction: each streak is a row of reflections from one
 reciprocal-lattice line, spread out along the streak by the range of
 wavelengths in the beam. The masked beamstop arm and the dead rectangles
-show up as white regions with no spots.</p>
+show up as blank regions with no spots.</p>
 </section>
 </section>
 <section id="indexing-each-still-with-pinkindexer">
@@ -354,23 +304,28 @@ here is what each group of parameters does:</p>
 <p><strong>Pink indexer parameters</strong> (<code class="docutils literal notranslate"><span class="pre">indexer.indexing.pink_indexer.*</span></code>)</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">wavelength=1.1</span></code> and <code class="docutils literal notranslate"><span class="pre">percent_bandwidth=15</span></code> define the wavelength
-window the indexer considers: 1.1 Å ± 7.5 %, i.e. roughly 1.02–1.18 Å.
-The window should cover the bulk of your spectrum. Note that it need
-not be centred on the placeholder wavelength given to
+window the indexer considers: 1.1 Å ± 7.5 %, i.e. roughly 1.02–1.18
+Å. The window should cover the bulk of your spectrum. Note that it
+need not be centred on the placeholder wavelength given to
 <code class="docutils literal notranslate"><span class="pre">dials.import</span></code>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">max_refls=50</span></code> — index using the 50 strongest spots on each image.
 More spots make the orientation search slower without much benefit.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">rotogram_grid_points=180</span></code> and <code class="docutils literal notranslate"><span class="pre">voxel_grid_points=250</span></code> control how
-finely orientation space is sampled. Finer grids (for example 360
-rotogram points) give slightly more precise starting orientations but
-need proportionally more memory: 360 points needs over 2.5 GB per
-process on this data set, which is why the DIALS default of 180 is
-used in this tutorial.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">min_lattices=5</span></code> — ask the indexer to generate several candidate
-lattices rather than stopping at the first, so the stills indexer has
-alternatives to choose between. In recent DIALS versions this option
-is deprecated in favour of <code class="docutils literal notranslate"><span class="pre">target_lattices</span></code>, which works the same
-way.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rotogram_grid_points=360</span></code> and <code class="docutils literal notranslate"><span class="pre">voxel_grid_points=250</span></code> control
+how finely orientation space is sampled. Finer grids give more
+precise starting orientations but need proportionally more memory per
+process (360 rotogram points needs a few GB per process on this data
+set) — raise <code class="docutils literal notranslate"><span class="pre">N</span></code> and this grid together only as far as your
+machine’s memory allows.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">min_lattices=20</span></code> — ask the indexer to generate up to 20 candidate
+lattices per image rather than stopping at the first few, so the
+stills indexer has more alternatives to choose between before picking
+a winner. In recent DIALS versions this option is deprecated in
+favour of <code class="docutils literal notranslate"><span class="pre">target_lattices</span></code>, which works the same way. Together, a
+fine rotogram grid and a generous lattice budget are what make
+pinkIndexer reliable on this data set: with a coarser grid (180
+points) and fewer candidates (5) we found a noticeably larger
+fraction of images converged to the wrong lattice, visible later as
+outliers in the per-image RMSD after refinement.</p></li>
 </ul>
 <p><strong>Known symmetry</strong> (<code class="docutils literal notranslate"><span class="pre">indexer.indexing.known_symmetry.*</span></code>)</p>
 <ul class="simple">
@@ -383,13 +338,13 @@ which also absorbs uncertainty in the cell lengths.</p></li>
 friends)</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">refinement_protocol.mode=None</span></code> — do not refine the crystal model
-inside <code class="docutils literal notranslate"><span class="pre">dials.index</span></code>. Monochromatic refinement of polychromatic data
-would pull the model towards a compromise wavelength; we leave
+inside <code class="docutils literal notranslate"><span class="pre">dials.index</span></code>. Monochromatic refinement of polychromatic
+data would pull the model towards a compromise wavelength; we leave
 refinement to the polychromatic steps below.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">stills.refine_all_candidates=True</span></code>, <code class="docutils literal notranslate"><span class="pre">stills.rmsd_min_px=20</span></code>, and
-<code class="docutils literal notranslate"><span class="pre">stills.ewald_proximal_volume_max=0.03</span></code> — every candidate lattice is
-scored with a quick stills refinement and the best one is kept. The
-thresholds are generous because, under the single-wavelength
+<code class="docutils literal notranslate"><span class="pre">stills.ewald_proximal_volume_max=0.03</span></code> — every candidate lattice
+is scored with a quick stills refinement and the best one is kept.
+The thresholds are generous because, under the single-wavelength
 assumption, most reflections will <em>not</em> sit exactly on the Ewald
 sphere.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">joint_indexing=False</span></code> — index every image independently. This is
@@ -407,7 +362,7 @@ that <code class="docutils literal notranslate"><span class="pre">laue.index</sp
 meaningful only for rotation data. The indexed stills are written
 directly to <code class="docutils literal notranslate"><span class="pre">monochromatic.expt</span></code> and <code class="docutils literal notranslate"><span class="pre">monochromatic.refl</span></code>.</p></li>
 </ul>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">N</span><span class="o">=</span><span class="m">1</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">N</span><span class="o">=</span><span class="m">12</span>
 
 laue.index<span class="w"> </span>imported.expt<span class="w"> </span>strong.refl<span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>indexer.indexing.nproc<span class="o">=</span><span class="nv">$N</span><span class="w"> </span><span class="se">\</span>
@@ -415,8 +370,8 @@ laue.index<span class="w"> </span>imported.expt<span class="w"> </span>strong.re
 <span class="w">    </span>indexer.indexing.pink_indexer.wavelength<span class="o">=</span><span class="m">1</span>.1<span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>indexer.indexing.pink_indexer.percent_bandwidth<span class="o">=</span><span class="m">15</span><span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>indexer.indexing.pink_indexer.max_refls<span class="o">=</span><span class="m">50</span><span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>indexer.indexing.pink_indexer.min_lattices<span class="o">=</span><span class="m">5</span><span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>indexer.indexing.pink_indexer.rotogram_grid_points<span class="o">=</span><span class="m">180</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>indexer.indexing.pink_indexer.min_lattices<span class="o">=</span><span class="m">20</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>indexer.indexing.pink_indexer.rotogram_grid_points<span class="o">=</span><span class="m">360</span><span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>indexer.indexing.pink_indexer.voxel_grid_points<span class="o">=</span><span class="m">250</span><span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>indexer.indexing.known_symmetry.space_group<span class="o">=</span><span class="m">19</span><span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>indexer.indexing.known_symmetry.unit_cell<span class="o">=</span><span class="m">34</span>.297,45.552,99.035,90,90,90<span class="w"> </span><span class="se">\</span>
@@ -434,120 +389,98 @@ laue.index<span class="w"> </span>imported.expt<span class="w"> </span>strong.re
 <p>The log is long because the stills indexer reports a refinement for
 every candidate lattice on every image. Look for the
 <code class="docutils literal notranslate"><span class="pre">Indexing</span> <span class="pre">imageset</span> <span class="pre">id</span></code> banners to follow progress from image to image,
-and for <code class="docutils literal notranslate"><span class="pre">n_indexed</span></code> in the summary after each one. On this laptop each
-image takes about ten seconds to index.</p>
-<p>Let us look at what came out. <code class="docutils literal notranslate"><span class="pre">monochromatic.expt</span></code> now contains five
+and for <code class="docutils literal notranslate"><span class="pre">n_indexed</span></code> in the summary after each one. Indexing all 179
+images with <code class="docutils literal notranslate"><span class="pre">N=12</span></code> took about seven minutes on the machine this
+tutorial was run on.</p>
+<p>Let us look at what came out. <code class="docutils literal notranslate"><span class="pre">monochromatic.expt</span></code> now contains 179
 crystal models, one per image, and <code class="docutils literal notranslate"><span class="pre">monochromatic.refl</span></code> has the strong
 spots with Miller indices assigned where the indexer could do so.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dials.array_family</span><span class="w"> </span><span class="kn">import</span> <span class="n">flex</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dxtbx.model.experiment_list</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExperimentListFactory</span>
 
 <span class="n">mono_expts</span> <span class="o">=</span> <span class="n">ExperimentListFactory</span><span class="o">.</span><span class="n">from_json_file</span><span class="p">(</span><span class="s2">"monochromatic.expt"</span><span class="p">,</span> <span class="n">check_format</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="n">mono</span> <span class="o">=</span> <span class="n">flex</span><span class="o">.</span><span class="n">reflection_table</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="s2">"monochromatic.refl"</span><span class="p">)</span>
+<span class="n">strong</span> <span class="o">=</span> <span class="n">flex</span><span class="o">.</span><span class="n">reflection_table</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="s2">"strong.refl"</span><span class="p">)</span>
 
-<span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">mono_expts</span><span class="p">):</span>
-    <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">al</span><span class="p">,</span> <span class="n">be</span><span class="p">,</span> <span class="n">ga</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">crystal</span><span class="o">.</span><span class="n">get_unit_cell</span><span class="p">()</span><span class="o">.</span><span class="n">parameters</span><span class="p">()</span>
-    <span class="n">n_idx</span> <span class="o">=</span> <span class="p">(</span><span class="n">mono</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]</span> <span class="o">==</span> <span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">"image"</span><span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"a"</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="s2">"b"</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="s2">"c"</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
-                 <span class="s2">"strong"</span><span class="p">:</span> <span class="n">per_image</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="s2">"indexed"</span><span class="p">:</span> <span class="n">n_idx</span><span class="p">,</span>
-                 <span class="s2">"fraction"</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">n_idx</span> <span class="o">/</span> <span class="n">per_image</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="mi">2</span><span class="p">)})</span>
-<span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">"image"</span><span class="p">)</span>
+<span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">mono_expts</span><span class="p">)</span>
+<span class="n">per_strong</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([(</span><span class="n">strong</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]</span> <span class="o">==</span> <span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)])</span>
+<span class="n">per_indexed</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([(</span><span class="n">mono</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]</span> <span class="o">==</span> <span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)])</span>
+<span class="n">fractions</span> <span class="o">=</span> <span class="n">per_indexed</span> <span class="o">/</span> <span class="n">per_strong</span>
+
+<span class="n">cells_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">e</span><span class="o">.</span><span class="n">crystal</span><span class="o">.</span><span class="n">get_unit_cell</span><span class="p">()</span><span class="o">.</span><span class="n">parameters</span><span class="p">()</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">mono_expts</span><span class="p">])</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Images indexed: </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Strong spots: </span><span class="si">{</span><span class="n">per_strong</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="si">}</span><span class="s2">; indexed (monochromatic): </span><span class="si">{</span><span class="n">per_indexed</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Fraction indexed: mean </span><span class="si">{</span><span class="n">fractions</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">, "</span>
+      <span class="sa">f</span><span class="s2">"range </span><span class="si">{</span><span class="n">fractions</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">fractions</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Mean unit cell (monochromatic): "</span>
+      <span class="o">+</span> <span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">v</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">cells_arr</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Unit cell std dev: "</span>
+      <span class="o">+</span> <span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">v</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">cells_arr</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)))</span>
 </pre></div>
 </div>
 <table class="docutils align-default">
 <thead>
-<tr class="row-odd"><th class="head"><p>image</p></th>
-<th class="head"><p>a (Å)</p></th>
-<th class="head"><p>b (Å)</p></th>
-<th class="head"><p>c (Å)</p></th>
-<th class="head"><p>strong</p></th>
-<th class="head"><p>indexed</p></th>
-<th class="head"><p>fraction</p></th>
+<tr class="row-odd"><th class="head"><p>metric</p></th>
+<th class="head"><p>value</p></th>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p>1</p></td>
-<td><p>34.21</p></td>
-<td><p>45.51</p></td>
-<td><p>98.96</p></td>
-<td><p>551</p></td>
-<td><p>203</p></td>
-<td><p>0.37</p></td>
+<tr class="row-even"><td><p>images indexed</p></td>
+<td><p>179</p></td>
 </tr>
-<tr class="row-odd"><td><p>2</p></td>
-<td><p>34.21</p></td>
-<td><p>44.79</p></td>
-<td><p>99.12</p></td>
-<td><p>550</p></td>
-<td><p>212</p></td>
-<td><p>0.39</p></td>
+<tr class="row-odd"><td><p>strong spots</p></td>
+<td><p>85,428</p></td>
 </tr>
-<tr class="row-even"><td><p>3</p></td>
-<td><p>34.23</p></td>
-<td><p>45.17</p></td>
-<td><p>98.93</p></td>
-<td><p>589</p></td>
-<td><p>238</p></td>
-<td><p>0.40</p></td>
+<tr class="row-even"><td><p>indexed (monochromatic)</p></td>
+<td><p>32,817</p></td>
 </tr>
-<tr class="row-odd"><td><p>4</p></td>
-<td><p>34.30</p></td>
-<td><p>45.09</p></td>
-<td><p>98.99</p></td>
-<td><p>612</p></td>
-<td><p>224</p></td>
-<td><p>0.37</p></td>
+<tr class="row-odd"><td><p>fraction indexed, mean</p></td>
+<td><p>0.38</p></td>
 </tr>
-<tr class="row-even"><td><p>5</p></td>
-<td><p>34.23</p></td>
-<td><p>44.73</p></td>
-<td><p>99.13</p></td>
-<td><p>576</p></td>
-<td><p>232</p></td>
-<td><p>0.40</p></td>
+<tr class="row-even"><td><p>fraction indexed, range</p></td>
+<td><p>0.12 – 0.51</p></td>
+</tr>
+<tr class="row-odd"><td><p>mean unit cell (Å)</p></td>
+<td><p>a = 34.19, b = 45.38, c = 98.96</p></td>
+</tr>
+<tr class="row-even"><td><p>unit cell std dev (Å)</p></td>
+<td><p>a = 0.08, b = 0.19, c = 0.28</p></td>
 </tr>
 </tbody>
 </table>
 <p>Two things stand out, and both are expected:</p>
 <ol class="arabic simple">
-<li><p><strong>Only about 40 % of the strong spots are indexed.</strong> The stills
-indexer still assigns Miller indices using a single wavelength (1.04
-Å), and only reflections whose true wavelength happens to be close to
-it satisfy the Ewald condition within the tolerance. The remaining
-spots are real, and <code class="docutils literal notranslate"><span class="pre">laue.optimize_indexing</span></code> will recover them in
-the next section.</p></li>
-<li><p><strong>The unit cells are slightly off.</strong> Cell lengths from a
-monochromatic treatment of pink-beam data scale with the assumed
-wavelength, so <code class="docutils literal notranslate"><span class="pre">b</span></code> in particular wanders between 44.7 and 45.5 Å.
-This does not matter here: the <em>orientation</em> is what we need from
-this step, and the cell will be reset and refined later.</p></li>
+<li><p><strong>Only about 38 % of the strong spots are indexed on average</strong>
+(ranging from 12 % to 51 % image-to-image). The stills indexer still
+assigns Miller indices using a single wavelength (1.04 Å), and only
+reflections whose true wavelength happens to be close to it satisfy
+the Ewald condition within the tolerance. The remaining spots are
+real, and <code class="docutils literal notranslate"><span class="pre">laue.optimize_indexing</span></code> will recover most of them in the
+next section.</p></li>
+<li><p><strong>The unit cells are slightly off and scattered.</strong> Cell lengths from
+a monochromatic treatment of pink-beam data scale with the assumed
+wavelength, so <code class="docutils literal notranslate"><span class="pre">b</span></code> in particular wanders by almost an Ångstrom from
+image to image. This does not matter here: the <em>orientation</em> is what
+we need from this step, and the cell will be reset and refined later.</p></li>
 </ol>
-<p>The plot below shows the first image again, this time marking which
-strong spots were indexed. Notice how the indexed spots (blue) cluster
-at particular positions along each streak—those are the reflections
-whose wavelength is near 1.04 Å—while their neighbours along the same
-streak are left unindexed.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sel_idx</span> <span class="o">=</span> <span class="n">mono</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span>
-<span class="n">sel_un</span> <span class="o">=</span> <span class="p">(</span><span class="n">mono</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">mono</span><span class="p">[</span><span class="s2">"imageset_id"</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
-<span class="n">ix</span><span class="p">,</span> <span class="n">iy</span> <span class="o">=</span> <span class="n">xy</span><span class="p">(</span><span class="n">mono</span><span class="p">,</span> <span class="s2">"xyzobs.px.value"</span><span class="p">,</span> <span class="n">sel_idx</span><span class="p">)</span>
-<span class="n">ux</span><span class="p">,</span> <span class="n">uy</span> <span class="o">=</span> <span class="n">xy</span><span class="p">(</span><span class="n">mono</span><span class="p">,</span> <span class="s2">"xyzobs.px.value"</span><span class="p">,</span> <span class="n">sel_un</span><span class="p">)</span>
-
-<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="mf">5.4</span><span class="p">))</span>
-<span class="k">for</span> <span class="n">ax</span><span class="p">,</span> <span class="n">zoom</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">axes</span><span class="p">,</span> <span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">)):</span>
-    <span class="n">show_image</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">zoom</span><span class="o">=</span><span class="n">zoom</span><span class="p">)</span>
-    <span class="n">s</span> <span class="o">=</span> <span class="mi">60</span> <span class="k">if</span> <span class="n">zoom</span> <span class="k">else</span> <span class="mi">8</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">ux</span><span class="p">,</span> <span class="n">uy</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="n">s</span><span class="p">,</span> <span class="n">facecolors</span><span class="o">=</span><span class="s2">"none"</span><span class="p">,</span> <span class="n">edgecolors</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span> <span class="n">linewidths</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"unindexed"</span><span class="p">)</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">ix</span><span class="p">,</span> <span class="n">iy</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="n">s</span><span class="p">,</span> <span class="n">facecolors</span><span class="o">=</span><span class="s2">"none"</span><span class="p">,</span> <span class="n">edgecolors</span><span class="o">=</span><span class="s2">"tab:blue"</span><span class="p">,</span> <span class="n">linewidths</span><span class="o">=</span><span class="mf">1.2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"indexed"</span><span class="p">)</span>
-<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Image 1: </span><span class="si">{</span><span class="n">sel_idx</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span><span class="si">}</span><span class="s2"> of </span><span class="si">{</span><span class="n">per_image</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> spots indexed"</span><span class="p">)</span>
-<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"Zoom"</span><span class="p">)</span>
-<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">"upper right"</span><span class="p">)</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">"tutorial_images/mono_indexing.png"</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">110</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<p>The screenshot below shows the first image again, this time with only
+the indexed subset of spots drawn (we pass <code class="docutils literal notranslate"><span class="pre">show_indexed=True</span></code>,
+equivalent to ticking “Indexed” in the viewer’s reflection settings
+panel). Compare it to the spot-finding screenshot above: indexed spots
+cluster at particular positions along each streak — those are the
+reflections whose wavelength happens to be near 1.04 Å — while their
+neighbours along the same streak are left unindexed.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>dials.image_viewer<span class="w"> </span>monochromatic.expt<span class="w"> </span>monochromatic.refl<span class="w"> </span><span class="nv">brightness</span><span class="o">=</span><span class="m">60</span><span class="w"> </span><span class="nv">show_indexed</span><span class="o">=</span>True
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="../../_images/mono_indexing.png"><img alt="Indexed and unindexed spots after monochromatic indexing" src="../../_images/mono_indexing.png" width="800" />
-</a>
+<figure class="align-default" id="id2">
+<img alt="Indexed spots after monochromatic indexing" src="../../_images/mono_indexing.png" />
+<figcaption>
+<p><span class="caption-text">Indexed spots after monochromatic indexing</span><a class="headerlink" href="#id2" title="Link to this image"></a></p>
+</figcaption>
+</figure>
 <p>If indexing fails on some images (the log will say so and those images
 are dropped from <code class="docutils literal notranslate"><span class="pre">monochromatic.expt</span></code>), the usual remedies are:</p>
 <ul class="simple">
@@ -572,11 +505,11 @@ polychromatic model of each image:</p>
 and refines the crystal orientation jointly, re-indexing the spots
 that the monochromatic step could not.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">laue.refine</span></code> is a polychromatic wrapper for <code class="docutils literal notranslate"><span class="pre">dials.refine</span></code> that
-refines the full experimental geometry against the wavelength-assigned
-reflections.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">laue.predict</span></code> uses the refined geometry to predict the position and
-wavelength of every reflection that can appear on the detector, strong
-or weak.</p></li>
+refines the full experimental geometry against the
+wavelength-assigned reflections.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">laue.predict</span></code> uses the refined geometry to predict the position
+and wavelength of every reflection that can appear on the detector,
+strong or weak.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">laue.integrate</span></code> fits spot profiles at the predicted positions and
 writes the integrated intensities to an <code class="docutils literal notranslate"><span class="pre">.mtz</span></code> file.</p></li>
 </ul>
@@ -588,20 +521,22 @@ each image, alternates between assigning each spot the Miller index and
 wavelength that best explain its position and rotating the crystal to
 reduce the residuals. Serial-specific choices in this command:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">geometry.unit_cell=...</span></code> resets every crystal to the known DHFR cell
-before optimization. This removes the wavelength-dependent cell
+<li><p><code class="docutils literal notranslate"><span class="pre">geometry.unit_cell=...</span></code> resets every crystal to the known DHFR
+cell before optimization. This removes the wavelength-dependent cell
 scaling we saw in the previous section. For rotation data one would
 usually let the cell from <code class="docutils literal notranslate"><span class="pre">laue.index</span></code> stand.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">n_macrocycles=5</span></code> — the number of assign/rotate cycles. Serial
 stills start from a rougher orientation than a scan-refined rotation
 series, so a couple of extra cycles (the default is 3) help them
 converge.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">keep_unindexed=False</span></code> and <code class="docutils literal notranslate"><span class="pre">filter_spectrum=True</span></code> — drop
-reflections that still cannot be indexed, or whose assigned wavelength
-falls outside the stated spectrum, so they do not bias geometry
-refinement.</p></li>
+<li><p>By default <code class="docutils literal notranslate"><span class="pre">laue.optimize_indexing</span></code> also drops reflections that
+still cannot be indexed (<code class="docutils literal notranslate"><span class="pre">keep_unindexed=False</span></code>) and reflections
+whose assigned wavelength falls outside the stated spectrum
+(<code class="docutils literal notranslate"><span class="pre">filter_spectrum=True</span></code>), so they do not bias geometry refinement.
+Both are already the defaults, so we do not need to pass them
+explicitly.</p></li>
 </ul>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">N</span><span class="o">=</span><span class="m">1</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">N</span><span class="o">=</span><span class="m">12</span>
 
 laue.optimize_indexing<span class="w"> </span>monochromatic.expt<span class="w"> </span>monochromatic.refl<span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>output.experiments<span class="o">=</span><span class="s2">"optimized.expt"</span><span class="w"> </span><span class="se">\</span>
@@ -612,51 +547,44 @@ laue.optimize_indexing<span class="w"> </span>monochromatic.expt<span class="w">
 <span class="w">    </span>reciprocal_grid.d_min<span class="o">=</span><span class="m">1</span>.4<span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>geometry.unit_cell<span class="o">=</span><span class="m">34</span>.297,45.552,99.035,90,90,90<span class="w"> </span><span class="se">\</span>
 <span class="w">    </span><span class="nv">n_macrocycles</span><span class="o">=</span><span class="m">5</span><span class="w"> </span><span class="se">\</span>
-<span class="w">    </span><span class="nv">keep_unindexed</span><span class="o">=</span>False<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span><span class="nv">filter_spectrum</span><span class="o">=</span>True<span class="w"> </span><span class="se">\</span>
 <span class="w">    </span><span class="nv">nproc</span><span class="o">=</span><span class="nv">$N</span>
 </pre></div>
 </div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">opt</span> <span class="o">=</span> <span class="n">flex</span><span class="o">.</span><span class="n">reflection_table</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="s2">"optimized.refl"</span><span class="p">)</span>
-<span class="n">opt_per_image</span> <span class="o">=</span> <span class="p">[(</span><span class="n">opt</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]</span> <span class="o">==</span> <span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">expts</span><span class="p">))]</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Indexed after optimization:"</span><span class="p">,</span> <span class="n">opt_per_image</span><span class="p">,</span> <span class="s2">"total:"</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">opt</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Fraction of strong spots indexed: </span><span class="si">%.2f</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">opt</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">strong</span><span class="p">)))</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">dials.array_family</span><span class="w"> </span><span class="kn">import</span> <span class="n">flex</span>
+
+<span class="n">opt</span> <span class="o">=</span> <span class="n">flex</span><span class="o">.</span><span class="n">reflection_table</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="s2">"optimized.refl"</span><span class="p">)</span>
+<span class="n">strong</span> <span class="o">=</span> <span class="n">flex</span><span class="o">.</span><span class="n">reflection_table</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="s2">"strong.refl"</span><span class="p">)</span>
 <span class="n">wl</span> <span class="o">=</span> <span class="n">opt</span><span class="p">[</span><span class="s2">"wavelength"</span><span class="p">]</span><span class="o">.</span><span class="n">as_numpy_array</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Assigned wavelength range: </span><span class="si">%.3f</span><span class="s2"> - </span><span class="si">%.3f</span><span class="s2"> Angstrom"</span> <span class="o">%</span> <span class="p">(</span><span class="n">wl</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">wl</span><span class="o">.</span><span class="n">max</span><span class="p">()))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Indexed after optimization: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">opt</span><span class="p">)</span><span class="si">}</span><span class="s2"> of </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">strong</span><span class="p">)</span><span class="si">}</span><span class="s2"> strong spots "</span>
+      <span class="sa">f</span><span class="s2">"(</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">opt</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="n">strong</span><span class="p">)</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Assigned wavelength range: </span><span class="si">{</span><span class="n">wl</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">wl</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> Angstrom"</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Wavelength assignment roughly doubles the number of indexed reflections,
-from about 1100 to 2175 of the 2878 strong spots (76 %) in this run:</p>
 <table class="docutils align-default">
 <thead>
-<tr class="row-odd"><th class="head"><p>image</p></th>
-<th class="head"><p>1</p></th>
-<th class="head"><p>2</p></th>
-<th class="head"><p>3</p></th>
-<th class="head"><p>4</p></th>
-<th class="head"><p>5</p></th>
+<tr class="row-odd"><th class="head"><p>metric</p></th>
+<th class="head"><p>value</p></th>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p>indexed (monochromatic)</p></td>
-<td><p>203</p></td>
-<td><p>212</p></td>
-<td><p>238</p></td>
-<td><p>224</p></td>
-<td><p>232</p></td>
+<tr class="row-even"><td><p>strong spots</p></td>
+<td><p>85,428</p></td>
 </tr>
-<tr class="row-odd"><td><p>indexed (optimized)</p></td>
-<td><p>380</p></td>
-<td><p>433</p></td>
-<td><p>536</p></td>
-<td><p>416</p></td>
-<td><p>410</p></td>
+<tr class="row-odd"><td><p>indexed, monochromatic</p></td>
+<td><p>32,817 (38 %)</p></td>
+</tr>
+<tr class="row-even"><td><p>indexed, after optimization</p></td>
+<td><p>61,616 (72 %)</p></td>
+</tr>
+<tr class="row-odd"><td><p>assigned wavelength range</p></td>
+<td><p>0.970 – 1.200 Å</p></td>
 </tr>
 </tbody>
 </table>
-<p>(The exact counts can differ by a few percent from run to run, because
-the orientation optimization is iterative and starts from slightly
-different candidate solutions.)</p>
+<p>Wavelength assignment very nearly doubles the number of indexed
+reflections, from about 38 % to 72 % of the 85,428 strong spots in this
+run (32,817 to 61,616 reflections).</p>
 <p>The reflections that remain unindexed are mostly at the ends of the
 streaks, where the wavelength is outside the 0.97–1.20 Å window, or are
 harmonics and overlaps that no single Miller index can explain.</p>
@@ -668,7 +596,7 @@ that the detector position, crystal orientation, and unit cell are
 refined against the polychromatic observations. As with <code class="docutils literal notranslate"><span class="pre">dials.refine</span></code>
 it detects and rejects centroid outliers before the final cycle; expect
 to see a few percent of reflections flagged on each image.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">N</span><span class="o">=</span><span class="m">1</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">N</span><span class="o">=</span><span class="m">12</span>
 
 laue.refine<span class="w"> </span>optimized.expt<span class="w"> </span>optimized.refl<span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>output.experiments<span class="o">=</span><span class="s2">"poly_refined.expt"</span><span class="w"> </span><span class="se">\</span>
@@ -677,6 +605,11 @@ laue.refine<span class="w"> </span>optimized.expt<span class="w"> </span>optimiz
 <span class="w">    </span><span class="nv">nproc</span><span class="o">=</span><span class="nv">$N</span>
 </pre></div>
 </div>
+<p>In this run, 178 of the 179 images successfully refine; one image had
+too few reliable reflections for <code class="docutils literal notranslate"><span class="pre">dials.refine</span></code> to converge and is
+dropped from <code class="docutils literal notranslate"><span class="pre">poly_refined.expt</span></code>. This is normal for a serial data set
+— a real experiment would collect far more than 179 images precisely
+because some fraction will fail at every stage.</p>
 </section>
 <section id="checking-the-wavelength-spectrum">
 <h2>Checking the Wavelength Spectrum<a class="headerlink" href="#checking-the-wavelength-spectrum" title="Link to this heading"></a></h2>
@@ -693,103 +626,86 @@ and it is worth revisiting the indexing before going further.</p>
 <span class="w">    </span><span class="nv">output</span><span class="o">=</span>tutorial_images/wavelengths.png
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="../../_images/wavelengths1.png"><img alt="Histogram of assigned wavelengths" src="../../_images/wavelengths1.png" width="800" />
-</a>
+<figure class="align-default" id="id3">
+<img alt="Histogram of assigned wavelengths" src="../../_images/wavelengths1.png" />
+<figcaption>
+<p><span class="caption-text">Histogram of assigned wavelengths</span><a class="headerlink" href="#id3" title="Link to this image"></a></p>
+</figcaption>
+</figure>
 </section>
 <section id="checking-the-residuals">
 <h2>Checking the Residuals<a class="headerlink" href="#checking-the-residuals" title="Link to this heading"></a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">laue.compute_rmsds</span></code> reports, for each image, the root-mean-square
-distance between observed and predicted spot centroids. After
-polychromatic refinement these should be around a pixel. An image with a
-much larger RMSD than its neighbours has probably been mis-indexed and
-can be dropped before prediction.</p>
+distance between observed and predicted spot centroids. Passing
+<code class="docutils literal notranslate"><span class="pre">refined_only=True</span></code> restricts this to the reflections <code class="docutils literal notranslate"><span class="pre">dials.refine</span></code>
+actually used (i.e. after its own outlier rejection), which gives a much
+cleaner signal for spotting mis-indexed images than including every
+reflection. An image with a much larger RMSD than its neighbours has
+probably been mis-indexed.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>laue.compute_rmsds<span class="w"> </span>poly_refined.expt<span class="w"> </span>poly_refined.refl<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span><span class="nv">refined_only</span><span class="o">=</span>True<span class="w"> </span><span class="se">\</span>
 <span class="w">    </span><span class="nv">show</span><span class="o">=</span>False<span class="w"> </span><span class="se">\</span>
 <span class="w">    </span><span class="nv">save</span><span class="o">=</span>True<span class="w"> </span><span class="se">\</span>
 <span class="w">    </span><span class="nv">output</span><span class="o">=</span>tutorial_images/residuals.png<span class="w"> </span><span class="se">\</span>
 <span class="w">    </span><span class="nv">csv</span><span class="o">=</span>rmsds.csv
-
-cat<span class="w"> </span>rmsds.csv
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="../../_images/residuals1.png"><img alt="Per-image centroid RMSDs" src="../../_images/residuals1.png" width="800" />
-</a>
+<figure class="align-default" id="id4">
+<img alt="Per-image centroid RMSDs" src="../../_images/residuals1.png" />
+<figcaption>
+<p><span class="caption-text">Per-image centroid RMSDs</span><a class="headerlink" href="#id4" title="Link to this image"></a></p>
+</figcaption>
+</figure>
 <table class="docutils align-default">
 <thead>
-<tr class="row-odd"><th class="head"><p>image</p></th>
-<th class="head"><p>1</p></th>
-<th class="head"><p>2</p></th>
-<th class="head"><p>3</p></th>
-<th class="head"><p>4</p></th>
-<th class="head"><p>5</p></th>
+<tr class="row-odd"><th class="head"><p>metric</p></th>
+<th class="head"><p>value</p></th>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p>RMSD (px)</p></td>
-<td><p>1.34</p></td>
-<td><p>0.49</p></td>
-<td><p>0.79</p></td>
-<td><p>1.06</p></td>
-<td><p>1.09</p></td>
+<tr class="row-even"><td><p>images refined</p></td>
+<td><p>178 of 179</p></td>
 </tr>
-<tr class="row-odd"><td><p>reflections</p></td>
-<td><p>380</p></td>
-<td><p>433</p></td>
-<td><p>536</p></td>
-<td><p>416</p></td>
-<td><p>410</p></td>
+<tr class="row-odd"><td><p>images with RMSD &lt; 1 px</p></td>
+<td><p>177 of 178</p></td>
+</tr>
+<tr class="row-even"><td><p>median RMSD</p></td>
+<td><p>0.22 px</p></td>
+</tr>
+<tr class="row-odd"><td><p>outlier</p></td>
+<td><p>image 121, RMSD 6.40 px</p></td>
+</tr>
+<tr class="row-even"><td><p>refined unit cell (Å)</p></td>
+<td><p>a = 34.301 ± 0.006, b = 45.538 ±
+0.025, c = 98.957 ± 0.05</p></td>
 </tr>
 </tbody>
 </table>
-<p>All five images refine to an RMSD of about one pixel or better, and the
-refined unit cells now agree with each other to within 0.01 Å (a ≈
-34.30, b ≈ 45.53, c ≈ 98.83 Å).</p>
+<p>The result is a clean bimodal split: 177 of the 178 refined images land
+at an RMSD of a few tenths of a pixel (median 0.22 px), while a single
+image (image 121) is a clear outlier at 6.4 px — almost certainly a case
+where pinkIndexer converged on the wrong candidate lattice. The refined
+unit cells of the well-indexed images agree with each other to within a
+few thousandths of an Ångstrom (a ≈ 34.301 ± 0.006, b ≈ 45.538 ± 0.025,
+c ≈ 98.957 ± 0.05 Å).</p>
+<p>A real pipeline would typically screen outliers like image 121 out
+before merging — either with an RMSD cut like the one visible here, or
+by relying on <code class="docutils literal notranslate"><span class="pre">careless</span></code>’s own robust merging to down-weight it. For
+this tutorial we deliberately carry every successfully refined image
+through to prediction and integration unfiltered, so that what you see
+below is the raw output of the pipeline rather than a hand-curated
+subset.</p>
 <p>One caveat is worth knowing about. <code class="docutils literal notranslate"><span class="pre">laue.optimize_indexing</span></code> protects
 the orientation refinement with a robust outlier filter (a minimum
 covariance determinant estimate on the observed and predicted scattering
 vectors), and reflections it rejects are written out unindexed and
-therefore dropped by <code class="docutils literal notranslate"><span class="pre">keep_unindexed=False</span></code>. On a still whose
-residuals vary systematically across the detector—here the upper quarter
-of images 1, 4 and 5 has residuals roughly twice those elsewhere—the
-filter can reject that whole region. Those reflections take no part in
-<code class="docutils literal notranslate"><span class="pre">laue.refine</span></code>, but they are <em>not</em> lost: the refined geometry still
-predicts them, and they are integrated along with everything else in the
-next two sections. If you see this on many images it is a hint that the
-detector model (distance, tilt, or beam centre) deserves a closer look.</p>
-<p>Let us compare the predicted spot positions before and after the
-polychromatic treatment:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">poly_expts</span> <span class="o">=</span> <span class="n">ExperimentListFactory</span><span class="o">.</span><span class="n">from_json_file</span><span class="p">(</span><span class="s2">"poly_refined.expt"</span><span class="p">,</span> <span class="n">check_format</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">poly</span> <span class="o">=</span> <span class="n">flex</span><span class="o">.</span><span class="n">reflection_table</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="s2">"poly_refined.refl"</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">poly_expts</span><span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">"image </span><span class="si">%d</span><span class="s2"> cell: </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">" "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">"</span><span class="si">%.3f</span><span class="s2">"</span> <span class="o">%</span> <span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">e</span><span class="o">.</span><span class="n">crystal</span><span class="o">.</span><span class="n">get_unit_cell</span><span class="p">()</span><span class="o">.</span><span class="n">parameters</span><span class="p">())))</span>
-
-<span class="n">px</span><span class="p">,</span> <span class="n">py_</span> <span class="o">=</span> <span class="n">xy</span><span class="p">(</span><span class="n">poly</span><span class="p">,</span> <span class="s2">"xyzcal.px"</span><span class="p">,</span> <span class="n">poly</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
-<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="mf">5.4</span><span class="p">))</span>
-<span class="n">show_image</span><span class="p">(</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">zoom</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">sx</span><span class="p">,</span> <span class="n">sy</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span> <span class="n">facecolors</span><span class="o">=</span><span class="s2">"none"</span><span class="p">,</span> <span class="n">edgecolors</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span> <span class="n">linewidths</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"strong spot"</span><span class="p">)</span>
-<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">ix</span><span class="p">,</span> <span class="n">iy</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span> <span class="n">facecolors</span><span class="o">=</span><span class="s2">"none"</span><span class="p">,</span> <span class="n">edgecolors</span><span class="o">=</span><span class="s2">"tab:blue"</span><span class="p">,</span> <span class="n">linewidths</span><span class="o">=</span><span class="mf">1.2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"indexed (monochromatic)"</span><span class="p">)</span>
-<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">"upper right"</span><span class="p">)</span>
-<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"After laue.index"</span><span class="p">)</span>
-<span class="n">show_image</span><span class="p">(</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">zoom</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">sx</span><span class="p">,</span> <span class="n">sy</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span> <span class="n">facecolors</span><span class="o">=</span><span class="s2">"none"</span><span class="p">,</span> <span class="n">edgecolors</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span> <span class="n">linewidths</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"strong spot"</span><span class="p">)</span>
-<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">px</span><span class="p">,</span> <span class="n">py_</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">90</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">"x"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"lime"</span><span class="p">,</span> <span class="n">linewidths</span><span class="o">=</span><span class="mf">1.4</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"predicted (polychromatic)"</span><span class="p">)</span>
-<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">"upper right"</span><span class="p">)</span>
-<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"After laue.refine"</span><span class="p">)</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">"tutorial_images/mono_vs_poly.png"</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">110</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-</div>
-<a class="reference internal image-reference" href="../../_images/mono_vs_poly.png"><img alt="Monochromatic indexing versus polychromatic refinement" src="../../_images/mono_vs_poly.png" width="800" />
-</a>
-<p>On the left only a fraction of the spots along each streak carried a
-Miller index after monochromatic indexing. On the right the
-polychromatic model places a prediction (green cross) on essentially
-every strong spot, and the crosses that fall on the streaks between the
-strong spots are the weak reflections that were not picked up by spot
-finding.</p>
-<p>You can also use <code class="docutils literal notranslate"><span class="pre">dials.report</span> <span class="pre">poly_refined.expt</span> <span class="pre">poly_refined.refl</span></code> to
-generate an HTML report with many more diagnostic plots.</p>
+therefore dropped. On a still whose residuals vary systematically across
+the detector, the filter can reject a whole region rather than the whole
+image. Those reflections take no part in <code class="docutils literal notranslate"><span class="pre">laue.refine</span></code>, but they are
+<em>not</em> lost: the refined geometry still predicts them, and they are
+integrated along with everything else in the next two sections. If you
+see this on many images it is a hint that the detector model (distance,
+tilt, or beam centre) deserves a closer look.</p>
 </section>
 </section>
 <section id="spot-prediction">
@@ -805,7 +721,7 @@ where there is no beam.</p>
 <p>The predictor also estimates how likely each prediction is to be
 observable and removes improbable ones, and discards predictions that
 fall on masked pixels.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">N</span><span class="o">=</span><span class="m">1</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">N</span><span class="o">=</span><span class="m">12</span>
 
 laue.predict<span class="w"> </span>poly_refined.expt<span class="w"> </span>poly_refined.refl<span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>output.reflections<span class="o">=</span><span class="s2">"predicted.refl"</span><span class="w"> </span><span class="se">\</span>
@@ -816,43 +732,67 @@ laue.predict<span class="w"> </span>poly_refined.expt<span class="w"> </span>pol
 <span class="w">    </span><span class="nv">nproc</span><span class="o">=</span><span class="nv">$N</span>
 </pre></div>
 </div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pred</span> <span class="o">=</span> <span class="n">flex</span><span class="o">.</span><span class="n">reflection_table</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="s2">"predicted.refl"</span><span class="p">)</span>
-<span class="n">pred_per_image</span> <span class="o">=</span> <span class="p">[(</span><span class="n">pred</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]</span> <span class="o">==</span> <span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">expts</span><span class="p">))]</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Predicted reflections per image:"</span><span class="p">,</span> <span class="n">pred_per_image</span><span class="p">,</span> <span class="s2">"total:"</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">pred</span><span class="p">))</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dxtbx.model.experiment_list</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExperimentListFactory</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dials.array_family</span><span class="w"> </span><span class="kn">import</span> <span class="n">flex</span>
 
-<span class="n">qx</span><span class="p">,</span> <span class="n">qy</span> <span class="o">=</span> <span class="n">xy</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="s2">"xyzcal.px"</span><span class="p">,</span> <span class="n">pred</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
-<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="mf">5.4</span><span class="p">))</span>
-<span class="n">show_image</span><span class="p">(</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">qx</span><span class="p">,</span> <span class="n">qy</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"tab:green"</span><span class="p">,</span> <span class="n">linewidths</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Image 1: </span><span class="si">{</span><span class="n">pred_per_image</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> predicted reflections"</span><span class="p">)</span>
-<span class="n">show_image</span><span class="p">(</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">zoom</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">qx</span><span class="p">,</span> <span class="n">qy</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">70</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">"x"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"lime"</span><span class="p">,</span> <span class="n">linewidths</span><span class="o">=</span><span class="mf">1.2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"predicted"</span><span class="p">)</span>
-<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">sx</span><span class="p">,</span> <span class="n">sy</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span> <span class="n">facecolors</span><span class="o">=</span><span class="s2">"none"</span><span class="p">,</span> <span class="n">edgecolors</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span> <span class="n">linewidths</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"strong spot"</span><span class="p">)</span>
-<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">"upper right"</span><span class="p">)</span>
-<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"Zoom"</span><span class="p">)</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">"tutorial_images/predicted_overlay.png"</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">110</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">poly_expts</span> <span class="o">=</span> <span class="n">ExperimentListFactory</span><span class="o">.</span><span class="n">from_json_file</span><span class="p">(</span><span class="s2">"poly_refined.expt"</span><span class="p">,</span> <span class="n">check_format</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">pred</span> <span class="o">=</span> <span class="n">flex</span><span class="o">.</span><span class="n">reflection_table</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="s2">"predicted.refl"</span><span class="p">)</span>
+
+<span class="n">per_image</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([(</span><span class="n">pred</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]</span> <span class="o">==</span> <span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">poly_expts</span><span class="p">))])</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Predicted reflections: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">pred</span><span class="p">)</span><span class="si">}</span><span class="s2"> total across </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">poly_expts</span><span class="p">)</span><span class="si">}</span><span class="s2"> images "</span>
+      <span class="sa">f</span><span class="s2">"(mean </span><span class="si">{</span><span class="n">per_image</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2"> per image)"</span><span class="p">)</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="../../_images/predicted_overlay.png"><img alt="Predicted reflections on the first image" src="../../_images/predicted_overlay.png" width="800" />
-</a>
-<p>About 2150 reflections are predicted per image, roughly four times the
-number of strong spots. In the zoomed panel every strong spot has a
-prediction on it, and the predictions in between mark the weak
-reflections that the integrator will measure as well.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>metric</p></th>
+<th class="head"><p>value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>predicted reflections</p></td>
+<td><p>320,713</p></td>
+</tr>
+<tr class="row-odd"><td><p>images</p></td>
+<td><p>178</p></td>
+</tr>
+<tr class="row-even"><td><p>mean per image</p></td>
+<td><p>1,802</p></td>
+</tr>
+</tbody>
+</table>
+<p>About 1,800 reflections are predicted per image on average, roughly four
+times the number of strong spots. The screenshot below shows this for
+the first image (predictions are drawn using <code class="docutils literal notranslate"><span class="pre">xyzcal.px</span></code>, the same
+field the viewer uses for any reflection table that has been predicted
+or integrated).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>dials.image_viewer<span class="w"> </span>poly_refined.expt<span class="w"> </span>predicted.refl<span class="w"> </span><span class="nv">brightness</span><span class="o">=</span><span class="m">60</span>
+</pre></div>
+</div>
+<figure class="align-default" id="id5">
+<img alt="Predicted reflections on the first image" src="../../_images/predicted_overlay.png" />
+<figcaption>
+<p><span class="caption-text">Predicted reflections on the first image</span><a class="headerlink" href="#id5" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>Compare this to the indexed-spots screenshot from the
+monochromatic-indexing section: there, only a sparse subset of spots
+along each streak carried a Miller index. Here, after full polychromatic
+refinement, a prediction lands on essentially every point along every
+streak — including the weak reflections between the strong spots that
+spot finding never picked up.</p>
 </section>
 <section id="integration">
 <h1>Integration<a class="headerlink" href="#integration" title="Link to this heading"></a></h1>
 <p><code class="docutils literal notranslate"><span class="pre">laue.integrate</span></code> measures an intensity for every predicted reflection.
 For each image it chooses an integration radius from the spacing of the
-predicted centroids (10–12 pixels here), pools the pixels of the nearest
-strong spots to learn an elliptical profile, and then fits that profile
-plus a flat background to the pixels around each prediction. Weak
-reflections thus inherit a well-determined profile from their neighbours
-instead of fitting noise. The result is written straight to an <code class="docutils literal notranslate"><span class="pre">.mtz</span></code>
-file.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">N</span><span class="o">=</span><span class="m">1</span>
+predicted centroids, pools the pixels of the nearest strong spots to
+learn an elliptical profile, and then fits that profile plus a flat
+background to the pixels around each prediction. Weak reflections thus
+inherit a well-determined profile from their neighbours instead of
+fitting noise. The result is written straight to an <code class="docutils literal notranslate"><span class="pre">.mtz</span></code> file.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">N</span><span class="o">=</span><span class="m">12</span>
 
 laue.integrate<span class="w"> </span>poly_refined.expt<span class="w"> </span>predicted.refl<span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>output.filename<span class="o">=</span><span class="s2">"integrated.mtz"</span><span class="w"> </span><span class="se">\</span>
@@ -868,7 +808,7 @@ reflection. We can inspect it with <code class="docutils literal notranslate"><s
 <span class="nb">print</span><span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">spacegroup</span><span class="o">.</span><span class="n">short_name</span><span class="p">(),</span> <span class="n">ds</span><span class="o">.</span><span class="n">cell</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">"Columns:"</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">columns</span><span class="p">))</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">"Reflections:"</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">ds</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">ds</span><span class="p">[</span><span class="s2">"BATCH"</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">sort_index</span><span class="p">()</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s2">"per image"</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Images (batches):"</span><span class="p">,</span> <span class="n">ds</span><span class="p">[</span><span class="s2">"BATCH"</span><span class="p">]</span><span class="o">.</span><span class="n">nunique</span><span class="p">())</span>
 <span class="n">ds</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -884,7 +824,7 @@ reflection. We can inspect it with <code class="docutils literal notranslate"><s
 <td><p>Miller indices</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">BATCH</span></code></p></td>
-<td><p>the image number (1–5), used by
+<td><p>the image number, used by
 <code class="docutils literal notranslate"><span class="pre">careless</span></code> to group reflections</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">I</span></code>, <code class="docutils literal notranslate"><span class="pre">SIGI</span></code></p></td>
@@ -911,7 +851,12 @@ MTZ <code class="docutils literal notranslate"><span class="pre">M/ISYM</span></
 </tbody>
 </table>
 <p>A quick look at the data quality:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ds</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">compute_dHKL</span><span class="p">()</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">reciprocalspaceship</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">rs</span>
+
+<span class="n">ds</span> <span class="o">=</span> <span class="n">rs</span><span class="o">.</span><span class="n">read_mtz</span><span class="p">(</span><span class="s2">"integrated.mtz"</span><span class="p">)</span>
+<span class="n">ds</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">compute_dHKL</span><span class="p">()</span>
 <span class="n">d</span> <span class="o">=</span> <span class="n">ds</span><span class="p">[</span><span class="s2">"dHKL"</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
 <span class="n">isigi</span> <span class="o">=</span> <span class="p">(</span><span class="n">ds</span><span class="p">[</span><span class="s2">"I"</span><span class="p">]</span> <span class="o">/</span> <span class="n">ds</span><span class="p">[</span><span class="s2">"SIGI"</span><span class="p">])</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
 <span class="n">w</span> <span class="o">=</span> <span class="n">ds</span><span class="p">[</span><span class="s2">"wavelength"</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
@@ -947,29 +892,60 @@ MTZ <code class="docutils literal notranslate"><span class="pre">M/ISYM</span></
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="../../_images/integrated_stats.png"><img alt="Integrated intensity statistics" src="../../_images/integrated_stats.png" width="800" />
-</a>
-<p>The mean I/σ(I) falls smoothly with resolution and drops below 1 at
-about 1.75 Å, which is a reasonable place to expect the merged data to
-stop. The long tail of the I/σ(I) histogram is the strong,
-low-resolution data, and the wavelength–resolution plot shows the full
-spectrum contributing at every resolution, with most reflections near
-the 1.04 Å peak.</p>
+<figure class="align-default" id="id6">
+<img alt="Integrated intensity statistics" src="../../_images/integrated_stats.png" />
+<figcaption>
+<p><span class="caption-text">Integrated intensity statistics</span><a class="headerlink" href="#id6" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>metric</p></th>
+<th class="head"><p>value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>space group</p></td>
+<td><p>P2₁2₁2₁</p></td>
+</tr>
+<tr class="row-odd"><td><p>unit cell (Å)</p></td>
+<td><p>34.30, 45.54, 98.96, 90, 90, 90</p></td>
+</tr>
+<tr class="row-even"><td><p>integrated reflections</p></td>
+<td><p>317,633</p></td>
+</tr>
+<tr class="row-odd"><td><p>resolution range</p></td>
+<td><p>49.5 – 1.57 Å</p></td>
+</tr>
+<tr class="row-even"><td><p>mean I/σ(I)</p></td>
+<td><p>4.5</p></td>
+</tr>
+<tr class="row-odd"><td><p>fraction I/σ(I) &gt; 2</p></td>
+<td><p>0.38</p></td>
+</tr>
+</tbody>
+</table>
+<p>Across the full 179-image collection, <code class="docutils literal notranslate"><span class="pre">laue.integrate</span></code> produced
+317,633 integrated reflections spanning 49.5–1.57 Å, with a mean I/σ(I)
+of 4.5 and 38 % of reflections above I/σ(I) = 2. The mean I/σ(I) falls
+smoothly with resolution, and the wavelength–resolution plot shows the
+full spectrum contributing at every resolution, with most reflections
+near the 1.04 Å peak.</p>
 </section>
 <section id="conclusion">
 <h1>Conclusion<a class="headerlink" href="#conclusion" title="Link to this heading"></a></h1>
-<p>At this point you have an integrated, unmerged <code class="docutils literal notranslate"><span class="pre">integrated.mtz</span></code> for
-the five stills. In a real serial experiment you would now repeat the
-pipeline on all of your images (or run it on chunks of images in
-parallel, since nothing couples one image to another) and pass the
-resulting file(s) to
+<p>At this point you have an integrated, unmerged <code class="docutils literal notranslate"><span class="pre">integrated.mtz</span></code>
+covering all 179 stills (178 of which produced a refined crystal model).
+In a real serial experiment you would pass the resulting file(s) to
 <code class="docutils literal notranslate"><span class="pre">`careless</span></code> &lt;<a class="reference external" href="https://github.com/rs-station/careless">https://github.com/rs-station/careless</a>&gt;`__ for scaling
-and merging. Because the wavelength of every reflection is known,
-<code class="docutils literal notranslate"><span class="pre">careless</span></code> is run in <code class="docutils literal notranslate"><span class="pre">poly</span></code> mode and given the <code class="docutils literal notranslate"><span class="pre">wavelength</span></code> column
-as a metadata key, for example:</p>
+and merging, typically after collecting many more images than this to
+compensate for the fraction that fail to index or refine well. Because
+the wavelength of every reflection is known, <code class="docutils literal notranslate"><span class="pre">careless</span></code> is run in
+<code class="docutils literal notranslate"><span class="pre">poly</span></code> mode and given the <code class="docutils literal notranslate"><span class="pre">wavelength</span></code> column as a metadata key, for
+example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">careless</span> <span class="n">poly</span> \
     <span class="o">--</span><span class="n">iterations</span><span class="o">=</span><span class="mi">30000</span> \
-    <span class="o">--</span><span class="n">dmin</span><span class="o">=</span><span class="mf">1.75</span> \
+    <span class="o">--</span><span class="n">dmin</span><span class="o">=</span><span class="mf">1.57</span> \
     <span class="o">--</span><span class="n">merge</span><span class="o">-</span><span class="n">half</span><span class="o">-</span><span class="n">datasets</span> \
     <span class="o">--</span><span class="n">wavelength</span><span class="o">-</span><span class="n">key</span><span class="o">=</span><span class="s1">'wavelength'</span> \
     <span class="s2">"xcal,ycal,wavelength,dHKL,BATCH"</span> \
@@ -977,9 +953,8 @@ as a metadata key, for example:</p>
     <span class="n">merged</span><span class="o">/</span><span class="n">dhfr</span>
 </pre></div>
 </div>
-<p>Five images are far from enough for a complete data set, but every image
-in a serial run is processed identically, so scaling up is only a matter
-of compute time.</p>
+<p>Every image in a serial run is processed identically, so scaling up
+further (more images, more crystals) is only a matter of compute time.</p>
 <p>Throughout the pipeline you can use DIALS utilities like
 <code class="docutils literal notranslate"><span class="pre">dials.image_viewer</span></code> or <code class="docutils literal notranslate"><span class="pre">dials.report</span></code> to check progress. Files are
 generally written in pairs with the same base name
