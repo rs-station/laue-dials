@@ -38,6 +38,7 @@ class RecordingIntegrator:
             "radius": radius,
             "k": k,
             "isigi_cutoff": isigi_cutoff,
+            "overlap_method": kwargs.get("overlap_method"),
             "maxiter": None,
             "n": len(centroids),
         }
@@ -85,6 +86,7 @@ def refls_and_imageset():
         ("integration_radius", 7, "radius"),
         ("knn", 9, "k"),
         ("maxiter", 6, "maxiter"),
+        ("overlap_method", "legacy", "overlap_method"),
     ],
 )
 def test_phil_parameters_reach_the_integrator(

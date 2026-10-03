@@ -19,8 +19,11 @@ from dials.util.options import ArgumentParser
 from dxtbx.model import ExperimentList
 from dxtbx.model.experiment_list import ExperimentListFactory
 
-from laue_dials.algorithms.laue import (gen_beam_models, remove_beam_models,
-                                        store_wavelengths)
+from laue_dials.algorithms.laue import (
+    gen_beam_models,
+    remove_beam_models,
+    store_wavelengths,
+)
 from laue_dials.utils.version import laue_version
 
 logger = logging.getLogger("laue-dials.command_line.refine")
@@ -50,7 +53,8 @@ nproc = 1
     process_includes=True,
 )
 
-refiner_phil = libtbx.phil.parse("""
+refiner_phil = libtbx.phil.parse(
+    """
 
 refinement {
   refinery {
@@ -105,7 +109,8 @@ output {
 
   log = laue.poly_refined.log
 }
-""")
+"""
+)
 
 working_phil = main_phil.fetch(sources=[refiner_phil])
 

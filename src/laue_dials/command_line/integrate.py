@@ -17,12 +17,13 @@ import reciprocalspaceship as rs
 from cctbx import sgtbx
 from dials.array_family import flex
 from dials.util import show_mail_handle_errors
-from dials.util.options import (ArgumentParser,
-                                reflections_and_experiments_from_files)
+from dials.util.options import ArgumentParser, reflections_and_experiments_from_files
 
-from laue_dials.algorithms.integration import (Integrator,
-                                               estimate_integration_radius,
-                                               unmasked_prediction_selection)
+from laue_dials.algorithms.integration import (
+    Integrator,
+    estimate_integration_radius,
+    unmasked_prediction_selection,
+)
 from laue_dials.utils.version import laue_version
 
 logger = logging.getLogger("laue-dials.command_line.integrate")
@@ -48,6 +49,13 @@ weak reflections inherit a well-determined profile from their neighbors
 rather than fitting noise. Intensities and their uncertainties are then
 obtained by profile fitting, weighting each pixel by its expected
 contribution, rather than by summing counts inside a mask.
+
+Windows of neighboring reflections may overlap. The counts in a shared
+pixel are modeled as the sum of every covering reflection's profile plus
+the background, and the intensities of each cluster of overlapping
+reflections are solved for together (overlap_method=joint), so a
+neighbor's signal is neither counted in a reflection's intensity nor
+absorbed into its background.
 
 Unless integration_radius is set, the window radius is estimated from the
 spacing of the predicted centroids. That same radius is used to dilate the
@@ -92,9 +100,13 @@ knn = 5
   .type = int(value_min=1)
   .help = "Number of nearest strong spots whose pixels are pooled to estimate the elliptical profile of each reflection. Larger values give steadier profiles but blur genuine variation in spot shape across the detector. Reduced automatically if an image has fewer strong spots than this."
 
-maxiter = 2
+maxiter = 10
   .type = int(value_min=1)
   .help = "Maximum number of profile-fitting iterations. Each iteration re-estimates the background, profiles, and intensities, then re-marks strong spots. Fitting stops early if the Poisson log-likelihood stops improving."
+
+overlap_method = *joint legacy
+  .type = choice
+  .help = "How intensities of reflections with overlapping profiles are separated. 'joint' solves the weighted least-squares problem for each cluster of overlapping reflections exactly and reports uncertainties that account for the blending. 'legacy' fits each reflection on its own window, so a neighbor's counts are included in its intensity; it is kept for comparison with earlier results."
 """,
     process_includes=True,
 )
@@ -116,7 +128,15 @@ def get_refls_image(refls, img_id):
     return refls.select(refls["id"] == img_id)
 
 
-def integrate_image(img_set, refls, isigi_cutoff, integration_radius, knn, maxiter):
+def integrate_image(
+    img_set,
+    refls,
+    isigi_cutoff,
+    integration_radius,
+    knn,
+    maxiter,
+    overlap_method="joint",
+):
     """
     Integrate predicted spots on an image.
 
@@ -137,6 +157,8 @@ def integrate_image(img_set, refls, isigi_cutoff, integration_radius, knn, maxit
         knn (int): Number of nearest strong spots pooled to estimate each
             reflection's profile.
         maxiter (int): Maximum number of profile-fitting iterations.
+        overlap_method (str): How overlapping reflections are deblended,
+            ``"joint"`` or ``"legacy"``. See ``Integrator``.
 
     Returns:
         flex.reflection_table: Updated reflection table.
@@ -179,7 +201,12 @@ def integrate_image(img_set, refls, isigi_cutoff, integration_radius, knn, maxit
         return flex.reflection_table()
 
     integrator = Integrator(
-        pixels, all_spots, radius=radius, k=knn, isigi_cutoff=isigi_cutoff
+        pixels,
+        all_spots,
+        radius=radius,
+        k=knn,
+        isigi_cutoff=isigi_cutoff,
+        overlap_method=overlap_method,
     )
     try:
         integrator.fit(maxiter=maxiter)
@@ -305,6 +332,7 @@ def run(args=None, *, phil=working_phil):
             repeat(params.integration_radius),
             repeat(params.knn),
             repeat(params.maxiter),
+            repeat(params.overlap_method),
         )
     )
 

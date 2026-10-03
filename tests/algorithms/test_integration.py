@@ -1,10 +1,14 @@
 import numpy as np
 import pytest
 
-from laue_dials.algorithms.integration import (Integrator, cov,
-                                               estimate_integration_radius,
-                                               mvn_log_pdf,
-                                               unmasked_prediction_selection)
+from laue_dials.algorithms.integration import (
+    Integrator,
+    cov,
+    estimate_integration_radius,
+    mvn_log_pdf,
+    solve_block_diagonal,
+    unmasked_prediction_selection,
+)
 
 
 # ---------------------------------------------------------------------------
@@ -214,8 +218,89 @@ def test_integrator_predict_shapes_and_positivity():
     integ.fit()
     v = integ.predict()
     assert v.shape == integ.windows.shape
-    # predict() = max(0, I) * profile + background, both non-negative.
+    # predict() sums max(0, I) * profile and averages background, both
+    # non-negative.
     assert (v > 0).all()
+
+
+def _reference_predict(integ):
+    """Loop-based predict() that sums overlapping windows pixel by pixel."""
+    p = integ.profile_values
+    signal = np.maximum(0.0, integ.intensity)[:, None] * p
+    bg = np.broadcast_to(integ.background, p.shape)
+    rows, cols = integ.window_idx
+    per_pixel = {}
+    for i in range(integ.n):
+        seen = set()
+        for k in range(integ.m):
+            key = (rows[i, k], cols[i, k])
+            if key in seen:  # clamped repeat within one window
+                continue
+            seen.add(key)
+            per_pixel.setdefault(key, []).append((signal[i, k], bg[i, k]))
+    v = np.empty_like(p)
+    for i in range(integ.n):
+        for k in range(integ.m):
+            contribs = per_pixel[(rows[i, k], cols[i, k])]
+            v[i, k] = sum(s for s, _ in contribs) + np.mean([b for _, b in contribs])
+    return v
+
+
+def _randomize_state(integ, seed):
+    rng = np.random.default_rng(seed)
+    integ.intensity = rng.uniform(-50.0, 500.0, integ.n)
+    integ.background = rng.uniform(1.0, 10.0, (integ.n, 1))
+
+
+def test_predict_matches_reference_with_overlaps_and_edges():
+    # Crowded spots, some near the image edge, so windows both overlap one
+    # another and get clamped at the detector boundary.
+    centroids = np.array(
+        [[10, 10], [14, 12], [2, 30], [5, 33], [40, 40], [43, 38], [45, 44], [58, 2]],
+        dtype="float32",
+    )
+    pixels, centroids = make_synthetic_image(shape=(60, 60), centroids=centroids)
+    integ = Integrator(pixels, centroids, radius=5)
+    _randomize_state(integ, seed=11)
+    assert np.allclose(integ.predict(), _reference_predict(integ))
+
+
+def test_predict_two_overlapping_reflections_matches_formula():
+    centroids = np.array([[20, 20], [24, 20]], dtype="float32")
+    pixels, centroids = make_synthetic_image(shape=(40, 40), centroids=centroids)
+    integ = Integrator(pixels, centroids, radius=4)
+    integ.intensity = np.array([100.0, 30.0])
+    integ.background = np.array([[2.0], [6.0]])
+    p = integ.profile_values
+    v = integ.predict()
+
+    # Match pixels shared by the two windows.
+    pix0 = {tuple(ij): k for k, ij in enumerate(integ.window_idx[:, 0].T)}
+    shared = [
+        (pix0[tuple(ij)], k)
+        for k, ij in enumerate(integ.window_idx[:, 1].T)
+        if tuple(ij) in pix0
+    ]
+    assert shared
+    for k0, k1 in shared:
+        expected = 100.0 * p[0, k0] + 30.0 * p[1, k1] + 0.5 * 2.0 + 0.5 * 6.0
+        assert np.isclose(v[0, k0], expected)
+        assert np.isclose(v[1, k1], expected)
+
+    # Unshared pixels see only their own reflection.
+    only0 = np.setdiff1d(np.arange(integ.m), [k0 for k0, _ in shared])
+    assert np.allclose(v[0, only0], 100.0 * p[0, only0] + 2.0)
+
+
+def test_predict_without_overlaps_is_unchanged():
+    pixels, centroids = make_synthetic_image(seed=3)
+    integ = Integrator(pixels, centroids, radius=5)
+    _randomize_state(integ, seed=4)
+    expected = (
+        np.maximum(0.0, integ.intensity[:, None]) * integ.profile_values
+        + integ.background
+    )
+    assert np.allclose(integ.predict(), expected)
 
 
 # ---------------------------------------------------------------------------
@@ -449,14 +534,15 @@ def test_fit_does_not_apply_an_update_past_the_stopping_point():
     The objective is evaluated after an iteration's updates are applied, so a
     stalled iteration ends the loop immediately.
 
-    On this data the score is minimised after a single update and worsens
-    thereafter, so the second iteration must trip the rule and fit() must stop
-    holding two updates. The previous implementation scored the state *before*
-    updating, which detected the stall one iteration late and returned a third,
-    unwanted update.
+    The score is scripted to fall after the first update and rise after the
+    second, so the second iteration must trip the rule and fit() must stop
+    holding two updates. Scoring the state *before* updating would detect the
+    stall one iteration late and return a third, unwanted update.
     """
     pixels, centroids = make_synthetic_image(seed=7)
     integ = _counting_integrator(pixels, centroids)
+    scores = {1: 100.0, 2: 101.0, 3: 50.0}
+    type(integ).score = property(lambda self: scores[self.n_updates])
 
     integ.fit(maxiter=3)
 
@@ -478,3 +564,183 @@ def test_fit_maxiter_one_matches_a_single_manual_update():
 
     assert np.isclose(integ.score, again.score)
     assert np.allclose(integ.intensity, again.intensity)
+
+
+# ---------------------------------------------------------------------------
+# Deblending overlapping reflections
+# ---------------------------------------------------------------------------
+def _blended_scene(offsets, sigma=1.5, amplitude=200.0, seed=0):
+    """
+    A grid of isolated spots, which give the kNN profiles something clean to
+    learn from, plus a cluster of overlapping spots around each of a second
+    set of centers. Returns (pixels, centroids, n_isolated, true_intensity).
+    """
+    xs = np.arange(20, 380, 30.0)
+    grid = np.array([(x, y) for x in xs for y in xs[::2]])
+    centers = np.array([(x, y + 15) for x in xs for y in xs[::2][:-1]])
+    centroids = np.concatenate([grid] + [centers + o for o in offsets])
+    pixels, centroids = make_synthetic_image(
+        (400, 400), centroids, amplitude=amplitude, sigma=sigma, seed=seed
+    )
+    return pixels, centroids, len(grid), amplitude * 2 * np.pi * sigma**2
+
+
+def test_solve_block_diagonal_matches_dense_solve():
+    rng = np.random.default_rng(0)
+    sizes = [1, 1, 3, 2, 3, 1, 5]
+    blocks = []
+    for s in sizes:
+        a = rng.normal(size=(s, s))
+        blocks.append(a @ a.T + s * np.eye(s))
+    import scipy.sparse as sp
+
+    N = sp.block_diag(blocks).toarray()
+    perm = rng.permutation(len(N))  # blocks need not be contiguous
+    N = N[perm][:, perm]
+    rhs = rng.normal(size=len(N))
+
+    x, diag_inv = solve_block_diagonal(sp.coo_matrix(N), rhs, epsilon=0.0)
+
+    assert np.allclose(x, np.linalg.solve(N, rhs))
+    assert np.allclose(diag_inv, np.diag(np.linalg.inv(N)))
+
+
+@pytest.mark.parametrize("method", Integrator.overlap_methods)
+def test_integrate_without_overlaps_is_single_spot_profile_fit(method):
+    pixels, centroids = make_synthetic_image(seed=3)
+    integ = Integrator(pixels, centroids, radius=5, overlap_method=method)
+    _randomize_state(integ, seed=4)
+    c, b, p, v = integ.windows, integ.background, integ.profile_values, integ.predict()
+    precision = np.sum(p * p / v, axis=-1)
+    expected = np.sum(p * (c - b) / v, axis=-1) / precision
+
+    integ.integrate()
+
+    assert np.allclose(integ.intensity, expected, rtol=1e-5)
+    assert np.allclose(integ.uncertainty, np.sqrt(1.0 / precision), rtol=1e-5)
+
+
+def test_joint_deblends_a_pair_that_legacy_overcounts():
+    """
+    With a neighbor 3 px away, the single-window estimator absorbs part of
+    the neighbor's counts. The joint solve attributes them correctly.
+    """
+    pixels, centroids, n_iso, truth = _blended_scene([(0.0, 0.0), (3.0, 0.0)])
+    results = {}
+    for method in Integrator.overlap_methods:
+        integ = Integrator(pixels, centroids, radius=6, overlap_method=method)
+        integ.fit(maxiter=30)
+        results[method] = integ
+
+    joint = results["joint"]
+    blended = joint.intensity[n_iso:]
+    assert abs(blended.mean() / truth - 1) < 0.02
+    assert np.std((blended - truth) / joint.uncertainty[n_iso:]) < 1.5
+
+    legacy = results["legacy"].intensity[n_iso:]
+    assert legacy.mean() / truth - 1 > 0.05
+
+
+def test_joint_uncertainty_grows_with_blending():
+    pixels, centroids, n_iso, _ = _blended_scene([(0.0, 0.0), (2.0, 0.0)])
+    integ = Integrator(pixels, centroids, radius=6, overlap_method="joint")
+    integ.fit(maxiter=10)
+    isolated = integ.uncertainty[:n_iso] / np.sqrt(integ.intensity[:n_iso])
+    blended = integ.uncertainty[n_iso:] / np.sqrt(integ.intensity[n_iso:])
+    assert np.median(blended) > 1.2 * np.median(isolated)
+
+
+def test_joint_handles_a_tight_triangle():
+    """
+    Three spots 1.5 px apart, with sigma 1.5 px, are strongly degenerate.
+    Iterative schemes such as Jacobi diverge or crawl here; the exact joint
+    solve still recovers the intensities.
+    """
+    angles = np.pi / 2 + np.arange(3) * 2 * np.pi / 3
+    tri = 1.5 / np.sqrt(3) * np.column_stack([np.cos(angles), np.sin(angles)])
+    pixels, centroids, n_iso, truth = _blended_scene(tri)
+
+    joint = Integrator(pixels, centroids, radius=6, overlap_method="joint")
+    joint.fit(maxiter=30)
+    assert abs(joint.intensity[n_iso:].mean() / truth - 1) < 0.02
+
+
+def test_profiles_converge_to_the_true_width():
+    """
+    Repeated profile updates must settle on the spot width rather than
+    shrinking toward a point.
+    """
+    xs = np.arange(20, 380, 30.0)
+    grid = np.array([(x, y) for x in xs for y in xs])
+    pixels, centroids = make_synthetic_image(
+        (400, 400), grid, amplitude=200.0, sigma=1.5, seed=0
+    )
+    integ = Integrator(pixels, centroids, radius=6)
+    integ.fit(maxiter=30, tol=-np.inf)
+
+    var = integ.profile_scale[:, [0, 1], [0, 1]]
+    # Pixelization adds roughly 1/12 px^2 to the variance of a 1.5 px Gaussian
+    assert np.allclose(np.median(var, axis=0), 1.5**2, rtol=0.1)
+    assert np.isclose(
+        np.median(integ.intensity) / (200.0 * 2 * np.pi * 1.5**2), 1, atol=0.02
+    )
+    assert np.isclose(np.median(integ.background), 5.0, rtol=0.05)
+
+
+def test_integrator_rejects_unknown_overlap_method():
+    pixels, centroids = make_synthetic_image(seed=3)
+    with pytest.raises(ValueError):
+        Integrator(pixels, centroids, overlap_method="bogus")
+
+
+# ---------------------------------------------------------------------------
+# Profile evaluation cache
+# ---------------------------------------------------------------------------
+def _direct_profiles(integ):
+    from scipy.special import softmax
+
+    log_p, mdist = mvn_log_pdf(
+        integ.xy, integ.profile_loc, integ.profile_scale, return_zscore=True
+    )
+    return log_p, mdist, softmax(log_p, axis=-1)
+
+
+def _assert_cache_matches_direct(integ):
+    log_p, mdist, p = _direct_profiles(integ)
+    assert np.allclose(integ.log_profile_values, log_p)
+    assert np.allclose(integ.profile_dist, mdist)
+    assert np.allclose(integ.profile_values, p)
+
+
+def test_profile_cache_is_reused_while_profiles_are_unchanged():
+    pixels, centroids = make_synthetic_image(seed=3)
+    integ = Integrator(pixels, centroids)
+    assert integ.profile_values is integ.profile_values
+    _assert_cache_matches_direct(integ)
+
+
+def test_profile_cache_follows_in_place_edits_and_reassignment():
+    pixels, centroids = make_synthetic_image(seed=3)
+    integ = Integrator(pixels, centroids)
+    before = integ.profile_values
+
+    integ.profile_scale[0] *= 2.0
+    assert integ.profile_values is not before
+    _assert_cache_matches_direct(integ)
+
+    integ.profile_loc[1] += 0.5
+    _assert_cache_matches_direct(integ)
+
+    integ.profile_scale = integ.profile_scale * 0.5
+    _assert_cache_matches_direct(integ)
+
+    integ.assign_knn()
+    integ.estimate_profiles()
+    _assert_cache_matches_direct(integ)
+
+
+def test_cached_profiles_are_read_only():
+    pixels, centroids = make_synthetic_image(seed=3)
+    integ = Integrator(pixels, centroids)
+    with pytest.raises(ValueError):
+        integ.profile_values[0, 0] = 1.0
