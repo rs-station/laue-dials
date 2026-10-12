@@ -1,14 +1,11 @@
 import numpy as np
 import pytest
 
-from laue_dials.algorithms.integration import (
-    Integrator,
-    cov,
-    detector_global_pixels,
-    estimate_integration_radius,
-    mvn_log_pdf,
-    unmasked_prediction_selection,
-)
+from laue_dials.algorithms.integration import (Integrator, cov,
+                                               detector_global_pixels,
+                                               estimate_integration_radius,
+                                               mvn_log_pdf,
+                                               unmasked_prediction_selection)
 
 
 # ---------------------------------------------------------------------------
